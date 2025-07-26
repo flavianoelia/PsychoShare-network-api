@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\psychoshare_api.props" />
+</Project>

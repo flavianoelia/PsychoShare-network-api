@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "psychoshare_api", "psychoshare_api\psychoshare_api.csproj", "{DFD0C135-A58A-41C3-916F-78721EC70726}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "entity_library", "entity_library\entity_library.csproj", "{2F31EC18-190D-4A48-B6D0-E6F1113F5BE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dao_library", "dao_library\dao_library.csproj", "{58844802-7640-4682-B07C-5EA07D1FA96D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DFD0C135-A58A-41C3-916F-78721EC70726}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFD0C135-A58A-41C3-916F-78721EC70726}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFD0C135-A58A-41C3-916F-78721EC70726}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFD0C135-A58A-41C3-916F-78721EC70726}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F31EC18-190D-4A48-B6D0-E6F1113F5BE6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F31EC18-190D-4A48-B6D0-E6F1113F5BE6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F31EC18-190D-4A48-B6D0-E6F1113F5BE6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F31EC18-190D-4A48-B6D0-E6F1113F5BE6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58844802-7640-4682-B07C-5EA07D1FA96D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58844802-7640-4682-B07C-5EA07D1FA96D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58844802-7640-4682-B07C-5EA07D1FA96D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58844802-7640-4682-B07C-5EA07D1FA96D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

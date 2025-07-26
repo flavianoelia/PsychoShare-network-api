@@ -1,0 +1,15 @@
+C:\Users\Usuario\Desktop\Nueva carpeta\PsychoShare-API\dao_library\bin\Debug\net8.0\dao_library.deps.json
+C:\Users\Usuario\Desktop\Nueva carpeta\PsychoShare-API\dao_library\bin\Debug\net8.0\dao_library.dll
+C:\Users\Usuario\Desktop\Nueva carpeta\PsychoShare-API\dao_library\bin\Debug\net8.0\dao_library.pdb
+C:\Users\Usuario\Desktop\Nueva carpeta\PsychoShare-API\dao_library\bin\Debug\net8.0\entity_library.dll
+C:\Users\Usuario\Desktop\Nueva carpeta\PsychoShare-API\dao_library\bin\Debug\net8.0\entity_library.pdb
+C:\Users\Usuario\Desktop\Nueva carpeta\PsychoShare-API\dao_library\obj\Debug\net8.0\dao_library.csproj.AssemblyReference.cache
+C:\Users\Usuario\Desktop\Nueva carpeta\PsychoShare-API\dao_library\obj\Debug\net8.0\dao_library.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Usuario\Desktop\Nueva carpeta\PsychoShare-API\dao_library\obj\Debug\net8.0\dao_library.AssemblyInfoInputs.cache
+C:\Users\Usuario\Desktop\Nueva carpeta\PsychoShare-API\dao_library\obj\Debug\net8.0\dao_library.AssemblyInfo.cs
+C:\Users\Usuario\Desktop\Nueva carpeta\PsychoShare-API\dao_library\obj\Debug\net8.0\dao_library.csproj.CoreCompileInputs.cache
+C:\Users\Usuario\Desktop\Nueva carpeta\PsychoShare-API\dao_library\obj\Debug\net8.0\dao_libr.F9BEABA2.Up2Date
+C:\Users\Usuario\Desktop\Nueva carpeta\PsychoShare-API\dao_library\obj\Debug\net8.0\dao_library.dll
+C:\Users\Usuario\Desktop\Nueva carpeta\PsychoShare-API\dao_library\obj\Debug\net8.0\refint\dao_library.dll
+C:\Users\Usuario\Desktop\Nueva carpeta\PsychoShare-API\dao_library\obj\Debug\net8.0\dao_library.pdb
+C:\Users\Usuario\Desktop\Nueva carpeta\PsychoShare-API\dao_library\obj\Debug\net8.0\ref\dao_library.dll
