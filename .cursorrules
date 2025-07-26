@@ -1,0 +1,52 @@
+# PsychoShare Network API - Context
+
+## Project Overview
+PsychoShare Network is a social network platform designed specifically for psychologists to share Creative Commons licensed bibliographic materials. It provides standard social media functionality including user management, content sharing, and social interactions.
+
+## Technical Stack
+- **Backend**: .NET 8.0 with C#
+- **Database**: SQL Server or MySQL
+- **Frontend**: Vanilla JavaScript with Bootstrap
+- **Admin Dashboard**: React + Node.js (separate repository)
+- **Authentication**: C# standard authentication (JWT likely)
+- **Deployment**: Docker containerization
+- **Architecture**: Clean Architecture with possible Singleton pattern
+
+## Core Features
+- User account creation and management
+- Profile editing with image uploads
+- PDF file upload and sharing
+- User following system
+- Like and comment functionality
+- User and follower management
+- Account deletion
+- Creative Commons content licensing
+
+## Development Guidelines
+
+### Code Standards
+- **Language**: All code, comments, and commits must be in English
+- **Clean Code**: Use descriptive variable names that represent their purpose
+- **Architecture**: Follow Clean Architecture principles
+- **Testing**: Unit tests required for all assigned tasks
+- **Accessibility**: Avoid symbols like @, x, / to support screen readers
+
+### Git Workflow
+- **Branching**: Each developer works on feature branches
+- **Branch Naming**: Use kebab-case (e.g., `user-authentication`, `file-upload-feature`)
+- **Commits**: Brief, explicit descriptions of what was implemented
+- **No Personal Names**: Branch names should describe functionality, not developers
+
+### Project Structure
+- Backend API (current repository)
+- Frontend public site (separate repository: psychoshare-public-site)
+- Admin dashboard (separate React/Node repository)
+
+## AI Assistant Instructions
+- Follow Clean Architecture patterns
+- Suggest meaningful variable and method names
+- Prioritize accessibility in code suggestions
+- Maintain English language consistency
+- Consider unit testing approaches
+- Respect separation of concerns between repositories
+- Focus on psychologist user experience and Creative Commons compliance

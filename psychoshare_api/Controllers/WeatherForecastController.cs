@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace psychoshare_api.Controllers;
 
+// TODO: sacar datos innecesarios y dejar solo lo q sirve de plantilla
 [ApiController]
 [Route("[controller]")]
 public class WeatherForecastController : ControllerBase
