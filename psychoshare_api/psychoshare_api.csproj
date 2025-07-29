@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\dao_library\dao_library.csproj" />
+    <ProjectReference Include="..\entity_library\entity_library.csproj" />
   </ItemGroup>
 
 </Project>
