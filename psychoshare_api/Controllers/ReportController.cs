@@ -7,39 +7,53 @@ namespace psychoshare_api.Controllers;
 public class ReportController : ControllerBase
 {
     private readonly ILogger<ReportController> _logger;
+    private readonly IReportService _reportService;
 
-    public ReportController(ILogger<ReportController> logger)
+    public ReportController(ILogger<ReportController> logger, IReportService reportService)
     {
         _logger = logger;
+        _reportService = reportService;
     }
 
     [HttpPost]
-    public void ReportUser()
+    public async Task<ActionResult<ReportResponseDto>> ReportUser([FromBody] CreateReportDto createReportDto)
     {
-        // TODO: Report user with name, lastname, and date
+        // TODO: Implement report user logic
+        var result = await _reportService.CreateReportAsync(createReportDto);
+        return Ok(result);
     }
 
     [HttpGet]
-    public void GetAllReports()
+    public async Task<ActionResult<List<ReportResponseDto>>> GetAllReports()
     {
-        // TODO: Get all reports (admin only)
+        // TODO: Implement get all reports logic
+        var result = await _reportService.GetAllReportsAsync();
+        return Ok(result);
     }
 
     [HttpGet("{id}")]
-    public void GetReport(int id)
+    public async Task<ActionResult<ReportResponseDto>> GetReport(int id)
     {
-        // TODO: Get specific report details
+        // TODO: Implement get report logic
+        var result = await _reportService.GetReportByIdAsync(id);
+        if (result == null)
+            return NotFound("Report not found");
+        return Ok(result);
     }
 
     [HttpPut("{id}/resolve")]
-    public void ResolveReport(int id)
+    public async Task<ActionResult<bool>> ResolveReport(int id)
     {
-        // TODO: Mark report as resolved
+        // TODO: Implement resolve report logic
+        var result = await _reportService.ResolveReportAsync(id);
+        return Ok(result);
     }
 
     [HttpDelete("{id}")]
-    public void DeleteReport(int id)
+    public async Task<ActionResult<bool>> DeleteReport(int id)
     {
-        // TODO: Delete report
+        // TODO: Implement delete report logic
+        var result = await _reportService.DeleteReportAsync(id);
+        return Ok(result);
     }
 }

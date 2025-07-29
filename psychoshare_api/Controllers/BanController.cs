@@ -7,39 +7,53 @@ namespace psychoshare_api.Controllers;
 public class BanController : ControllerBase
 {
     private readonly ILogger<BanController> _logger;
+    private readonly IBanService _banService;
 
-    public BanController(ILogger<BanController> logger)
+    public BanController(ILogger<BanController> logger, IBanService banService)
     {
         _logger = logger;
+        _banService = banService;
     }
 
     [HttpPost]
-    public void BanUser()
+    public async Task<ActionResult<BanResponseDto>> BanUser([FromBody] CreateBanDto createBanDto)
     {
-        // TODO: Ban user with start/end date and reason
+        // TODO: Implement ban user logic
+        var result = await _banService.CreateBanAsync(createBanDto);
+        return Ok(result);
     }
 
     [HttpDelete("{userId}")]
-    public void UnbanUser(int userId)
+    public async Task<ActionResult<bool>> UnbanUser(int userId)
     {
-        // TODO: Unban user
+        // TODO: Implement unban user logic
+        var result = await _banService.UnbanUserAsync(userId);
+        return Ok(result);
     }
 
     [HttpGet("{userId}")]
-    public void GetUserBan(int userId)
+    public async Task<ActionResult<BanResponseDto>> GetUserBan(int userId)
     {
-        // TODO: Get ban details for user
+        // TODO: Implement get user ban logic
+        var result = await _banService.GetBanByUserIdAsync(userId);
+        if (result == null)
+            return NotFound("Ban not found");
+        return Ok(result);
     }
 
     [HttpGet("active")]
-    public void GetActiveBans()
+    public async Task<ActionResult<List<BanResponseDto>>> GetActiveBans()
     {
-        // TODO: Get all active bans (admin only)
+        // TODO: Implement get active bans logic
+        var result = await _banService.GetAllActiveBansAsync();
+        return Ok(result);
     }
 
     [HttpGet("check/{userId}")]
-    public void CheckBanStatus(int userId)
+    public async Task<ActionResult<bool>> CheckBanStatus(int userId)
     {
-        // TODO: Check if user is currently banned
+        // TODO: Implement check ban status logic
+        var result = await _banService.CheckUserIsBannedAsync(userId);
+        return Ok(result);
     }
 }
