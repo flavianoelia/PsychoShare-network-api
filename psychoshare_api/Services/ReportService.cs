@@ -1,10 +1,10 @@
 public interface IReportService
 {
     Task<ReportResponseDto> CreateReportAsync(CreateReportDto createReportDto);
-    Task<ReportResponseDto?> GetReportByIdAsync(int reportId);
+    Task<ReportResponseDto?> GetReportByIdAsync(long reportId);
     Task<List<ReportResponseDto>> GetAllReportsAsync();
-    Task<bool> ResolveReportAsync(int reportId);
-    Task<bool> DeleteReportAsync(int reportId);
+    Task<bool> ResolveReportAsync(long reportId);
+    Task<bool> DeleteReportAsync(long reportId);
 }
 
 public class ReportService : IReportService
@@ -25,7 +25,7 @@ public class ReportService : IReportService
         throw new NotImplementedException();
     }
 
-    public Task<ReportResponseDto?> GetReportByIdAsync(int reportId)
+    public Task<ReportResponseDto?> GetReportByIdAsync(long reportId)
     {
         // TODO: Get report from repository
         // TODO: Convert entity to DTO
@@ -39,13 +39,13 @@ public class ReportService : IReportService
         throw new NotImplementedException();
     }
 
-    public Task<bool> ResolveReportAsync(int reportId)
+    public Task<bool> ResolveReportAsync(long reportId)
     {
         // TODO: Mark report as resolved
         throw new NotImplementedException();
     }
 
-    public Task<bool> DeleteReportAsync(int reportId)
+    public Task<bool> DeleteReportAsync(long reportId)
     {
         // TODO: Delete report from database
         throw new NotImplementedException();

@@ -1,10 +1,10 @@
 public class Person
 {
-    private int idPerson;
+    private long idPerson;
     private string name = "";
     private string lastName = "";
 
-    public int IdPerson
+    public long IdPerson
     {
         get { return idPerson; }
         set { idPerson = value; }
