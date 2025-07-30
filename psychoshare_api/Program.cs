@@ -1,3 +1,5 @@
+using psychoshare_api.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,11 +9,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Register Ban and Report services
+// Register Ban, Report and Following services
 builder.Services.AddScoped<IBanService, BanService>();
 builder.Services.AddScoped<IReportService, ReportService>();
+builder.Services.AddScoped<IFollowingService, FollowingService>();
 builder.Services.AddScoped<IBanRepository, BanRepository>();
 builder.Services.AddScoped<IReportRepository, ReportRepository>();
+builder.Services.AddScoped<IFollowingRepository, FollowingRepository>();
 
 var app = builder.Build();
 
