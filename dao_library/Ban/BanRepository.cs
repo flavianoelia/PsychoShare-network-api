@@ -1,29 +1,29 @@
 public interface IBanRepository
 {
-    Task<int> CreateBanAsync(Ban ban);
-    Task<Ban?> GetBanByIdAsync(int banId);
-    Task<Ban?> GetActiveBanByUserIdAsync(int userId);
+    Task<long> CreateBanAsync(Ban ban);
+    Task<Ban?> GetBanByIdAsync(long banId);
+    Task<Ban?> GetActiveBanByUserIdAsync(long userId);
     Task<List<Ban>> GetAllActiveBansAsync();
     Task<bool> UpdateBanAsync(Ban ban);
-    Task<bool> DeleteBanAsync(int banId);
-    Task<bool> CheckUserIsBannedAsync(int userId);
+    Task<bool> DeleteBanAsync(long banId);
+    Task<bool> CheckUserIsBannedAsync(long userId);
 }
 
 public class BanRepository : IBanRepository
 {
-    public Task<int> CreateBanAsync(Ban ban)
+    public Task<long> CreateBanAsync(Ban ban)
     {
         // TODO: Implement database creation
         throw new NotImplementedException();
     }
 
-    public Task<Ban?> GetBanByIdAsync(int banId)
+    public Task<Ban?> GetBanByIdAsync(long banId)
     {
         // TODO: Implement database retrieval
         throw new NotImplementedException();
     }
 
-    public Task<Ban?> GetActiveBanByUserIdAsync(int userId)
+    public Task<Ban?> GetActiveBanByUserIdAsync(long userId)
     {
         // TODO: Implement get active ban for user
         throw new NotImplementedException();
@@ -41,13 +41,13 @@ public class BanRepository : IBanRepository
         throw new NotImplementedException();
     }
 
-    public Task<bool> DeleteBanAsync(int banId)
+    public Task<bool> DeleteBanAsync(long banId)
     {
         // TODO: Implement database deletion
         throw new NotImplementedException();
     }
 
-    public Task<bool> CheckUserIsBannedAsync(int userId)
+    public Task<bool> CheckUserIsBannedAsync(long userId)
     {
         // TODO: Check if user has active ban
         throw new NotImplementedException();

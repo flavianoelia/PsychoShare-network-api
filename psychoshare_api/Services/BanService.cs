@@ -1,11 +1,11 @@
 public interface IBanService
 {
     Task<BanResponseDto> CreateBanAsync(CreateBanDto createBanDto);
-    Task<BanResponseDto?> GetBanByUserIdAsync(int userId);
+    Task<BanResponseDto?> GetBanByUserIdAsync(long userId);
     Task<List<BanResponseDto>> GetAllActiveBansAsync();
-    Task<bool> UnbanUserAsync(int userId);
-    Task<bool> CheckUserIsBannedAsync(int userId);
-    Task<bool> UpdateBanAsync(int banId, UpdateBanDto updateBanDto);
+    Task<bool> UnbanUserAsync(long userId);
+    Task<bool> CheckUserIsBannedAsync(long userId);
+    Task<bool> UpdateBanAsync(long banId, UpdateBanDto updateBanDto);
 }
 
 public class BanService : IBanService
@@ -26,7 +26,7 @@ public class BanService : IBanService
         throw new NotImplementedException();
     }
 
-    public Task<BanResponseDto?> GetBanByUserIdAsync(int userId)
+    public Task<BanResponseDto?> GetBanByUserIdAsync(long userId)
     {
         // TODO: Get ban from repository
         // TODO: Convert entity to DTO
@@ -40,20 +40,20 @@ public class BanService : IBanService
         throw new NotImplementedException();
     }
 
-    public Task<bool> UnbanUserAsync(int userId)
+    public Task<bool> UnbanUserAsync(long userId)
     {
         // TODO: Find active ban for user
         // TODO: Update end date to now
         throw new NotImplementedException();
     }
 
-    public Task<bool> CheckUserIsBannedAsync(int userId)
+    public Task<bool> CheckUserIsBannedAsync(long userId)
     {
         // TODO: Check if user has active ban
         throw new NotImplementedException();
     }
 
-    public Task<bool> UpdateBanAsync(int banId, UpdateBanDto updateBanDto)
+    public Task<bool> UpdateBanAsync(long banId, UpdateBanDto updateBanDto)
     {
         // TODO: Get existing ban
         // TODO: Update properties

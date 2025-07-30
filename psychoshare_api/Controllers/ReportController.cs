@@ -32,7 +32,7 @@ public class ReportController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ReportResponseDto>> GetReport(int id)
+    public async Task<ActionResult<ReportResponseDto>> GetReport(long id)
     {
         // TODO: Implement get report logic
         var result = await _reportService.GetReportByIdAsync(id);
@@ -42,7 +42,7 @@ public class ReportController : ControllerBase
     }
 
     [HttpPut("{id}/resolve")]
-    public async Task<ActionResult<bool>> ResolveReport(int id)
+    public async Task<ActionResult<bool>> ResolveReport(long id)
     {
         // TODO: Implement resolve report logic
         var result = await _reportService.ResolveReportAsync(id);
@@ -50,7 +50,7 @@ public class ReportController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult<bool>> DeleteReport(int id)
+    public async Task<ActionResult<bool>> DeleteReport(long id)
     {
         // TODO: Implement delete report logic
         var result = await _reportService.DeleteReportAsync(id);
