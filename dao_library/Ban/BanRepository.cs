@@ -11,45 +11,76 @@ public interface IBanRepository
 
 public class BanRepository : IBanRepository
 {
+    private static List<Ban> _mockBans = new List<Ban>();
+    private static long _nextId = 1;
+
     public Task<long> CreateBanAsync(Ban ban)
     {
-        // TODO: Implement database creation
-        throw new NotImplementedException();
+        // Mock implementation: Create ban
+        ban.IdBan = _nextId++;
+        ban.StartDate = DateTime.Now;
+        ban.IsActive = true;
+        
+        _mockBans.Add(ban);
+        
+        return Task.FromResult(ban.IdBan);
     }
 
     public Task<Ban?> GetBanByIdAsync(long banId)
     {
-        // TODO: Implement database retrieval
-        throw new NotImplementedException();
+        // Mock implementation: Get ban by ID
+        var ban = _mockBans.FirstOrDefault(b => b.IdBan == banId);
+        return Task.FromResult(ban);
     }
 
     public Task<Ban?> GetActiveBanByUserIdAsync(long userId)
     {
-        // TODO: Implement get active ban for user
-        throw new NotImplementedException();
+        // Mock implementation: Get active ban for user
+        var activeBan = _mockBans.FirstOrDefault(b => b.BannedUserId == userId && 
+            b.IsActive && (b.EndDate == null || b.EndDate > DateTime.Now));
+        return Task.FromResult(activeBan);
     }
 
     public Task<List<Ban>> GetAllActiveBansAsync()
     {
-        // TODO: Implement get all active bans
-        throw new NotImplementedException();
+        // Mock implementation: Get all active bans
+        var activeBans = _mockBans.Where(b => b.IsActive && 
+            (b.EndDate == null || b.EndDate > DateTime.Now)).ToList();
+        return Task.FromResult(activeBans);
     }
 
     public Task<bool> UpdateBanAsync(Ban ban)
     {
-        // TODO: Implement database update
-        throw new NotImplementedException();
+        // Mock implementation: Update ban
+        var existingBan = _mockBans.FirstOrDefault(b => b.IdBan == ban.IdBan);
+        if (existingBan != null)
+        {
+            existingBan.Reason = ban.Reason;
+            existingBan.EndDate = ban.EndDate;
+            existingBan.BanType = ban.BanType;
+            existingBan.IsActive = ban.IsActive;
+            return Task.FromResult(true);
+        }
+        return Task.FromResult(false);
     }
 
     public Task<bool> DeleteBanAsync(long banId)
     {
-        // TODO: Implement database deletion
-        throw new NotImplementedException();
+        // Mock implementation: Delete ban (mark as inactive)
+        var ban = _mockBans.FirstOrDefault(b => b.IdBan == banId);
+        if (ban != null)
+        {
+            ban.IsActive = false; // Soft delete
+            return Task.FromResult(true);
+        }
+        return Task.FromResult(false);
     }
 
     public Task<bool> CheckUserIsBannedAsync(long userId)
     {
-        // TODO: Check if user has active ban
-        throw new NotImplementedException();
+        // Mock implementation: Check if user is currently banned
+        var activeBan = _mockBans.Any(b => b.BannedUserId == userId && 
+            b.IsActive && (b.EndDate == null || b.EndDate > DateTime.Now));
+        return Task.FromResult(activeBan);
     }
 }
