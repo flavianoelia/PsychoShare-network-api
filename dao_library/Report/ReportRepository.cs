@@ -1,48 +1,78 @@
 public interface IReportRepository
 {
-    Task<int> CreateReportAsync(Report report);
-    Task<Report?> GetReportByIdAsync(int reportId);
+    Task<long> CreateReportAsync(Report report);
+    Task<Report?> GetReportByIdAsync(long reportId);
     Task<List<Report>> GetAllReportsAsync();
     Task<bool> UpdateReportAsync(Report report);
-    Task<bool> DeleteReportAsync(int reportId);
-    Task<bool> ResolveReportAsync(int reportId);
+    Task<bool> DeleteReportAsync(long reportId);
+    Task<bool> ResolveReportAsync(long reportId);
 }
 
 public class ReportRepository : IReportRepository
 {
-    public Task<int> CreateReportAsync(Report report)
+    private static List<Report> _mockReports = new List<Report>();
+    private static long _nextId = 1;
+
+    public Task<long> CreateReportAsync(Report report)
     {
-        // TODO: Implement database creation
-        throw new NotImplementedException();
+        // Mock implementation: Create report
+        report.IdReport = _nextId++;
+        report.ReportDate = DateTime.Now;
+        report.Status = "Pending"; // Default status
+        
+        _mockReports.Add(report);
+        
+        return Task.FromResult(report.IdReport);
     }
 
-    public Task<Report?> GetReportByIdAsync(int reportId)
+    public Task<Report?> GetReportByIdAsync(long reportId)
     {
-        // TODO: Implement database retrieval
-        throw new NotImplementedException();
+        // Mock implementation: Get report by ID
+        var report = _mockReports.FirstOrDefault(r => r.IdReport == reportId);
+        return Task.FromResult(report);
     }
 
     public Task<List<Report>> GetAllReportsAsync()
     {
-        // TODO: Implement get all reports
-        throw new NotImplementedException();
+        // Mock implementation: Get all reports
+        return Task.FromResult(_mockReports.ToList());
     }
 
     public Task<bool> UpdateReportAsync(Report report)
     {
-        // TODO: Implement database update
-        throw new NotImplementedException();
+        // Mock implementation: Update report
+        var existingReport = _mockReports.FirstOrDefault(r => r.IdReport == report.IdReport);
+        if (existingReport != null)
+        {
+            existingReport.Reason = report.Reason;
+            existingReport.Details = report.Details;
+            existingReport.Status = report.Status;
+            return Task.FromResult(true);
+        }
+        return Task.FromResult(false);
     }
 
-    public Task<bool> DeleteReportAsync(int reportId)
+    public Task<bool> DeleteReportAsync(long reportId)
     {
-        // TODO: Implement database deletion
-        throw new NotImplementedException();
+        // Mock implementation: Delete report
+        var report = _mockReports.FirstOrDefault(r => r.IdReport == reportId);
+        if (report != null)
+        {
+            _mockReports.Remove(report);
+            return Task.FromResult(true);
+        }
+        return Task.FromResult(false);
     }
 
-    public Task<bool> ResolveReportAsync(int reportId)
+    public Task<bool> ResolveReportAsync(long reportId)
     {
-        // TODO: Mark report as resolved
-        throw new NotImplementedException();
+        // Mock implementation: Mark report as resolved
+        var report = _mockReports.FirstOrDefault(r => r.IdReport == reportId);
+        if (report != null)
+        {
+            report.Status = "Resolved";
+            return Task.FromResult(true);
+        }
+        return Task.FromResult(false);
     }
 }

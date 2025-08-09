@@ -24,7 +24,7 @@ public class BanController : ControllerBase
     }
 
     [HttpDelete("{userId}")]
-    public async Task<ActionResult<bool>> UnbanUser(int userId)
+    public async Task<ActionResult<bool>> UnbanUser(long userId)
     {
         // TODO: Implement unban user logic
         var result = await _banService.UnbanUserAsync(userId);
@@ -32,7 +32,7 @@ public class BanController : ControllerBase
     }
 
     [HttpGet("{userId}")]
-    public async Task<ActionResult<BanResponseDto>> GetUserBan(int userId)
+    public async Task<ActionResult<BanResponseDto>> GetUserBan(long userId)
     {
         // TODO: Implement get user ban logic
         var result = await _banService.GetBanByUserIdAsync(userId);
@@ -50,7 +50,7 @@ public class BanController : ControllerBase
     }
 
     [HttpGet("check/{userId}")]
-    public async Task<ActionResult<bool>> CheckBanStatus(int userId)
+    public async Task<ActionResult<bool>> CheckBanStatus(long userId)
     {
         // TODO: Implement check ban status logic
         var result = await _banService.CheckUserIsBannedAsync(userId);

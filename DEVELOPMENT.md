@@ -3,15 +3,17 @@
 ## Quick Reference
 
 ### Project Type
+
 Social network for psychology professionals to share Creative Commons licensed academic content and scientific divulgation
 
 ### Frontend Status (EXISTING)
-- **Repository**: `psychoshare-public-site` 
+
+- **Repository**: `psychoshare-public-site`
 - **Technology Stack**: HTML5 Vanilla, CSS3, JavaScript ES6
 - **Framework**: Bootstrap (included via external file)
-- **Pages Completed**: 
+- **Pages Completed**:
   - Login page
-  - Sign-up page  
+  - Sign-up page
   - Profile page
   - Wall (main feed)
   - Contacts page
@@ -19,12 +21,14 @@ Social network for psychology professionals to share Creative Commons licensed a
 - **Features**: Responsive design, modals, post system UI, comments interface
 
 ### Key Business Rules
+
 - Only Creative Commons licensed content allowed
 - Psychology professionals are target users
 - Academic/professional focus over casual social media
 - Scientific divulgation and educational material sharing
 
 ### Architecture Decisions
+
 - Clean Architecture implementation
 - Repository pattern for data access
 - Service layer for business logic
@@ -32,6 +36,7 @@ Social network for psychology professionals to share Creative Commons licensed a
 - Unit of Work pattern (likely)
 
 ### Database Schema Considerations
+
 - **Users** (psychologists profiles - connects to profile page)
 - **Posts** (scientific articles and educational content - wall display)
 - **Files** (PDF uploads with Creative Commons licensing)
@@ -41,6 +46,7 @@ Social network for psychology professionals to share Creative Commons licensed a
 - **Creative Commons metadata** (licensing information)
 
 ### API Endpoints Structure (To match existing frontend)
+
 ```
 /api/auth          - Authentication (login, sign-up pages)
 /api/users         - User management (profile page)
@@ -52,14 +58,16 @@ Social network for psychology professionals to share Creative Commons licensed a
 ```
 
 ### Frontend-Backend Integration Points
+
 1. **Login page** → `/api/auth/login`
-2. **Sign-up page** → `/api/auth/register` 
+2. **Sign-up page** → `/api/auth/register`
 3. **Profile page** → `/api/users/{id}`, `/api/users/update`
 4. **Wall page** → `/api/posts`, `/api/social/comments`, `/api/social/likes`
 5. **Contacts page** → `/api/contacts`, `/api/social/follow`
 6. **About-us page** → Static content (no API needed)
 
 ### Development Priorities (Based on existing frontend)
+
 1. **User authentication system** (login/sign-up integration)
 2. **User profile management** (profile page support)
 3. **Posts and content sharing** (wall functionality)
@@ -69,18 +77,21 @@ Social network for psychology professionals to share Creative Commons licensed a
 7. **Admin functionality** (content moderation)
 
 ### Testing Strategy
+
 - Unit tests for all business logic
 - Integration tests for API endpoints
 - File upload testing
 - Authentication flow testing
 
 ### Security Considerations
+
 - File upload validation (PDF only)
 - User authentication/authorization
 - Creative Commons compliance validation
 - Data protection for user profiles
 
 ### Performance Considerations
+
 - File storage optimization
 - Database indexing for social queries
 - Caching strategy for frequently accessed content
