@@ -19,6 +19,62 @@ public class PostController : ControllerBase
         // TODO: Create new post
     }
 
+        [HttpPost("{postId}/comment")]
+        public IActionResult CreateComment(int postId)
+        {
+            // Create comment on post
+            return Ok();
+        }
+
+        [HttpGet("{postId}/comments")]
+        public IActionResult GetPostComments(int postId)
+        {
+            // Get all comments for a post
+            return Ok();
+        }
+
+        [HttpPut("comment/{id}")]
+        public IActionResult EditComment(int id)
+        {
+            // Edit comment
+            return Ok();
+        }
+
+        [HttpDelete("comment/{id}")]
+        public IActionResult DeleteComment(int id)
+        {
+            // Delete comment
+            return Ok();
+        }
+
+        [HttpPost("{postId}/like")]
+        public IActionResult LikePost(int postId)
+        {
+            // Like a post
+            return Ok();
+        }
+
+        [HttpDelete("{postId}/like")]
+        public IActionResult UnlikePost(int postId)
+        {
+            // Unlike a post
+            return Ok();
+        }
+
+        [HttpGet("{postId}/likes")]
+        public IActionResult GetPostLikes(int postId)
+        {
+            // Get all likes for a post
+            return Ok();
+        }
+
+        [HttpGet("user/{userId}/likes")]
+        public IActionResult GetUserLikes(int userId)
+        {
+            // Get all posts liked by user
+            return Ok();
+        }
+
         [HttpPost("{id}/cover-image")]
         public void UploadCoverImage(int id, IFormFile image)
         {
