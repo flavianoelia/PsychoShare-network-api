@@ -1,12 +1,12 @@
 public class Role 
 {
-    private int Idrole;
+    private long id;
     private string roleName = "";
 
-    public int IdRole
+    public long Id
     {
-        get { return Idrole; }
-        set { Idrole = value; }
+        get { return id; }
+        set { id = value; }
     }
     public string RoleName
     {

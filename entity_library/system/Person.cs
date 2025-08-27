@@ -1,13 +1,13 @@
 public class Person
 {
-    private int idPerson;
+    private long id;
     private string name = "";
     private string lastName = "";
 
-    public int IdPerson
+    public long Id
     {
-        get { return idPerson; }
-        set { idPerson = value; }
+        get { return id; }
+        set { id = value; }
     }
     public string Name
     {
