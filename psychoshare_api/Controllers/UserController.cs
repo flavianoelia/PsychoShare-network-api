@@ -6,7 +6,9 @@ namespace psychoshare_api.Controllers;
 [Route("[controller]")]
 public class UserController : ControllerBase
 {
+    
     private readonly ILogger<UserController> _logger;
+    private DAOFactory df = new MockDAOFactory();
 
     public UserController(ILogger<UserController> logger)
     {
@@ -20,15 +22,32 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("login")]
-    public void Login()
+    //este controlador es un ejemplo y está incompleto
+    public IActionResult Login()
     {
-        // TODO: Implement user login, return token
+        //objeto User harcodeado para guardar algo en la "base de datos"
+        User user = new User
+        { Name = "Pepe", LastName = "Roldan", Email = "pepe.com", Password = "12345", IdPerson = 1, Username = "pepeHD" };
+
+        this.df.CreateDAOUser().Save(user);
+
+        return Ok(new
+        {
+            success = true,
+            content = user
+        });
     }
 
+    //este controlador es un ejemplo y está incompleto, obtiene un usuario por su id
     [HttpGet("{id}")]
-    public void GetUser(int id)
+    public IActionResult GetUser(long id)
     {
-        // TODO: Get user by ID
+        User? user = this.df.CreateDAOUser().GetUser(id);
+        return Ok(new
+        {
+            success = true,
+            content = user
+        });
     }
 
     [HttpPut("{id}")]

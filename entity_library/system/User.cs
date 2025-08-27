@@ -1,5 +1,6 @@
 public class User : Person
 {
+    
     private string username = "";
     private string email = "";
     private string password = "";
