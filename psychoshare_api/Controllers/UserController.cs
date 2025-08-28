@@ -21,7 +21,7 @@ public class UserController : ControllerBase
         // TODO: Implement user registration
     }
 
-    [HttpPost("login")]
+    [HttpGet("login")]
     //este controlador es un ejemplo y está incompleto
     public IActionResult Login()
     {
