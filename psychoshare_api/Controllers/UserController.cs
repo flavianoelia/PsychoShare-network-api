@@ -56,34 +56,6 @@ public class UserController : ControllerBase
         
         return Ok("mock-jwt-token-12345");
     }
-    
-        [HttpPost("avatar/upload/{userId}")]
-        public IActionResult UploadAvatar(int userId)
-        {
-            // Upload user avatar image
-            return Ok();
-        }
-    
-        [HttpGet("avatar/{userId}")]
-        public IActionResult GetUserAvatar(int userId)
-        {
-            // Get user avatar
-            return Ok();
-        }
-    
-        [HttpPut("avatar/{userId}")]
-        public IActionResult UpdateAvatar(int userId)
-        {
-            // Update user avatar
-            return Ok();
-        }
-    
-        [HttpDelete("avatar/{userId}")]
-        public IActionResult DeleteAvatar(int userId)
-        {
-            // Delete user avatar
-            return Ok();
-        }
 
     [HttpGet("{id}")]
     public ActionResult<UserResponseDto> GetUser(long id)
