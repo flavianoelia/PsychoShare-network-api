@@ -27,7 +27,7 @@ public class UserController : ControllerBase
     {
         //objeto User harcodeado para guardar algo en la "base de datos"
         User user = new User
-        { Name = "Pepe", LastName = "Roldan", Email = "pepe.com", Password = "12345", IdPerson = 1, Username = "pepeHD" };
+        { Name = "Pepe", LastName = "Roldan", Email = "pepe.com", Password = "12345", Id = 1, Username = "pepeHD" };
 
         this.df.CreateDAOUser().Save(user);
 
