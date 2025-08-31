@@ -11,32 +11,27 @@ public class FollowingService : IFollowingService
 
     public async Task<Following> CreateFollowingAsync(Following following)
     {
-        // TODO: Add business logic validation (e.g., check if already following, user exists, etc.)
-        return await _followingRepository.CreateFollowingAsync(following);
+    return await _followingRepository.CreateFollowingAsync(following);
     }
 
     public Task<bool> DeleteFollowingAsync(long userId, long followedId)
     {
-        // TODO: Add business logic validation
-        return _followingRepository.DeleteFollowingAsync(userId, followedId);
+    return _followingRepository.DeleteFollowingAsync(userId, followedId);
     }
 
     public Task<List<Following>> GetFollowersAsync(long userId)
     {
-        // TODO: Add business logic validation
-        return _followingRepository.GetFollowersAsync(userId);
+    return _followingRepository.GetFollowersAsync(userId);
     }
 
     public Task<List<Following>> GetFollowingAsync(long userId)
     {
-        // TODO: Add business logic validation
-        return _followingRepository.GetFollowingListAsync(userId);
+    return _followingRepository.GetFollowingListAsync(userId);
     }
 
     public Task<bool> CheckIsFollowingAsync(long userId, long followedId)
     {
-        // TODO: Add business logic validation
-        return _followingRepository.CheckIsFollowingAsync(userId, followedId);
+    return _followingRepository.CheckIsFollowingAsync(userId, followedId);
     }
 
     public Task<int> GetFollowersCountAsync(long userId)

@@ -17,16 +17,14 @@ public class BanController : ControllerBase
 
     [HttpPost]
     public async Task<ActionResult<BanResponseDto>> BanUser([FromBody] CreateBanDto createBanDto)
-    {
-        // TODO: Implement ban user logic
+    {    
         var result = await _banService.CreateBanAsync(createBanDto);
         return Ok(result);
     }
 
     [HttpDelete("{userId}")]
     public async Task<ActionResult<bool>> UnbanUser(long userId)
-    {
-        // TODO: Implement unban user logic
+    {   
         var result = await _banService.UnbanUserAsync(userId);
         return Ok(result);
     }
@@ -34,7 +32,6 @@ public class BanController : ControllerBase
     [HttpGet("{userId}")]
     public async Task<ActionResult<BanResponseDto>> GetUserBan(long userId)
     {
-        // TODO: Implement get user ban logic
         var result = await _banService.GetBanByUserIdAsync(userId);
         if (result == null)
             return NotFound("Ban not found");
@@ -44,7 +41,6 @@ public class BanController : ControllerBase
     [HttpGet("active")]
     public async Task<ActionResult<List<BanResponseDto>>> GetActiveBans()
     {
-        // TODO: Implement get active bans logic
         var result = await _banService.GetAllActiveBansAsync();
         return Ok(result);
     }
@@ -52,7 +48,6 @@ public class BanController : ControllerBase
     [HttpGet("check/{userId}")]
     public async Task<ActionResult<bool>> CheckBanStatus(long userId)
     {
-        // TODO: Implement check ban status logic
         var result = await _banService.CheckUserIsBannedAsync(userId);
         return Ok(result);
     }

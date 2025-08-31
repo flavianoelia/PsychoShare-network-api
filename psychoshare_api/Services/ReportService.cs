@@ -18,36 +18,74 @@ public class ReportService : IReportService
 
     public Task<ReportResponseDto> CreateReportAsync(CreateReportDto createReportDto)
     {
-        // TODO: Validate report data
-        // TODO: Convert DTO to entity
-        // TODO: Save to database
-        // TODO: Return response DTO
-        throw new NotImplementedException();
+        var report = new Report
+        {
+            Reason = createReportDto.Name, // Using Name as Reason (mock)
+            Details = createReportDto.Lastname, // Using Lastname as Details (mock)
+            ReportDate = createReportDto.ReportDate,
+            Status = "Pending",
+            ContentType = "User"
+        };
+        return _reportRepository.CreateReportAsync(report)
+            .ContinueWith(task =>
+            {
+                var id = task.Result;
+                return new ReportResponseDto
+                {
+                    Id = id,
+                    Name = createReportDto.Name,
+                    Lastname = createReportDto.Lastname,
+                    ReportDate = createReportDto.ReportDate,
+                    IsResolved = false
+                };
+            });
     }
 
     public Task<ReportResponseDto?> GetReportByIdAsync(long reportId)
     {
-        // TODO: Get report from repository
-        // TODO: Convert entity to DTO
-        throw new NotImplementedException();
+        return _reportRepository.GetReportByIdAsync(reportId)
+            .ContinueWith(task =>
+            {
+                var report = task.Result;
+                if (report == null)
+                    return null;
+                return new ReportResponseDto
+                {
+                    Id = report.IdReport,
+                    Name = report.Reason, // Using Reason as Name (mock)
+                    Lastname = report.Details, // Using Details as Lastname (mock)
+                    ReportDate = report.ReportDate,
+                    IsResolved = report.Status == "Resolved"
+                };
+            });
     }
 
     public Task<List<ReportResponseDto>> GetAllReportsAsync()
     {
-        // TODO: Get all reports
-        // TODO: Convert entities to DTOs
-        throw new NotImplementedException();
+        return _reportRepository.GetAllReportsAsync()
+            .ContinueWith(task =>
+            {
+                var reports = task.Result;
+                return reports.Select(report => new ReportResponseDto
+                {
+                    Id = report.IdReport,
+                    Name = report.Reason, // Using Reason as Name (mock)
+                    Lastname = report.Details, // Using Details as Lastname (mock)
+                    ReportDate = report.ReportDate,
+                    IsResolved = report.Status == "Resolved"
+                }).ToList();
+            });
     }
 
     public Task<bool> ResolveReportAsync(long reportId)
     {
         // TODO: Mark report as resolved
-        throw new NotImplementedException();
+    return _reportRepository.ResolveReportAsync(reportId);
     }
 
     public Task<bool> DeleteReportAsync(long reportId)
     {
         // TODO: Delete report from database
-        throw new NotImplementedException();
+    return _reportRepository.DeleteReportAsync(reportId);
     }
 }

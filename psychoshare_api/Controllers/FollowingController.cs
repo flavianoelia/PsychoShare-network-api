@@ -20,7 +20,6 @@ public class FollowingController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<FollowingResponseDto>> Follow([FromBody] CreateFollowingDto createFollowingDto)
     {
-        // TODO: Implement follow user logic
         Following following = new Following
         {
             UserId = createFollowingDto.UserId,
@@ -44,7 +43,6 @@ public class FollowingController : ControllerBase
     [HttpDelete("{userId}/{followedId}")]
     public async Task<ActionResult<bool>> Unfollow(long userId, long followedId)
     {
-        // TODO: Implement unfollow user logic
         var result = await _followingService.DeleteFollowingAsync(userId, followedId);
         return Ok(result);
     }
@@ -52,7 +50,6 @@ public class FollowingController : ControllerBase
     [HttpGet("followers/{userId}")]
     public async Task<ActionResult<List<FollowingResponseDto>>> GetFollowers(long userId)
     {
-        // TODO: Implement get user followers logic
         var followers = await _followingService.GetFollowersAsync(userId);
         
         var response = followers.Select(f => new FollowingResponseDto
@@ -69,7 +66,6 @@ public class FollowingController : ControllerBase
     [HttpGet("following/{userId}")]
     public async Task<ActionResult<List<FollowingResponseDto>>> GetFollowing(long userId)
     {
-        // TODO: Implement get users that user follows logic
         var following = await _followingService.GetFollowingAsync(userId);
         
         var response = following.Select(f => new FollowingResponseDto
@@ -86,7 +82,6 @@ public class FollowingController : ControllerBase
     [HttpGet("check/{userId}/{targetUserId}")]
     public async Task<ActionResult<bool>> CheckFollowing(long userId, long targetUserId)
     {
-        // TODO: Implement check if user follows target user logic
         var result = await _followingService.CheckIsFollowingAsync(userId, targetUserId);
         return Ok(result);
     }
@@ -94,7 +89,6 @@ public class FollowingController : ControllerBase
     [HttpGet("followers/count/{userId}")]
     public async Task<ActionResult<int>> GetFollowersCount(long userId)
     {
-        // TODO: Implement get followers count logic
         var result = await _followingService.GetFollowersCountAsync(userId);
         return Ok(result);
     }
@@ -102,7 +96,6 @@ public class FollowingController : ControllerBase
     [HttpGet("following/count/{userId}")]
     public async Task<ActionResult<int>> GetFollowingCount(long userId)
     {
-        // TODO: Implement get following count logic
         var result = await _followingService.GetFollowingCountAsync(userId);
         return Ok(result);
     }

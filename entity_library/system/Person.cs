@@ -5,6 +5,7 @@ public class Person
     private string lastName = "";
 
     public long IdPerson
+
     {
         get { return idPerson; }
         set { idPerson = value; }

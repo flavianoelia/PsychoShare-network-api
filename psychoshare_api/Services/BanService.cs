@@ -19,45 +19,100 @@ public class BanService : IBanService
 
     public Task<BanResponseDto> CreateBanAsync(CreateBanDto createBanDto)
     {
-        // TODO: Validate ban dates
-        // TODO: Convert DTO to entity
-        // TODO: Save to database
-        // TODO: Return response DTO
-        throw new NotImplementedException();
+        if (createBanDto.EndDate <= createBanDto.StartDate)
+            throw new ArgumentException("EndDate must be after StartDate");
+
+        var ban = new Ban
+        {
+            BannedUserId = createBanDto.UserId,
+            StartDate = createBanDto.StartDate,
+            EndDate = createBanDto.EndDate,
+            Reason = createBanDto.Reason,
+            IsActive = true
+        };
+
+        var banIdTask = _banRepository.CreateBanAsync(ban);
+        return banIdTask.ContinueWith(task =>
+        {
+            var idBan = task.Result;
+            return new BanResponseDto
+            {
+                IdBan = idBan,
+                IdPerson = ban.BannedUserId,
+                StartDate = ban.StartDate,
+                EndDate = ban.EndDate ?? DateTime.MinValue,
+                Reason = ban.Reason,
+                IsActive = ban.IsActive
+            };
+        });
     }
 
     public Task<BanResponseDto?> GetBanByUserIdAsync(long userId)
     {
-        // TODO: Get ban from repository
-        // TODO: Convert entity to DTO
-        throw new NotImplementedException();
+        return _banRepository.GetActiveBanByUserIdAsync(userId)
+            .ContinueWith(task =>
+            {
+                var ban = task.Result;
+                if (ban == null) return null;
+                return new BanResponseDto
+                {
+                    IdBan = ban.IdBan,
+                    IdPerson = ban.BannedUserId,
+                    StartDate = ban.StartDate,
+                    EndDate = ban.EndDate ?? DateTime.MinValue,
+                    Reason = ban.Reason,
+                    IsActive = ban.IsActive
+                };
+            });
     }
 
     public Task<List<BanResponseDto>> GetAllActiveBansAsync()
     {
-        // TODO: Get all active bans
-        // TODO: Convert entities to DTOs
-        throw new NotImplementedException();
+        return _banRepository.GetAllActiveBansAsync()
+            .ContinueWith(task =>
+            {
+                var bans = task.Result;
+                return bans.Select(ban => new BanResponseDto
+                {
+                    IdBan = ban.IdBan,
+                    IdPerson = ban.BannedUserId,
+                    StartDate = ban.StartDate,
+                    EndDate = ban.EndDate ?? DateTime.MinValue,
+                    Reason = ban.Reason,
+                    IsActive = ban.IsActive
+                }).ToList();
+            });
     }
 
     public Task<bool> UnbanUserAsync(long userId)
     {
-        // TODO: Find active ban for user
-        // TODO: Update end date to now
-        throw new NotImplementedException();
+        return _banRepository.GetActiveBanByUserIdAsync(userId)
+            .ContinueWith(task =>
+            {
+                var ban = task.Result;
+                if (ban == null) return false;
+                ban.EndDate = DateTime.Now;
+                ban.IsActive = false;
+                return _banRepository.UpdateBanAsync(ban).Result;
+            });
     }
 
     public Task<bool> CheckUserIsBannedAsync(long userId)
     {
-        // TODO: Check if user has active ban
-        throw new NotImplementedException();
+    return _banRepository.CheckUserIsBannedAsync(userId);
     }
 
     public Task<bool> UpdateBanAsync(long banId, UpdateBanDto updateBanDto)
     {
-        // TODO: Get existing ban
-        // TODO: Update properties
-        // TODO: Save changes
-        throw new NotImplementedException();
+        return _banRepository.GetBanByIdAsync(banId)
+            .ContinueWith(task =>
+            {
+                var ban = task.Result;
+                if (ban == null) return false;
+                if (updateBanDto.Reason != null)
+                    ban.Reason = updateBanDto.Reason;
+                ban.EndDate = updateBanDto.EndDate;
+                return _banRepository.UpdateBanAsync(ban).Result;
+            });
     }
 }
