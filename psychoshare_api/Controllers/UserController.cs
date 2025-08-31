@@ -68,5 +68,33 @@ public class UserController : ControllerBase
         return Ok();
     }
 
+    [HttpPost("follow")]
+    public async Task<IActionResult> Follow([FromBody] psychoshare_api.DTOs.Following.CreateFollowingDto createFollowingDto, [FromServices] IFollowingService followingService)
+    {
+        var following = new Following
+        {
+            UserId = createFollowingDto.UserId,
+            FollowedId = createFollowingDto.FollowedId,
+            StartDate = DateTime.Now
+        };
+        var result = await followingService.CreateFollowingAsync(following);
+        return Ok(new { success = true, content = result });
+    }
+
+    [HttpPost("unfollow")]
+    public async Task<IActionResult> Unfollow([FromBody] psychoshare_api.DTOs.Following.CreateFollowingDto createFollowingDto, [FromServices] IFollowingService followingService)
+    {
+        var result = await followingService.DeleteFollowingAsync(createFollowingDto.UserId, createFollowingDto.FollowedId);
+        return Ok(new { success = result });
+    }
+
+    [HttpGet("search/{username}")]
+    public IActionResult SearchUser(string username)
+    {
+        // Mock search: returns a hardcoded user
+        var user = new User { Username = username, Name = "Mock", LastName = "User", Email = "mock@user.com" };
+        return Ok(new { success = true, content = user });
+    }
+
     // TODO: Add search, follow, and unfollow endpoints if needed
 }
