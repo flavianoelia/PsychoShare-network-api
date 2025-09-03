@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using psychoshare_api.DTOs.Following;
-using psychoshare_api.Services;
+
 
 namespace psychoshare_api.Controllers;
 
@@ -9,12 +9,12 @@ namespace psychoshare_api.Controllers;
 public class FollowingController : ControllerBase
 {
     private readonly ILogger<FollowingController> _logger;
-    private readonly IFollowingService _followingService;
+    private readonly IFollowingRepository _followingRepository;
 
-    public FollowingController(ILogger<FollowingController> logger, IFollowingService followingService)
+    public FollowingController(ILogger<FollowingController> logger, IFollowingRepository followingRepository)
     {
         _logger = logger;
-        _followingService = followingService;
+        _followingRepository = followingRepository;
     }
 
     [HttpPost]
@@ -27,8 +27,7 @@ public class FollowingController : ControllerBase
             StartDate = DateTime.Now
         };
 
-        var result = await _followingService.CreateFollowingAsync(following);
-        
+        var result = await _followingRepository.CreateFollowingAsync(following);
         var response = new FollowingResponseDto
         {
             FollowingId = result.FollowingId,
@@ -36,22 +35,20 @@ public class FollowingController : ControllerBase
             FollowedId = result.FollowedId,
             StartDate = result.StartDate
         };
-
         return Ok(response);
     }
 
     [HttpDelete("{userId}/{followedId}")]
     public async Task<ActionResult<bool>> Unfollow(long userId, long followedId)
     {
-        var result = await _followingService.DeleteFollowingAsync(userId, followedId);
-        return Ok(result);
+    var result = await _followingRepository.DeleteFollowingAsync(userId, followedId);
+    return Ok(result);
     }
 
     [HttpGet("followers/{userId}")]
     public async Task<ActionResult<List<FollowingResponseDto>>> GetFollowers(long userId)
     {
-        var followers = await _followingService.GetFollowersAsync(userId);
-        
+        var followers = await _followingRepository.GetFollowersAsync(userId);
         var response = followers.Select(f => new FollowingResponseDto
         {
             FollowingId = f.FollowingId,
@@ -59,15 +56,13 @@ public class FollowingController : ControllerBase
             FollowedId = f.FollowedId,
             StartDate = f.StartDate
         }).ToList();
-
         return Ok(response);
     }
 
     [HttpGet("following/{userId}")]
     public async Task<ActionResult<List<FollowingResponseDto>>> GetFollowing(long userId)
     {
-        var following = await _followingService.GetFollowingAsync(userId);
-        
+        var following = await _followingRepository.GetFollowingListAsync(userId);
         var response = following.Select(f => new FollowingResponseDto
         {
             FollowingId = f.FollowingId,
@@ -75,28 +70,27 @@ public class FollowingController : ControllerBase
             FollowedId = f.FollowedId,
             StartDate = f.StartDate
         }).ToList();
-
         return Ok(response);
     }
 
     [HttpGet("check/{userId}/{targetUserId}")]
     public async Task<ActionResult<bool>> CheckFollowing(long userId, long targetUserId)
     {
-        var result = await _followingService.CheckIsFollowingAsync(userId, targetUserId);
-        return Ok(result);
+    var result = await _followingRepository.CheckIsFollowingAsync(userId, targetUserId);
+    return Ok(result);
     }
 
     [HttpGet("followers/count/{userId}")]
     public async Task<ActionResult<int>> GetFollowersCount(long userId)
     {
-        var result = await _followingService.GetFollowersCountAsync(userId);
-        return Ok(result);
+    var result = await _followingRepository.GetFollowersCountAsync(userId);
+    return Ok(result);
     }
 
     [HttpGet("following/count/{userId}")]
     public async Task<ActionResult<int>> GetFollowingCount(long userId)
     {
-        var result = await _followingService.GetFollowingCountAsync(userId);
-        return Ok(result);
+    var result = await _followingRepository.GetFollowingCountAsync(userId);
+    return Ok(result);
     }
 }
