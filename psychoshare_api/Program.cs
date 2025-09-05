@@ -1,7 +1,16 @@
-using psychoshare_api.Services;
+using Microsoft.EntityFrameworkCore;
 using dao_library;
+using psychoshare_api;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configuración de DbContext y conexión a MySQL
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        new MySqlServerVersion(new Version(8, 0, 36))
+    )
+);
 
 // Add services to the container.
 
@@ -12,9 +21,6 @@ builder.Services.AddSwaggerGen();
 
 
 // Register services and repositories directly
-builder.Services.AddScoped<IBanService, BanService>();
-builder.Services.AddScoped<IReportService, ReportService>();
-builder.Services.AddScoped<IFollowingService, FollowingService>();
 builder.Services.AddScoped<IBanRepository, BanRepository>();
 builder.Services.AddScoped<IReportRepository, ReportRepository>();
 builder.Services.AddScoped<IFollowingRepository, FollowingRepository>();

@@ -69,7 +69,7 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("follow")]
-    public async Task<IActionResult> Follow([FromBody] psychoshare_api.DTOs.Following.CreateFollowingDto createFollowingDto, [FromServices] IFollowingService followingService)
+    public async Task<IActionResult> Follow([FromBody] psychoshare_api.DTOs.Following.CreateFollowingDto createFollowingDto, [FromServices] IFollowingRepository followingRepository)
     {
         var following = new Following
         {
@@ -77,14 +77,14 @@ public class UserController : ControllerBase
             FollowedId = createFollowingDto.FollowedId,
             StartDate = DateTime.Now
         };
-        var result = await followingService.CreateFollowingAsync(following);
+        var result = await followingRepository.CreateFollowingAsync(following);
         return Ok(new { success = true, content = result });
     }
 
     [HttpPost("unfollow")]
-    public async Task<IActionResult> Unfollow([FromBody] psychoshare_api.DTOs.Following.CreateFollowingDto createFollowingDto, [FromServices] IFollowingService followingService)
+    public async Task<IActionResult> Unfollow([FromBody] psychoshare_api.DTOs.Following.CreateFollowingDto createFollowingDto, [FromServices] IFollowingRepository followingRepository)
     {
-        var result = await followingService.DeleteFollowingAsync(createFollowingDto.UserId, createFollowingDto.FollowedId);
+        var result = await followingRepository.DeleteFollowingAsync(createFollowingDto.UserId, createFollowingDto.FollowedId);
         return Ok(new { success = result });
     }
 
