@@ -1,5 +1,7 @@
 public interface DAOFactory
 {
-    DAOUser CreateDAOUser();
-    DAOPost CreateDaoPost();
+    DAOUser DAOUser();
+    DAOPost DaoPost();
+    DAOComment DAOComment();
+    DAOFollowing DAOFollowing();
 }   
