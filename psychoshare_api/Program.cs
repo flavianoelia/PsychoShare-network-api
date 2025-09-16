@@ -4,12 +4,13 @@ using psychoshare_api;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configuración de DbContext y conexión a MySQL
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        new MySqlServerVersion(new Version(8, 0, 36))
-    )
+    options
+        .UseMySql(
+            builder.Configuration.GetConnectionString("DefaultConnection"),
+            new MySqlServerVersion(new Version(8, 0, 36))
+        )
+        .UseLazyLoadingProxies()
 );
 
 // Add services to the container.
