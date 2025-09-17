@@ -1,8 +1,11 @@
 public class Following
 {
+
     private long userId;
     private long followedUserId;
     private DateTime startDate;
+
+    public long Id { get; set; }
 
     public User? User;
     public User? FollowedUser;
