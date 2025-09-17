@@ -44,4 +44,14 @@ public class MockDAOUser : DAOUser
     {
         users.Add(user);
     }
+
+    public void UpdateUser(long IdUser)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Delete(long IdUser)
+    {
+        throw new NotImplementedException();
+    }
 }
