@@ -2,7 +2,7 @@ public class Pdf : File
 {
     private string title = "";
     private string url = "";
-    private int idUser;
+    private long idUser;
 
     public string Title
     {
@@ -16,7 +16,7 @@ public class Pdf : File
         set { this.url = value; }
     }
 
-    public int IdUser
+    public long IdUser
     {
         get { return this.idUser; }
         set { this.idUser = value; }
