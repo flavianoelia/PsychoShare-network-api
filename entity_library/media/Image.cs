@@ -1,7 +1,7 @@
 public class Image : File
 {
     private string imageType = "";
-    private int idUser;
+    private long idUser;
     private string url = "";
 
     public string ImageType
@@ -10,7 +10,7 @@ public class Image : File
         set { this.imageType = value; }
     }
 
-    public int IdUser
+    public long IdUser
     {
         get { return this.idUser; }
         set { this.idUser = value; }

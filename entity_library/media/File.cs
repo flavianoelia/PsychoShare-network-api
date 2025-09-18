@@ -1,8 +1,8 @@
 public class File
 {
-    private int id;
+    private long id;
 
-    public int Id
+    public long Id
     {
         get { return this.id; }
         set { this.id = value; }
