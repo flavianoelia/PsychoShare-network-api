@@ -7,9 +7,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Register Ban and Report services
-builder.Services.AddScoped<IBanService, BanService>();
-builder.Services.AddScoped<IReportService, ReportService>();
 
 var app = builder.Build();
 
