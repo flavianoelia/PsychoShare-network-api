@@ -1,6 +1,12 @@
 public class User : Person
 {
-    
+    // Exponer Id como propiedad pública para compatibilidad con el resto del código
+    public long Id
+    {
+        get { return this.IdPerson; }
+        set { this.IdPerson = value; }
+    }
+
     private string username = "";
     private string email = "";
     private string password = "";

@@ -26,6 +26,7 @@ builder.Services.AddScoped<IBanRepository, BanRepository>();
 builder.Services.AddScoped<IReportRepository, ReportRepository>();
 builder.Services.AddScoped<IFollowingRepository, FollowingRepository>();
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
