@@ -5,10 +5,7 @@ public class EFDAOFactory : DAOFactory
         throw new NotImplementedException();
     }
 
-    public DAOFollowing DAOFollowing()
-    {
-        throw new NotImplementedException();
-    }
+    // Eliminado: public DAOFollowing DAOFollowing()
 
     public DAOPost DaoPost()
     {

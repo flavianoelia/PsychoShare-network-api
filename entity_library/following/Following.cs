@@ -1,16 +1,10 @@
-public class Following
+namespace entity_library.following
 {
-
-    private long userId;
-    private long followedUserId;
-    private DateTime startDate;
-
-    public long Id { get; set; }
-
-    public User? User;
-    public User? FollowedUser;
-
-    public long UserId { get { return this.userId; } set { this.userId = value; } }
-    public long FollowedUserId { get { return this.followedUserId; } set { this.followedUserId = value; } }
-    public DateTime StartDate { get { return this.startDate; } set { this.startDate = value; } }
+    public class Following
+    {
+        public long FollowingId { get; set; }
+        public long UserId { get; set; }
+        public long FollowedId { get; set; }
+        public DateTime StartDate { get; set; }
+    }
 }

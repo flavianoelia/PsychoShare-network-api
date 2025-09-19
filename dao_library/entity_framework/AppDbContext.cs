@@ -7,7 +7,7 @@ public class AppDbContext : DbContext
     }
 
     //public DbSet<Ban> Bans { get; set; }
-    public DbSet<Following> Followings { get; set; }
+    // Eliminado: public DbSet<Following> Followings { get; set; }
     public DbSet<Image> Images { get; set; }
     public DbSet<Pdf> Pdfs { get; set; }
     public DbSet<Report> Reports { get; set; }
