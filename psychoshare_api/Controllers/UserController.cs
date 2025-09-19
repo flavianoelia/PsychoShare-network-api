@@ -1,6 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using psychoshare_api.DTOs.User;
-using psychoshare_api.Services;
 
 namespace psychoshare_api.Controllers;
 
@@ -17,10 +15,9 @@ public class UserController : ControllerBase
     }
 
     [HttpPost("register")]
-    public IActionResult Register([FromBody] RegisterUserDto registerDto)
+    public void Register()
     {
         // TODO: Implement user registration with EF Core
-        return Ok(new { success = false, message = "Not implemented" });
     }
 
     [HttpGet("login")]
