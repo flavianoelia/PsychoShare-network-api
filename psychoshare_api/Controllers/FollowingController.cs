@@ -1,4 +1,4 @@
-using entity_library.following;
+//using entity_library.following;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +19,10 @@ public class FollowingController : ControllerBase
         _logger = logger;
         _db = db;
     }
+}
 
+
+/*
     [HttpPost]
     public async Task<ActionResult<FollowingResponseDto>> Follow([FromBody] CreateFollowingDto createFollowingDto)
     {
@@ -102,3 +105,4 @@ public class FollowingController : ControllerBase
         return Ok(count);
     }
 }
+*/
