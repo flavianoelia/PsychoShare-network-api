@@ -8,9 +8,10 @@ public class Report
     public string Name { get { return this.name; } set { this.name = value; } }
     public string Lastname { get { return this.lastname; } set { this.lastname = value; } }
     public DateTime ReportDate { get { return this.reportDate; } set { this.reportDate = value; } }
-
+    public long UserId { get; set; }
+    public virtual User? User { get; set; }
     public void ReportUser()
     {
-        
+
     }
 }

@@ -1,6 +1,11 @@
 
 public class EFDAOFollowing : DAOFollowing
-{
+{   
+    private AppDbContext dbContext; //agregado
+    public EFDAOFollowing(AppDbContext dbContext) //agregado
+    {
+        this.dbContext = dbContext;//agregado
+    }
     public List<User> GetContactsFromUser(long userId)
     {
         throw new NotImplementedException();

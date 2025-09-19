@@ -8,11 +8,11 @@ public class UserController : ControllerBase
 {
     
     private readonly ILogger<UserController> _logger;
-    private DAOFactory df = new MockDAOFactory();
-
-    public UserController(ILogger<UserController> logger)
+    private DAOFactory? df;
+    public UserController(ILogger<UserController> logger, DAOFactory df)
     {
         _logger = logger;
+        this.df = df;//agregado:inyectamos la factoría de DAOs
     }
 
     [HttpPost("register")]
@@ -23,31 +23,16 @@ public class UserController : ControllerBase
 
     [HttpGet("login")]
     //este controlador es un ejemplo y está incompleto
-    public IActionResult Login()
+    public void Login()
     {
-        //objeto User harcodeado para guardar algo en la "base de datos"
-        User user = new User
-        { Name = "Pepe", LastName = "Roldan", Email = "pepe.com", Password = "12345", Id = 1, Username = "pepeHD" };
-
-        this.df.CreateDAOUser().Save(user);
-
-        return Ok(new
-        {
-            success = true,
-            content = user
-        });
+        // TODO: Implement user login
     }
 
     //este controlador es un ejemplo y está incompleto, obtiene un usuario por su id
     [HttpGet("{id}")]
-    public IActionResult GetUser(long id)
+    public void GetUser(long id)
     {
-        User? user = this.df.CreateDAOUser().GetUser(id);
-        return Ok(new
-        {
-            success = true,
-            content = user
-        });
+       // TODO: Implement user getUser
     }
 
     [HttpPut("{id}")]

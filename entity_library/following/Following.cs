@@ -7,8 +7,8 @@ public class Following
 
     public long Id { get; set; }
 
-    public User? User;
-    public User? FollowedUser;
+    public virtual User? User { get; set; }
+    public virtual User? FollowedUser { get; set; }
 
     public long UserId { get { return this.userId; } set { this.userId = value; } }
     public long FollowedUserId { get { return this.followedUserId; } set { this.followedUserId = value; } }

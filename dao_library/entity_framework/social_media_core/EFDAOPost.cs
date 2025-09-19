@@ -1,6 +1,11 @@
 
 public class EFDAOPost : DAOPost
-{
+{   
+    private AppDbContext dbContext; //agregado
+    public EFDAOPost(AppDbContext dbContext) //agregado
+    {
+        this.dbContext = dbContext;//agregado
+    }
     public Post? GetPost(long id)
     {
         throw new NotImplementedException();
