@@ -1,12 +1,11 @@
 public class User : Person
 {
-    // Exponer Id como propiedad pública para compatibilidad con el resto del código
     private string username = "";
     private string email = "";
     private string password = "";
     private Role? role;
 
-    public long Id { get; set; } // Needed for MockDAOUser and EF Core
+    public long Id { get; set; }
 
     public string Username
     {
@@ -23,9 +22,7 @@ public class User : Person
         get { return password; }
         set { password = value; }
     }
-    public Role? Role
-    {
-        get { return role; }
-        set { role = value; }
-    }
+    public virtual Role? Role { get; set; }
+    public virtual Image? Image { get; set; }
+
 }

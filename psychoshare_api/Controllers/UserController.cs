@@ -9,11 +9,11 @@ namespace psychoshare_api.Controllers;
 public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger;
-
-
-    public UserController(ILogger<UserController> logger)
+    private DAOFactory? df;
+    public UserController(ILogger<UserController> logger, DAOFactory df)
     {
         _logger = logger;
+        this.df = df;//agregado:inyectamos la factoría de DAOs
     }
 
     [HttpPost("register")]
@@ -24,18 +24,18 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("login")]
-    // This controller is an example and is incomplete
-    public IActionResult Login()
+
+    //este controlador es un ejemplo y está incompleto
+    public void Login()
     {
-        // TODO: Implement login logic with EF Core
-        return Ok(new { success = false, message = "Not implemented" });
+        // TODO: Implement user login
     }
 
-    [HttpGet("get/{id}")]
-    public IActionResult GetUser(long id)
+    //este controlador es un ejemplo y está incompleto, obtiene un usuario por su id
+    [HttpGet("{id}")]
+    public void GetUser(long id)
     {
-        // TODO: Implement get user by id with EF Core
-        return Ok(new { success = false, message = "Not implemented" });
+       // TODO: Implement user getUser
     }
 
     [HttpPut("edit/{id}")]

@@ -1,19 +1,28 @@
 public class EFDAOFactory : DAOFactory
 {
-    public DAOComment DAOComment()
+    private AppDbContext appDbContext;
+    public EFDAOFactory(AppDbContext appDbContext)
     {
-        throw new NotImplementedException();
+        this.appDbContext = appDbContext;
     }
 
-    // Eliminado: public DAOFollowing DAOFollowing()
+    public DAOComment DAOComment()
+    {
+        return new EFDAOComment(this.appDbContext);
+    }
+
+    public DAOFollowing DAOFollowing()
+    {
+        return new EFDAOFollowing(this.appDbContext);
+    }
 
     public DAOPost DaoPost()
     {
-        throw new NotImplementedException();
+        return new EFDAOPost(this.appDbContext);
     }
 
     public DAOUser DAOUser()
     {
-        return new EFDAOUser();
+        return new EFDAOUser(this.appDbContext); //agregado
     }
 }

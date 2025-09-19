@@ -1,8 +1,16 @@
+using Microsoft.EntityFrameworkCore;
+
 public class EFDAOUser : DAOUser
 {
+    private AppDbContext dbContext; //agregado
+    public EFDAOUser(AppDbContext dbContext) //agregado
+    {
+        this.dbContext = dbContext;//agregado
+    }
     public User? GetUser(long id)
     {
-        throw new NotImplementedException();
+        User? user = this.dbContext.Users.Where(user => user.Id == 1).FirstOrDefault(); //agregdo
+        return user;
     }
     public void Save(User user)
     {
