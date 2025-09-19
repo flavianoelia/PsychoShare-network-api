@@ -19,7 +19,7 @@ namespace psychoshare_api.Migrations
                 .HasAnnotation("ProductVersion", "9.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
+            // Eliminado: MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 #pragma warning restore 612, 618
         }
     }

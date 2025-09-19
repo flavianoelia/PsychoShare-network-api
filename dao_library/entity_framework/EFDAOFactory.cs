@@ -1,6 +1,18 @@
 public class EFDAOFactory : DAOFactory
 {
-    public DAOUser CreateDAOUser()
+    public DAOComment DAOComment()
+    {
+        throw new NotImplementedException();
+    }
+
+    // Eliminado: public DAOFollowing DAOFollowing()
+
+    public DAOPost DaoPost()
+    {
+        throw new NotImplementedException();
+    }
+
+    public DAOUser DAOUser()
     {
         return new EFDAOUser();
     }

@@ -1,3 +1,6 @@
+using entity_library.following;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using psychoshare_api.DTOs.Following;
 
@@ -9,31 +12,31 @@ namespace psychoshare_api.Controllers;
 public class FollowingController : ControllerBase
 {
     private readonly ILogger<FollowingController> _logger;
-    private readonly IFollowingRepository _followingRepository;
+    private readonly AppDbContext _db;
 
-    public FollowingController(ILogger<FollowingController> logger, IFollowingRepository followingRepository)
+    public FollowingController(ILogger<FollowingController> logger, AppDbContext db)
     {
         _logger = logger;
-        _followingRepository = followingRepository;
+        _db = db;
     }
 
     [HttpPost]
     public async Task<ActionResult<FollowingResponseDto>> Follow([FromBody] CreateFollowingDto createFollowingDto)
     {
-        Following following = new Following
+        var following = new Following
         {
             UserId = createFollowingDto.UserId,
             FollowedId = createFollowingDto.FollowedId,
             StartDate = DateTime.Now
         };
-
-        var result = await _followingRepository.CreateFollowingAsync(following);
+        _db.Followings.Add(following);
+        await _db.SaveChangesAsync();
         var response = new FollowingResponseDto
         {
-            FollowingId = result.FollowingId,
-            UserId = result.UserId,
-            FollowedId = result.FollowedId,
-            StartDate = result.StartDate
+            FollowingId = following.FollowingId,
+            UserId = following.UserId,
+            FollowedId = following.FollowedId,
+            StartDate = following.StartDate
         };
         return Ok(response);
     }
@@ -41,14 +44,18 @@ public class FollowingController : ControllerBase
     [HttpDelete("{userId}/{followedId}")]
     public async Task<ActionResult<bool>> Unfollow(long userId, long followedId)
     {
-    var result = await _followingRepository.DeleteFollowingAsync(userId, followedId);
-    return Ok(result);
+        var following = await _db.Followings.FirstOrDefaultAsync(f => f.UserId == userId && f.FollowedId == followedId);
+        if (following == null)
+            return Ok(false);
+        _db.Followings.Remove(following);
+        await _db.SaveChangesAsync();
+        return Ok(true);
     }
 
     [HttpGet("followers/{userId}")]
     public async Task<ActionResult<List<FollowingResponseDto>>> GetFollowers(long userId)
     {
-        var followers = await _followingRepository.GetFollowersAsync(userId);
+        var followers = await _db.Followings.Where(f => f.FollowedId == userId).ToListAsync();
         var response = followers.Select(f => new FollowingResponseDto
         {
             FollowingId = f.FollowingId,
@@ -62,7 +69,7 @@ public class FollowingController : ControllerBase
     [HttpGet("following/{userId}")]
     public async Task<ActionResult<List<FollowingResponseDto>>> GetFollowing(long userId)
     {
-        var following = await _followingRepository.GetFollowingListAsync(userId);
+        var following = await _db.Followings.Where(f => f.UserId == userId).ToListAsync();
         var response = following.Select(f => new FollowingResponseDto
         {
             FollowingId = f.FollowingId,
@@ -76,21 +83,22 @@ public class FollowingController : ControllerBase
     [HttpGet("check/{userId}/{targetUserId}")]
     public async Task<ActionResult<bool>> CheckFollowing(long userId, long targetUserId)
     {
-    var result = await _followingRepository.CheckIsFollowingAsync(userId, targetUserId);
-    return Ok(result);
+        var exists = await _db.Followings.AnyAsync(f => f.UserId == userId && f.FollowedId == targetUserId);
+        return Ok(exists);
     }
 
     [HttpGet("followers/count/{userId}")]
     public async Task<ActionResult<int>> GetFollowersCount(long userId)
     {
-    var result = await _followingRepository.GetFollowersCountAsync(userId);
-    return Ok(result);
+    // ...existing code...
+        var count = await _db.Followings.CountAsync(f => f.FollowedId == userId);
+        return Ok(count);
     }
 
     [HttpGet("following/count/{userId}")]
     public async Task<ActionResult<int>> GetFollowingCount(long userId)
     {
-    var result = await _followingRepository.GetFollowingCountAsync(userId);
-    return Ok(result);
+        var count = await _db.Followings.CountAsync(f => f.UserId == userId);
+        return Ok(count);
     }
 }

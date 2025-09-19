@@ -1,3 +1,4 @@
+using entity_library.following;
 using Microsoft.EntityFrameworkCore;
 
 namespace psychoshare_api
@@ -6,8 +7,6 @@ namespace psychoshare_api
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        // Ejemplo de DbSet para una entidad User
-        // public DbSet<User> Users { get; set; }
-        // Agrega aquí tus DbSet para cada entidad que quieras mapear a la base de datos
+    public DbSet<Following> Followings { get; set; }
     }
 }

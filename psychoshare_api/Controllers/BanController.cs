@@ -7,92 +7,44 @@ namespace psychoshare_api.Controllers;
 public class BanController : ControllerBase
 {
     private readonly ILogger<BanController> _logger;
-    private readonly IBanRepository _banRepository;
 
-    public BanController(ILogger<BanController> logger, IBanRepository banRepository)
+    public BanController(ILogger<BanController> logger)
     {
         _logger = logger;
-        _banRepository = banRepository;
     }
 
     [HttpPost]
-    public async Task<ActionResult<BanResponseDto>> BanUser([FromBody] CreateBanDto createBanDto)
-    {    
-        // Lógica simplificada en el controlador
-        if (createBanDto.EndDate <= createBanDto.StartDate)
-            return BadRequest("EndDate must be after StartDate");
-
-        var ban = new Ban
-        {
-            BannedUserId = createBanDto.UserId,
-            StartDate = createBanDto.StartDate,
-            EndDate = createBanDto.EndDate,
-            Reason = createBanDto.Reason,
-            IsActive = true
-        };
-        var idBan = await _banRepository.CreateBanAsync(ban);
-        var response = new BanResponseDto
-        {
-            IdBan = idBan,
-            IdPerson = ban.BannedUserId,
-            StartDate = ban.StartDate,
-            EndDate = ban.EndDate ?? DateTime.MinValue,
-            Reason = ban.Reason,
-            IsActive = ban.IsActive
-        };
-        return Ok(response);
+    public Task<ActionResult<BanResponseDto>> BanUser([FromBody] CreateBanDto createBanDto)
+    {
+        // TODO: Implement ban logic using EF Core
+        return Task.FromResult<ActionResult<BanResponseDto>>(Ok(new { success = false, message = "Not implemented" }));
     }
 
     [HttpDelete("{userId}")]
-    public async Task<ActionResult<bool>> UnbanUser(long userId)
-    {   
-        // Mock: desactivar ban activo
-        var activeBan = await _banRepository.GetActiveBanByUserIdAsync(userId);
-        if (activeBan == null)
-            return Ok(false);
-        activeBan.IsActive = false;
-        var updated = await _banRepository.UpdateBanAsync(activeBan);
-        return Ok(updated);
+    public Task<ActionResult<bool>> UnbanUser(long userId)
+    {
+        // TODO: Implement unban logic using EF Core
+        return Task.FromResult<ActionResult<bool>>(Ok(new { success = false, message = "Not implemented" }));
     }
 
     [HttpGet("{userId}")]
-    public async Task<ActionResult<BanResponseDto>> GetUserBan(long userId)
+    public Task<ActionResult<BanResponseDto>> GetUserBan(long userId)
     {
-        var ban = await _banRepository.GetActiveBanByUserIdAsync(userId);
-        if (ban == null)
-            return NotFound("Ban not found");
-        var response = new BanResponseDto
-        {
-            IdBan = ban.IdBan,
-            IdPerson = ban.BannedUserId,
-            StartDate = ban.StartDate,
-            EndDate = ban.EndDate ?? DateTime.MinValue,
-            Reason = ban.Reason,
-            IsActive = ban.IsActive
-        };
-        return Ok(response);
+        // TODO: Implement get user ban logic using EF Core
+        return Task.FromResult<ActionResult<BanResponseDto>>(Ok(new { success = false, message = "Not implemented" }));
     }
 
     [HttpGet("active")]
-    public async Task<ActionResult<List<BanResponseDto>>> GetActiveBans()
+    public Task<ActionResult<List<BanResponseDto>>> GetActiveBans()
     {
-        var bans = await _banRepository.GetAllActiveBansAsync();
-        var response = bans.Select(ban => new BanResponseDto
-        {
-            IdBan = ban.IdBan,
-            IdPerson = ban.BannedUserId,
-            StartDate = ban.StartDate,
-            EndDate = ban.EndDate ?? DateTime.MinValue,
-            Reason = ban.Reason,
-            IsActive = ban.IsActive
-        }).ToList();
-        return Ok(response);
+        // TODO: Implement get active bans logic using EF Core
+        return Task.FromResult<ActionResult<List<BanResponseDto>>>(Ok(new { success = false, message = "Not implemented" }));
     }
 
     [HttpGet("check/{userId}")]
-    public async Task<ActionResult<bool>> CheckBanStatus(long userId)
+    public Task<ActionResult<bool>> CheckBanStatus(long userId)
     {
-    var result = await _banRepository.CheckUserIsBannedAsync(userId);
-    return Ok(result);
+        // TODO: Implement check ban status logic using EF Core
+        return Task.FromResult<ActionResult<bool>>(Ok(new { success = false, message = "Not implemented" }));
     }
 }

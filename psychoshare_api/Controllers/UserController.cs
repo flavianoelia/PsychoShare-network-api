@@ -9,7 +9,7 @@ namespace psychoshare_api.Controllers;
 public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger;
-    private DAOFactory df = new MockDAOFactory();
+
 
     public UserController(ILogger<UserController> logger)
     {
@@ -19,46 +19,23 @@ public class UserController : ControllerBase
     [HttpPost("register")]
     public IActionResult Register([FromBody] RegisterUserDto registerDto)
     {
-        // Hardcoded User object for saving something in the "database"
-        User user = new User
-        { Name = registerDto.Name, LastName = registerDto.LastName, Email = registerDto.Email, Password = registerDto.Password, Username = registerDto.Username };
-
-        this.df.CreateDAOUser().Save(user);
-
-        return Ok(new
-        {
-            success = true,
-            content = user
-        });
+        // TODO: Implement user registration with EF Core
+        return Ok(new { success = false, message = "Not implemented" });
     }
 
     [HttpGet("login")]
     // This controller is an example and is incomplete
     public IActionResult Login()
     {
-        // Hardcoded User object for saving something in the "database"
-        User user = new User
-        { Name = "Pepe", LastName = "Roldan", Email = "pepe.com", Password = "12345", Username = "pepeHD" };
-
-        this.df.CreateDAOUser().Save(user);
-
-        return Ok(new
-        {
-            success = true,
-            content = user
-        });
- 
+        // TODO: Implement login logic with EF Core
+        return Ok(new { success = false, message = "Not implemented" });
     }
 
     [HttpGet("get/{id}")]
     public IActionResult GetUser(long id)
     {
-        User? user = this.df.CreateDAOUser().GetUser(id);
-        return Ok(new
-        {
-            success = true,
-            content = user
-        });
+        // TODO: Implement get user by id with EF Core
+        return Ok(new { success = false, message = "Not implemented" });
     }
 
     [HttpPut("edit/{id}")]
@@ -68,25 +45,19 @@ public class UserController : ControllerBase
         return Ok();
     }
 
-    [HttpPost("follow")]
-    public async Task<IActionResult> Follow([FromBody] psychoshare_api.DTOs.Following.CreateFollowingDto createFollowingDto, [FromServices] IFollowingRepository followingRepository)
-    {
-        var following = new Following
-        {
-            UserId = createFollowingDto.UserId,
-            FollowedId = createFollowingDto.FollowedId,
-            StartDate = DateTime.Now
-        };
-        var result = await followingRepository.CreateFollowingAsync(following);
-        return Ok(new { success = true, content = result });
-    }
+    // [HttpPost("follow")]
+    // public async Task<IActionResult> Follow([FromBody] psychoshare_api.DTOs.Following.CreateFollowingDto createFollowingDto)
+    // {
+    //     // TODO: Implement follow logic using EF Core
+    //     return Ok(new { success = false, message = "Not implemented" });
+    // }
 
-    [HttpPost("unfollow")]
-    public async Task<IActionResult> Unfollow([FromBody] psychoshare_api.DTOs.Following.CreateFollowingDto createFollowingDto, [FromServices] IFollowingRepository followingRepository)
-    {
-        var result = await followingRepository.DeleteFollowingAsync(createFollowingDto.UserId, createFollowingDto.FollowedId);
-        return Ok(new { success = result });
-    }
+    // [HttpPost("unfollow")]
+    // public async Task<IActionResult> Unfollow([FromBody] psychoshare_api.DTOs.Following.CreateFollowingDto createFollowingDto)
+    // {
+    //     // TODO: Implement unfollow logic using EF Core
+    //     return Ok(new { success = false, message = "Not implemented" });
+    // }
 
     [HttpGet("search/{username}")]
     public IActionResult SearchUser(string username)
