@@ -1,4 +1,6 @@
 
+using dao_library.Contexts;
+
 public class EFDAOComment : DAOComment
 {   
     private AppDbContext dbContext; //agregado

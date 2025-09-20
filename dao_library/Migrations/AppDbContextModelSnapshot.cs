@@ -2,8 +2,8 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using dao_library.Contexts;
 
 #nullable disable
 
@@ -16,21 +16,59 @@ namespace dao_library.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.9")
+                .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Proxies:ChangeTracking", false)
                 .HasAnnotation("Proxies:CheckEquality", false)
                 .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            // Eliminado: MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
+            modelBuilder.Entity("Ban", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("BanType")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<long?>("BanUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("BannedByAdminId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("BannedUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<long?>("RelatedReportId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BanUserId");
+
+                    b.ToTable("Bans");
+                });
 
             modelBuilder.Entity("Comment", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<long>("PostId")
                         .HasColumnType("bigint");
@@ -57,9 +95,7 @@ namespace dao_library.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("FollowedUserId")
+                    b.Property<long>("FollowedId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime>("StartDate")
@@ -69,8 +105,6 @@ namespace dao_library.Migrations
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("FollowedUserId");
 
                     b.HasIndex("UserId");
 
@@ -82,8 +116,6 @@ namespace dao_library.Migrations
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<long>("IdUser")
                         .HasColumnType("bigint");
@@ -107,8 +139,6 @@ namespace dao_library.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
-
                     b.Property<long>("PostId")
                         .HasColumnType("bigint");
 
@@ -129,8 +159,6 @@ namespace dao_library.Migrations
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<long>("IdUser")
                         .HasColumnType("bigint");
@@ -153,8 +181,6 @@ namespace dao_library.Migrations
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<long?>("ImageId")
                         .HasColumnType("bigint");
@@ -204,25 +230,39 @@ namespace dao_library.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
+                    b.Property<long?>("ContentId")
+                        .HasColumnType("bigint");
 
-                    b.Property<string>("Lastname")
+                    b.Property<string>("ContentType")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Details")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Reason")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<DateTime>("ReportDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<long>("UserId")
+                    b.Property<long>("ReportedUserId")
                         .HasColumnType("bigint");
+
+                    b.Property<long>("ReporterUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("ReportedUserId");
+
+                    b.HasIndex("ReporterUserId");
 
                     b.ToTable("Reports");
                 });
@@ -232,8 +272,6 @@ namespace dao_library.Migrations
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<string>("RoleName")
                         .IsRequired()
@@ -250,11 +288,12 @@ namespace dao_library.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<long>("Id"));
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<long>("IdPerson")
+                        .HasColumnType("bigint");
 
                     b.Property<long?>("ImageId")
                         .HasColumnType("bigint");
@@ -287,6 +326,15 @@ namespace dao_library.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("Ban", b =>
+                {
+                    b.HasOne("User", "BanUser")
+                        .WithMany()
+                        .HasForeignKey("BanUserId");
+
+                    b.Navigation("BanUser");
+                });
+
             modelBuilder.Entity("Comment", b =>
                 {
                     b.HasOne("Post", "Post")
@@ -310,19 +358,11 @@ namespace dao_library.Migrations
                 {
                     b.HasOne("User", "FollowedUser")
                         .WithMany()
-                        .HasForeignKey("FollowedUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("User", "User")
-                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("FollowedUser");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Like", b =>
@@ -361,13 +401,21 @@ namespace dao_library.Migrations
 
             modelBuilder.Entity("Report", b =>
                 {
-                    b.HasOne("User", "User")
+                    b.HasOne("User", "ReportedUser")
                         .WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("ReportedUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.HasOne("User", "ReporterUser")
+                        .WithMany()
+                        .HasForeignKey("ReporterUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ReportedUser");
+
+                    b.Navigation("ReporterUser");
                 });
 
             modelBuilder.Entity("User", b =>

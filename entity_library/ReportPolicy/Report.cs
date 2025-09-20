@@ -1,6 +1,6 @@
 public class Report
 {
-    public long IdReport { get; set; } 
+    public long Id { get; set; } 
     public long ReporterUserId { get; set; }  // Usuario que hace el reporte
     public long ReportedUserId { get; set; } // Usuario reportado
     public string Reason { get; set; }

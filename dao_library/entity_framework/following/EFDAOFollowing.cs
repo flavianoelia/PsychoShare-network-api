@@ -1,4 +1,6 @@
 
+using dao_library.Contexts;
+
 public class EFDAOFollowing : DAOFollowing
 {   
     private AppDbContext dbContext; //agregado

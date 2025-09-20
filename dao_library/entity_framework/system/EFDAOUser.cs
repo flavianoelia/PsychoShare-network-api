@@ -1,3 +1,4 @@
+using dao_library.Contexts;
 using Microsoft.EntityFrameworkCore;
 
 public class EFDAOUser : DAOUser

@@ -1,4 +1,6 @@
 
+using dao_library.Contexts;
+
 public class EFDAOPost : DAOPost
 {   
     private AppDbContext dbContext; //agregado
