@@ -25,7 +25,6 @@ public class UserController : ControllerBase
         // Regex iguales al front
         var nameRegex = new Regex(@"^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,30}$");
         var emailRegex = new Regex(@"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$");
-        var passwordRegex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$");
 
         // --- Name ---
         if (string.IsNullOrWhiteSpace(req.Name) || !nameRegex.IsMatch(req.Name.Trim()))
@@ -34,6 +33,10 @@ public class UserController : ControllerBase
         // --- LastName ---
         if (string.IsNullOrWhiteSpace(req.LastName) || !nameRegex.IsMatch(req.LastName.Trim()))
             errores.Add("El apellido no es válido. Debe tener entre 2 y 30 caracteres y solo letras/espacios.");
+        
+                // --- Email ---
+        if (string.IsNullOrWhiteSpace(req.Email) || !emailRegex.IsMatch(req.Email.Trim()))
+            errores.Add("El email no tiene un formato válido.");
 
         return errores;
     }
