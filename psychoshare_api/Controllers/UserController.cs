@@ -42,19 +42,6 @@ public class UserController : ControllerBase
         return Ok();
     }
 
-    // [HttpPost("follow")]
-    // public async Task<IActionResult> Follow([FromBody] psychoshare_api.DTOs.Following.CreateFollowingDto createFollowingDto)
-    // {
-    //     // TODO: Implement follow logic using EF Core
-    //     return Ok(new { success = false, message = "Not implemented" });
-    // }
-
-    // [HttpPost("unfollow")]
-    // public async Task<IActionResult> Unfollow([FromBody] psychoshare_api.DTOs.Following.CreateFollowingDto createFollowingDto)
-    // {
-    //     // TODO: Implement unfollow logic using EF Core
-    //     return Ok(new { success = false, message = "Not implemented" });
-    // }
 
     [HttpGet("search/{username}")]
     public IActionResult SearchUser(string username)
@@ -64,5 +51,11 @@ public class UserController : ControllerBase
         return Ok(new { success = true, content = user });
     }
 
-    // TODO: Add search, follow, and unfollow endpoints if needed
+    // GET /api/user/check-email?email=alguien@mail.com
+    [HttpGet("check-email")]
+    public IActionResult CheckEmail([FromQuery] string email)
+    {
+        var user = df?.DAOUser().GetUserByEmail(email);
+        return Ok(new { exists = user != null });
+    }
 }
