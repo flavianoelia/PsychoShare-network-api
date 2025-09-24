@@ -95,3 +95,56 @@ Social network for psychology professionals to share Creative Commons licensed a
 - File storage optimization
 - Database indexing for social queries
 - Caching strategy for frequently accessed content
+
+## 🌿 Git Workflow & Branch Management
+
+### Branch Strategy
+```
+main (production-ready)
+├── development (integration branch)
+├── development2 (alternative integration)
+└── feature/* (feature branches)
+```
+
+### Branch Targeting Rules
+- **Feature branches** → `development` or `development2`
+- **Hotfixes** → `main` (emergency only)
+- **Documentation** → `development`
+
+### Common Issues & Solutions
+
+#### ❌ PR Targeting `main` Instead of `development`
+**Problem**: PR was created targeting `main` branch
+**Solution**: 
+1. Change target branch in GitHub UI, OR
+2. Close PR and recreate targeting `development`
+
+#### ❌ Duplicate PRs
+**Problem**: Multiple PRs with same changes
+**Solution**: 
+1. Review both PRs
+2. Close duplicate with reference: "Duplicate of #[number]"
+3. Keep the PR with better description/targeting
+
+#### ❌ Wrong Branch Name
+**Problem**: Branch doesn't follow conventions
+**Solution**: 
+1. Create new branch with correct name
+2. Cherry-pick commits: `git cherry-pick <commit-hash>`
+3. Delete old branch
+
+### Quick Commands
+```bash
+# Check current branch and status
+git status
+
+# List all branches
+git branch -a
+
+# Change PR target (GitHub UI only)
+# Go to PR → Edit → Change base branch
+
+# Delete problematic branch
+git push origin --delete branch-name
+git branch -D branch-name
+```
