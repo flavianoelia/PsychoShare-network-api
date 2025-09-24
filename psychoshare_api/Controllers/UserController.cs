@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using psychoshare_api.DTOs.User;
 
 namespace psychoshare_api.Controllers;
 
@@ -14,10 +15,10 @@ public class UserController : ControllerBase
         this.df = df;//agregado:inyectamos la factoría de DAOs
     }
 
-    [HttpPost("register")]
-    public void Register()
+   [HttpPost]
+    public IActionResult Register([FromBody] CreateUserRequestDTO req)
     {
-        // TODO: Implement user registration with EF Core
+        return BadRequest();
     }
 
     [HttpGet("login")]
