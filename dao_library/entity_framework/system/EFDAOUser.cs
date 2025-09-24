@@ -3,16 +3,27 @@ using Microsoft.EntityFrameworkCore;
 
 public class EFDAOUser : DAOUser
 {
-    private AppDbContext dbContext; //agregado
-    public EFDAOUser(AppDbContext dbContext) //agregado
+    private AppDbContext dbContext; 
+    public EFDAOUser(AppDbContext dbContext) 
     {
-        this.dbContext = dbContext;//agregado
+        this.dbContext = dbContext;
     }
     public User? GetUser(long id)
     {
-        User? user = this.dbContext.Users.Where(user => user.Id == 1).FirstOrDefault(); //agregdo
+        User? user = this.dbContext.Users.Where(user => user.Id == id).FirstOrDefault(); 
         return user;
     }
+    public User? GetUserByEmail(string email)
+    {
+        User? user = this.dbContext.Users.Where(user => user.Email == email).FirstOrDefault();
+        return user;
+    }
+
+    public User? GetUserByUsername(string username)
+    {
+        return this.dbContext.Users.FirstOrDefault(user => user.Username == username);
+    }
+
     public void Save(User user)
     {
         throw new NotImplementedException();

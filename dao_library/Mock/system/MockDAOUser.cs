@@ -1,3 +1,4 @@
+
 using System.Reflection.Metadata;
 
 public class MockDAOUser : DAOUser
@@ -27,6 +28,16 @@ public class MockDAOUser : DAOUser
         users.Add(new User { Name = "Fernando", LastName = "Molina", Email = "fernando.m@mail.com", Password = "pass890", Id = 19, Username = "fernandom" });
         users.Add(new User { Name = "Gabriela", LastName = "Ortega", Email = "gabriela.o@mail.com", Password = "pass101", Id = 20, Username = "gabrielao" });
         users.Add(new User { Name = "Ricardo", LastName = "Soto", Email = "ricardo.s@mail.com", Password = "pass112", Id = 21, Username = "ricardos" });
+    }
+
+    public User? GetUserByEmail(string email)
+    {
+        return users.FirstOrDefault(user => user.Email == email);
+    }
+
+    public User? GetUserByUsername(string username)
+    {
+        return users.FirstOrDefault(user => user.Username == username);
     }
 
     public List<User> GetUsers()
