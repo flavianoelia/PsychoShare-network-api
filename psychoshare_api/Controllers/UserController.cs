@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using psychoshare_api.DTOs.User;
+using System.Text.RegularExpressions;
 
 namespace psychoshare_api.Controllers;
 
@@ -9,31 +10,57 @@ public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger;
     private DAOFactory? df;
+
     public UserController(ILogger<UserController> logger, DAOFactory df)
     {
         _logger = logger;
-        this.df = df;//agregado:inyectamos la factoría de DAOs
+        this.df = df; // inyectamos la factoría de DAOs
     }
 
-   [HttpPost]
+    // 🔹 Validaciones reutilizables
+    private List<string> ValidateUserFields(CreateUserRequestDTO req)
+    {
+        var errores = new List<string>();
+
+        // Regex iguales al front
+        var nameRegex = new Regex(@"^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,30}$");
+        var emailRegex = new Regex(@"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$");
+        var passwordRegex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$");
+
+        // --- Name ---
+        if (string.IsNullOrWhiteSpace(req.Name) || !nameRegex.IsMatch(req.Name.Trim()))
+            errores.Add("El nombre no es válido. Debe tener entre 2 y 30 caracteres y solo letras/espacios.");
+
+        // --- LastName ---
+        if (string.IsNullOrWhiteSpace(req.LastName) || !nameRegex.IsMatch(req.LastName.Trim()))
+            errores.Add("El apellido no es válido. Debe tener entre 2 y 30 caracteres y solo letras/espacios.");
+
+        return errores;
+    }
+
+    // 🔹 POST: Register
+    [HttpPost]
     public IActionResult Register([FromBody] CreateUserRequestDTO req)
     {
-        return BadRequest();
+        var errores = ValidateUserFields(req);
+
+        if (errores.Any())
+            return BadRequest(new { success = false, errors = errores });
+
+        // TODO: Guardar usuario usando df.DAOUser()
+        return Ok(new { success = true, message = "Usuario válido." });
     }
 
     [HttpGet("login")]
-
-    //este controlador es un ejemplo y está incompleto
     public void Login()
     {
         // TODO: Implement user login
     }
 
-    //este controlador es un ejemplo y está incompleto, obtiene un usuario por su id
     [HttpGet("{id}")]
     public void GetUser(long id)
     {
-       // TODO: Implement user getUser
+        // TODO: Implement user getUser
     }
 
     [HttpPut("edit/{id}")]
@@ -43,16 +70,13 @@ public class UserController : ControllerBase
         return Ok();
     }
 
-
     [HttpGet("search/{username}")]
     public IActionResult SearchUser(string username)
     {
-        // Mock search: returns a hardcoded user
         var user = new User { Username = username, Name = "Mock", LastName = "User", Email = "mock@user.com" };
         return Ok(new { success = true, content = user });
     }
 
-    // GET /api/user/check-email?email=alguien@mail.com
     [HttpGet("check-email")]
     public IActionResult CheckEmail([FromQuery] string email)
     {
