@@ -96,12 +96,7 @@ public class UserController : ControllerBase
         return Ok();
     }
 
-    [HttpGet("search/{username}")]
-    public IActionResult SearchUser(string username)
-    {
-        var user = new User { Username = username, Name = "Mock", LastName = "User", Email = "mock@user.com" };
-        return Ok(new { success = true, content = user });
-    }
+
 
     [HttpGet("check-email")]
     public IActionResult CheckEmail([FromQuery] string email)

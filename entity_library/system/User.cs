@@ -1,26 +1,32 @@
 public class User : Person
 {
-    private string username = "";
+    private string name = "";
+    private string lastName = "";    
     private string email = "";
-    private string password = "";
+    private string passwordHash = "";
     private Role? role;
 
     public long Id { get; set; }
 
-    public string Username
+    public string Name
     {
-        get { return username; }
-        set { username = value; }
+        get { return name; }
+        set { name = value; }
+    }
+    public string LastName
+    {
+        get { return lastName; }
+        set { lastName = value; }
     }
     public string Email
     {
         get { return email; }
         set { email = value; }
     }
-    public string Password
+    public string PasswordHash
     {
-        get { return password; }
-        set { password = value; }
+        get { return passwordHash; }
+        set { passwordHash = value; }
     }
     public virtual Role? Role { get; set; }
     public virtual Image? Image { get; set; }
