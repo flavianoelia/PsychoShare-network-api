@@ -17,26 +17,45 @@ public class UserController : ControllerBase
         this.df = df; // inyectamos la factoría de DAOs
     }
 
-    // 🔹 Validaciones reutilizables
+    // 🔹 Función para validar Name o LastName
+    private string? ValidateNameOrLastName(string? value, string fieldName)
+    {
+        var nameRegex = new Regex(@"^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,30}$");
+
+        if (string.IsNullOrWhiteSpace(value) || !nameRegex.IsMatch(value.Trim()))
+        {
+            return $"{fieldName} no es válido. Debe tener entre 2 y 30 caracteres y solo letras/espacios.";
+        }
+
+        return null; 
+    }
+
+    // 🔹 Función para validar Email
+    private string? ValidateEmail(string? email)
+    {
+        var emailRegex = new Regex(@"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$");
+
+        if (string.IsNullOrWhiteSpace(email) || !emailRegex.IsMatch(email.Trim()))
+        {
+            return "El email no tiene un formato válido.";
+        }
+
+        return null; 
+    }
+
+    // 🔹 Función que agrupa las validaciones del registro
     private List<string> ValidateUserFields(CreateUserRequestDTO req)
     {
         var errores = new List<string>();
 
-        // Regex iguales al front
-        var nameRegex = new Regex(@"^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,30}$");
-        var emailRegex = new Regex(@"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$");
+        var nameError = ValidateNameOrLastName(req.Name, "El nombre");
+        if (nameError != null) errores.Add(nameError);
 
-        // --- Name ---
-        if (string.IsNullOrWhiteSpace(req.Name) || !nameRegex.IsMatch(req.Name.Trim()))
-            errores.Add("El nombre no es válido. Debe tener entre 2 y 30 caracteres y solo letras/espacios.");
+        var lastNameError = ValidateNameOrLastName(req.LastName, "El apellido");
+        if (lastNameError != null) errores.Add(lastNameError);
 
-        // --- LastName ---
-        if (string.IsNullOrWhiteSpace(req.LastName) || !nameRegex.IsMatch(req.LastName.Trim()))
-            errores.Add("El apellido no es válido. Debe tener entre 2 y 30 caracteres y solo letras/espacios.");
-        
-                // --- Email ---
-        if (string.IsNullOrWhiteSpace(req.Email) || !emailRegex.IsMatch(req.Email.Trim()))
-            errores.Add("El email no tiene un formato válido.");
+        var emailError = ValidateEmail(req.Email);
+        if (emailError != null) errores.Add(emailError);
 
         return errores;
     }
@@ -50,8 +69,12 @@ public class UserController : ControllerBase
         if (errores.Any())
             return BadRequest(new { success = false, errors = errores });
 
+        var existingUser = df?.DAOUser().GetUserByEmail(req.Email!.Trim());
+        if (existingUser != null)
+            return Conflict(new { success = false, message = "El email ya está registrado." });
+
         // TODO: Guardar usuario usando df.DAOUser()
-        return Ok(new { success = true, message = "Usuario válido." });
+            return Ok(new { success = true, message = "Usuario válido." });
     }
 
     [HttpGet("login")]
