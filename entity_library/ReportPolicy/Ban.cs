@@ -1,3 +1,5 @@
+using entity_library.system;
+
 public class Ban
 {
     public long Id { get; set; }

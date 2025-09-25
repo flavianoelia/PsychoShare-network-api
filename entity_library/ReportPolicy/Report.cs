@@ -1,3 +1,5 @@
+using entity_library.system;
+
 public class Report
 {
     public long Id { get; set; } 
