@@ -19,11 +19,6 @@ public class EFDAOUser : DAOUser
         return user;
     }
 
-    public User? GetUserByUsername(string username)
-    {
-        return this.dbContext.Users.FirstOrDefault(user => user.Username == username);
-    }
-
     public void Save(User user)
     {
         throw new NotImplementedException();
