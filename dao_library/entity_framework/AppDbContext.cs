@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using entity_library.system;
 namespace dao_library.Contexts;
 
 public class AppDbContext : DbContext
