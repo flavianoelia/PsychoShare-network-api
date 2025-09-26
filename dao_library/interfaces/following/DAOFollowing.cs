@@ -1,3 +1,5 @@
+using entity_library.system;
+
 public interface DAOFollowing
 {
     public void Save(Following following);

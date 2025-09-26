@@ -1,4 +1,5 @@
 using dao_library.Contexts;
+using entity_library.system;
 using Microsoft.EntityFrameworkCore;
 
 public class EFDAOUser : DAOUser
@@ -30,5 +31,10 @@ public class EFDAOUser : DAOUser
     public void Delete(long IdUser)
     {
         throw new NotImplementedException();
+    }
+    public async Task SaveAsync(User user)
+    {
+        await dbContext.Users.AddAsync(user);
+        await dbContext.SaveChangesAsync();
     }
 }
