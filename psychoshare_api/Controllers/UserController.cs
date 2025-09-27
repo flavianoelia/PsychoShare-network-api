@@ -16,31 +16,18 @@ public class UserController : ControllerBase
         _logger = logger;
         this.df = df; // inyectamos la factoría de DAOs
     }
-
     // 🔹 Función para validar Name o LastName
-    private string? ValidateNameOrLastName(string? value, string fieldName)
+    private bool IsValidNameOrLastName(string? value)
     {
         var nameRegex = new Regex(@"^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,30}$");
-
-        if (string.IsNullOrWhiteSpace(value) || !nameRegex.IsMatch(value.Trim()))
-        {
-            return $"{fieldName} no es válido. Debe tener entre 2 y 30 caracteres y solo letras/espacios.";
-        }
-
-        return null; 
+        return !string.IsNullOrWhiteSpace(value) && nameRegex.IsMatch(value.Trim());
     }
 
     // 🔹 Función para validar Email
-    private string? ValidateEmail(string? email)
+    private bool IsValidEmail(string? email)
     {
         var emailRegex = new Regex(@"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$");
-
-        if (string.IsNullOrWhiteSpace(email) || !emailRegex.IsMatch(email.Trim()))
-        {
-            return "El email no tiene un formato válido.";
-        }
-
-        return null; 
+        return !string.IsNullOrWhiteSpace(email) && emailRegex.IsMatch(email.Trim());
     }
 
     // 🔹 Función que agrupa las validaciones del registro
@@ -48,14 +35,14 @@ public class UserController : ControllerBase
     {
         var errores = new List<string>();
 
-        var nameError = ValidateNameOrLastName(req.Name, "El nombre");
-        if (nameError != null) errores.Add(nameError);
+        if (!IsValidNameOrLastName(req.Name))
+            errores.Add("El nombre no es válido. Debe tener entre 2 y 30 caracteres y solo letras/espacios.");
 
-        var lastNameError = ValidateNameOrLastName(req.LastName, "El apellido");
-        if (lastNameError != null) errores.Add(lastNameError);
+        if (!IsValidNameOrLastName(req.LastName))
+            errores.Add("El apellido no es válido. Debe tener entre 2 y 30 caracteres y solo letras/espacios.");
 
-        var emailError = ValidateEmail(req.Email);
-        if (emailError != null) errores.Add(emailError);
+        if (!IsValidEmail(req.Email))
+            errores.Add("El email no tiene un formato válido.");
 
         return errores;
     }
@@ -95,8 +82,6 @@ public class UserController : ControllerBase
         // TODO: Edit user profile
         return Ok();
     }
-
-
 
     [HttpGet("check-email")]
     public IActionResult CheckEmail([FromQuery] string email)
