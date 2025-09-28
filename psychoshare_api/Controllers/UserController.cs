@@ -49,7 +49,7 @@ public class UserController : ControllerBase
 
     // 🔹 POST: Register
     [HttpPost]
-    public IActionResult Register([FromBody] CreateUserRequestDTO req)
+    public async Task<IActionResult> Register([FromBody] CreateUserRequestDTO req)
     {
         var errores = ValidateUserFields(req);
 
@@ -60,8 +60,22 @@ public class UserController : ControllerBase
         if (existingUser != null)
             return Conflict(new { success = false, message = "El email ya está registrado." });
 
-        // TODO: Guardar usuario usando df.DAOUser()
-            return Ok(new { success = true, message = "Usuario válido." });
+        // Crear usuario y guardar usando SaveAsync
+        var user = new entity_library.system.User
+        {
+            Name = req.Name!,
+            LastName = req.LastName!,
+            Email = req.Email!,
+            PasswordHash = entity_library.system.User.HashPassword(req.Password!)
+        };
+
+        if (df != null)
+        {
+            // BP
+            await df.DAOUser().SaveAsync(user);
+        }
+
+        return Ok(new { success = true, message = "Usuario registrado y guardado." });
     }
 
     [HttpGet("login")]
