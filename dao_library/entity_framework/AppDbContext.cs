@@ -2,9 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using entity_library.system;
 namespace dao_library.Contexts;
 
+
 public class AppDbContext : DbContext
 {
-    public AppDbContext(DbContextOptions options) : base(options)
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
     }
 
@@ -17,6 +18,20 @@ public class AppDbContext : DbContext
     public DbSet<Like> Likes { get; set; }
     public DbSet<Post> Posts { get; set; }
     public DbSet<User> Users { get; set; }
+
     public DbSet<Role> Roles { get; set; }
-    
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        // Unique index for Email in User y limitar longitud a 191 caracteres (MySQL utf8mb4)
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.Email)
+            .IsUnique();
+        modelBuilder.Entity<User>()
+            .Property(u => u.Email)
+            .HasMaxLength(191)
+            .IsRequired();
+    }
 }
