@@ -49,6 +49,17 @@ public class PostController : ControllerBase
         if (errors.Count > 0)
             return BadRequest(errors);
 
+        var post = new Post
+        {
+            description = dto.Description!.Trim(),
+            title = dto.Title!.Trim(),
+            authorship = dto.Authorship!.Trim(),
+            resume = dto.Resume!.Trim(),
+            UserId = 1,
+            NameOwner = "TODO",
+            imgOwner = "TODO"
+        };
+
         return Ok();
     }
 
