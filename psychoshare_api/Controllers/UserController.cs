@@ -16,21 +16,29 @@ public class UserController : ControllerBase
         _logger = logger;
         this.df = df; // inyectamos la factoría de DAOs
     }
-    // 🔹 Función para validar Name o LastName
+
     private bool IsValidNameOrLastName(string? value)
     {
         var nameRegex = new Regex(@"^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,30}$");
         return !string.IsNullOrWhiteSpace(value) && nameRegex.IsMatch(value.Trim());
     }
 
-    // 🔹 Función para validar Email
     private bool IsValidEmail(string? email)
     {
         var emailRegex = new Regex(@"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$");
         return !string.IsNullOrWhiteSpace(email) && emailRegex.IsMatch(email.Trim());
     }
 
-    // 🔹 Función que agrupa las validaciones del registro
+    private bool IsValidPassword(string? password)
+    {
+        if (string.IsNullOrWhiteSpace(password))
+            return false;
+
+        var passwordRegex = new Regex(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$");
+        return passwordRegex.IsMatch(password);
+    }
+
+    
     private List<string> ValidateUserFields(CreateUserRequestDTO req)
     {
         var errores = new List<string>();
@@ -43,6 +51,9 @@ public class UserController : ControllerBase
 
         if (!IsValidEmail(req.Email))
             errores.Add("El email no tiene un formato válido.");
+
+        if (!IsValidPassword(req.Password))
+            errores.Add("La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y caracteres especiales (@$!%*?&).");
 
         return errores;
     }
