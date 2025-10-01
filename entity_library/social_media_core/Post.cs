@@ -1,13 +1,18 @@
 public class Post
 {
     public long Id { get; set; }
-    public long UserId { get; set; }
-    public string NameOwner { get; set; }
-    public string imgOwner { get; set; }
-    public string description { get; set; }
-    public string title { get; set; }
-    public string authorship { get; set; }
-    public string resume {get; set;}
+    
+    #region Header Post
+    required public long UserId { get; set; }
+    required public string NameOwner { get; set; }
+    required public string LastnameOwner { get; set; }
+    public virtual Image? ImgOwner { get; set; }
+    #endregion
+
+    public string Description { get; set; } = string.Empty;
+    public string Title { get; set; } = string.Empty;
+    public string Authorship { get; set; } = string.Empty;
+    public string Resume { get; set; } = string.Empty;
     public virtual Image? Image { get; set; }
     public virtual Pdf? Pdf { get; set; }
     public virtual List<Comment> Comments { get; set; } = new List<Comment>();
