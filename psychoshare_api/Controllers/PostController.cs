@@ -31,7 +31,18 @@ public class PostController : ControllerBase
         if (string.IsNullOrWhiteSpace(dto.Resume) || dto.Resume.Trim().Length < 2)
             errors.Add("Campo Resume requerido, mínimo 2 caracteres");
 
-        // Setear a empty si null
+        if (!string.IsNullOrWhiteSpace(dto.Description) && (!System.Text.RegularExpressions.Regex.IsMatch(dto.Description.Trim(), @"^[a-zA-Z0-9\s.,!?()-áéíóúñ]+$") || dto.Description.Trim() == "."))
+            errors.Add("Contenido inválido en Description");
+
+        if (!string.IsNullOrWhiteSpace(dto.Title) && (!System.Text.RegularExpressions.Regex.IsMatch(dto.Title.Trim(), @"^[a-zA-Z0-9\s.,!?()-áéíóúñ]+$") || dto.Title.Trim() == "."))
+            errors.Add("Contenido inválido en Title");
+
+        if (!string.IsNullOrWhiteSpace(dto.Authorship) && (!System.Text.RegularExpressions.Regex.IsMatch(dto.Authorship.Trim(), @"^[a-zA-Z0-9\s.,!?()-áéíóúñ]+$") || dto.Authorship.Trim() == "."))
+            errors.Add("Contenido inválido en Authorship");
+
+        if (!string.IsNullOrWhiteSpace(dto.Resume) && (!System.Text.RegularExpressions.Regex.IsMatch(dto.Resume.Trim(), @"^[a-zA-Z0-9\s.,!?()-áéíóúñ]+$") || dto.Resume.Trim() == "."))
+            errors.Add("Contenido inválido en Resume");
+
         dto.Image = dto.Image ?? string.Empty;
         dto.Pdf = dto.Pdf ?? string.Empty;
 
