@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
+using psychoshare_api.DTOs.Post;
 
 namespace psychoshare_api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/post")]
 public class PostController : ControllerBase
 {
     private readonly ILogger<PostController> _logger;
@@ -14,9 +15,20 @@ public class PostController : ControllerBase
     }
 
     [HttpPost]
-    public void CreatePost()
+    public async Task<IActionResult> CreatePost([FromBody] CreatePostRequest dto)
     {
-        // TODO: Create new post
+        var errors = new List<string>();
+
+        if (string.IsNullOrWhiteSpace(dto.Description) || dto.Description.Trim().Length < 2)
+            errors.Add("Campo Description requerido, mínimo 2 caracteres");
+
+        if (string.IsNullOrWhiteSpace(dto.Title) || dto.Title.Trim().Length < 2)
+            errors.Add("Campo Title requerido, mínimo 2 caracteres");
+
+        if (errors.Count > 0)
+            return BadRequest(errors);
+
+        return Ok();
     }
 
     [HttpGet("{id}")]
