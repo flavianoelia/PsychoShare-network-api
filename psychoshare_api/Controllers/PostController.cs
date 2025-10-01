@@ -25,6 +25,16 @@ public class PostController : ControllerBase
         if (string.IsNullOrWhiteSpace(dto.Title) || dto.Title.Trim().Length < 2)
             errors.Add("Campo Title requerido, mínimo 2 caracteres");
 
+        if (string.IsNullOrWhiteSpace(dto.Authorship) || dto.Authorship.Trim().Length < 2)
+            errors.Add("Campo Authorship requerido, mínimo 2 caracteres");
+
+        if (string.IsNullOrWhiteSpace(dto.Resume) || dto.Resume.Trim().Length < 2)
+            errors.Add("Campo Resume requerido, mínimo 2 caracteres");
+
+        // Setear a empty si null
+        dto.Image = dto.Image ?? string.Empty;
+        dto.Pdf = dto.Pdf ?? string.Empty;
+
         if (errors.Count > 0)
             return BadRequest(errors);
 
