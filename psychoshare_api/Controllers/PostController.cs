@@ -51,13 +51,13 @@ public class PostController : ControllerBase
 
         var post = new Post
         {
-            description = dto.Description!.Trim(),
-            title = dto.Title!.Trim(),
-            authorship = dto.Authorship!.Trim(),
-            resume = dto.Resume!.Trim(),
+            Description = dto.Description!.Trim(),
+            Title = dto.Title!.Trim(),
+            Authorship = dto.Authorship!.Trim(),
+            Resume = dto.Resume!.Trim(),
             UserId = 1,
             NameOwner = "TODO",
-            imgOwner = "TODO"
+            LastnameOwner = "TODO"
         };
 
         return Ok();
