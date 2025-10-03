@@ -4,7 +4,7 @@ public class Person
     private string name = "";
     private string lastName = "";
 
-    public long IdPerson
+    public long Id
 
     {
         get { return idPerson; }
