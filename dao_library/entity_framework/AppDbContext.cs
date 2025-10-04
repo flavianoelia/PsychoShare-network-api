@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using entity_library.system;
+using entity_library.professional;
 namespace dao_library.Contexts;
 
 
@@ -20,6 +21,7 @@ public class AppDbContext : DbContext
     public DbSet<Person> Persons { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Role> Roles { get; set; }
+    public DbSet<ProfessionalLicense> ProfessionalLicenses { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

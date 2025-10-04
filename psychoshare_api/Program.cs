@@ -39,6 +39,7 @@ builder.Services.AddDbContext<AppDbContext>(option =>
     option.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
 builder.Services.AddScoped<DAOFactory, EFDAOFactory>();
+builder.Services.AddHttpClient<psychoshare_api.Services.CPPCVerificationService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options

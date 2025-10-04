@@ -31,6 +31,8 @@ namespace entity_library.system
             set { this.image = value; }
         }
 
+        public virtual entity_library.professional.ProfessionalLicense? ProfessionalLicense { get; set; }
+
         public static string HashPassword(string plainPassword)
         {
             return BCrypt.Net.BCrypt.HashPassword(plainPassword);
