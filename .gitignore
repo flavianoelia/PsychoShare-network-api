@@ -403,5 +403,6 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-# Local development settings (do not commit to git)
-psychoshare_api/appsettings.Development.json
+# Local environment configuration (database connections, etc.)
+.env.local
+appsettings.Local.json
