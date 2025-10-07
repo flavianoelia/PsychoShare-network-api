@@ -2,11 +2,11 @@
 using dao_library.Contexts;
 
 public class EFDAOPost : DAOPost
-{   
-    private AppDbContext dbContext; //agregado
-    public EFDAOPost(AppDbContext dbContext) //agregado
+{
+    private AppDbContext dbContext;
+    public EFDAOPost(AppDbContext dbContext)
     {
-        this.dbContext = dbContext;//agregado
+        this.dbContext = dbContext;
     }
     public Post? GetPost(long id)
     {
@@ -27,5 +27,10 @@ public class EFDAOPost : DAOPost
     public void UpdatePost(long IdPost)
     {
         throw new NotImplementedException();
+    }
+    public async Task SaveAsync(Post post)
+    {
+        await dbContext.Posts.AddAsync(post);
+        await dbContext.SaveChangesAsync();
     }
 }
