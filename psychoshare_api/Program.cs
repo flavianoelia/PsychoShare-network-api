@@ -32,19 +32,7 @@ builder.Services.AddCors(options =>
         });
 });
 
-
-string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-
-builder.Services.AddDbContext<AppDbContext>(option =>
-    option.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-
 builder.Services.AddScoped<DAOFactory, EFDAOFactory>();
-
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options
-        .UseLazyLoadingProxies()
-        .UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
-        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))));
 
 var app = builder.Build();
 
