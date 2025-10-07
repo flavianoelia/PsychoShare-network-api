@@ -1,3 +1,5 @@
+using dao_library.interfaces.admin;
+
 public class MockDAOFactory : DAOFactory
 {
     public DAOUser CreateDAOUser()
@@ -21,6 +23,11 @@ public class MockDAOFactory : DAOFactory
     }
 
     public DAOUser DAOUser()
+    {
+        throw new NotImplementedException();
+    }
+
+    public DAOReport DAOReport()
     {
         throw new NotImplementedException();
     }
