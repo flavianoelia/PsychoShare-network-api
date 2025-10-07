@@ -13,8 +13,6 @@
 # Local environment configuration (database connections, etc.)
 .env.local
 appsettings.Local.json
-# Archivo de configuracion local de desarrollo
-psychoshare_api/appsettings.Development.json
 
 
 # User-specific files (MonoDevelop/Xamarin Studio)
