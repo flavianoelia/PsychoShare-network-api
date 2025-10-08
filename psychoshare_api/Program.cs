@@ -10,11 +10,25 @@ Env.Load("../.env.local");
 var builder = WebApplication.CreateBuilder(args);
 
 // Build connection string using environment variables
-var connectionString = $"Server={Environment.GetEnvironmentVariable("DB_SERVER") ?? "localhost"};" +
-                       $"Port={Environment.GetEnvironmentVariable("DB_PORT") ?? "3306"};" +
-                       $"Database={Environment.GetEnvironmentVariable("DB_NAME") ?? "psychoshare"};" +
-                       $"Uid={Environment.GetEnvironmentVariable("DB_USER") ?? "root"};" +
-                       $"Pwd={Environment.GetEnvironmentVariable("DB_PASSWORD") ?? ""};";
+var dbServer = Environment.GetEnvironmentVariable("DB_SERVER") ?? "localhost";
+var dbPort = Environment.GetEnvironmentVariable("DB_PORT") ?? "3306";
+var dbName = Environment.GetEnvironmentVariable("DB_NAME") ?? "psychoshare";
+var dbUser = Environment.GetEnvironmentVariable("DB_USER") ?? "root";
+var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "";
+
+Console.WriteLine($"DEBUG: DB_SERVER = {dbServer}");
+Console.WriteLine($"DEBUG: DB_PORT = {dbPort}");
+Console.WriteLine($"DEBUG: DB_NAME = {dbName}");
+Console.WriteLine($"DEBUG: DB_USER = {dbUser}");
+Console.WriteLine($"DEBUG: DB_PASSWORD = {(string.IsNullOrEmpty(dbPassword) ? "EMPTY" : "SET")}");
+
+var connectionString = $"Server={dbServer};" +
+                       $"Port={dbPort};" +
+                       $"Database={dbName};" +
+                       $"Uid={dbUser};" +
+                       $"Pwd={dbPassword};";
+
+Console.WriteLine($"DEBUG: Connection String = {connectionString.Replace(dbPassword, "***")}");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options
