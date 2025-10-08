@@ -31,4 +31,9 @@ public class MockDAOFactory : DAOFactory
     {
         throw new NotImplementedException();
     }
+
+    public DAOBan DAOBan()
+    {
+        throw new NotImplementedException();
+    }
 }

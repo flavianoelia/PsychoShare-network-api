@@ -34,4 +34,9 @@ public class EFDAOFactory : DAOFactory
     {
         return new EFDAOReport(this.appDbContext);
     }
+
+    public DAOBan DAOBan()
+    {
+        return new EFDAOBan(this.appDbContext);
+    }
 }
