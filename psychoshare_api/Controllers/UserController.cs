@@ -14,7 +14,7 @@ public class UserController : ControllerBase
     public UserController(ILogger<UserController> logger, DAOFactory df)
     {
         _logger = logger;
-        this.df = df; // inyectamos la factoría de DAOs
+        this.df = df;
     }
 
     private bool IsValidNameOrLastName(string? value)
@@ -71,7 +71,7 @@ public class UserController : ControllerBase
         if (existingUser != null)
             return Conflict(new { success = false, message = "El email ya está registrado." });
 
-        // Crear usuario y guardar usando SaveAsync
+        
         var user = new entity_library.system.User
         {
             Name = req.Name!,

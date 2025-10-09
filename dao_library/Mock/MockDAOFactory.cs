@@ -1,4 +1,5 @@
 using dao_library.interfaces.admin;
+using dao_library.interfaces.social_media_core;
 
 public class MockDAOFactory : DAOFactory
 {
@@ -28,6 +29,11 @@ public class MockDAOFactory : DAOFactory
     }
 
     public DAOReport DAOReport()
+    {
+        throw new NotImplementedException();
+    }
+
+    public DAOLike DAOLike()
     {
         throw new NotImplementedException();
     }
