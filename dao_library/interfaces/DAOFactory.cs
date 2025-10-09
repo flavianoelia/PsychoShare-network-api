@@ -6,4 +6,5 @@ public interface DAOFactory
     DAOPost DaoPost();
     DAOComment DAOComment();
     DAOReport DAOReport();
+    DAOBan DAOBan();
 }   
