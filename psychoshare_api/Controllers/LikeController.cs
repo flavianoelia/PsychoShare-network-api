@@ -154,7 +154,7 @@ public class LikeController : ControllerBase
     {
         try
         {
-            _logger.LogInformation($"Checking like for user {userId} and post {postId}");
+            _logger.LogInformation("Checking like for user {UserId} and post {PostId}", userId, postId);
             
             
             if (_daoFactory == null)
@@ -173,14 +173,14 @@ public class LikeController : ControllerBase
 
             _logger.LogInformation("About to call IsLiked method");
             var isLiked = daoLike.IsLiked(userId, postId);
-            _logger.LogInformation($"IsLiked result: {isLiked}");
+            _logger.LogInformation("IsLiked result: {IsLiked}", isLiked);
             
             return Ok(isLiked);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, $"Error al verificar like para user {userId} y post {postId}: {ex.Message}");
-            return StatusCode(500, $"Error interno del servidor: {ex.Message}");
+            _logger.LogError(ex, "Error al verificar like para user {UserId} y post {PostId}", userId, postId);
+            return StatusCode(500, "Error interno del servidor");
         }
     }
 }
