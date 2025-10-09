@@ -1,5 +1,6 @@
 using dao_library.Contexts;
 using dao_library.interfaces.admin;
+using dao_library.interfaces.social_media_core;
 using dao_library.entity_framework.admin;
 
 public class EFDAOFactory : DAOFactory
@@ -33,6 +34,11 @@ public class EFDAOFactory : DAOFactory
     public DAOReport DAOReport()
     {
         return new EFDAOReport(this.appDbContext);
+    }
+
+    public DAOLike DAOLike()
+    {
+        return new EFDAOLike(this.appDbContext);
     }
 
     public DAOBan DAOBan()

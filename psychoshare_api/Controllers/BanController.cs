@@ -19,34 +19,34 @@ public class BanController : ControllerBase
     [HttpPost]
     public ActionResult<BanResponseDto> BanUser([FromBody] CreateBanDto createBanDto)
     {
-        // Validación 1: Usuario no puede banearse a sí mismo
+        
         if (createBanDto.BannedUserId == createBanDto.BannedByAdminId)
             return BadRequest("Un usuario no puede banearse a sí mismo");
 
-        // Validación 2: Validar que el usuario existe antes de banear
+        
         var user = _daoFactory.DAOUser().GetUser(createBanDto.BannedUserId);
         if (user == null)
             return NotFound("Usuario a banear no encontrado");
 
-        // Validar que el admin existe
+        
         var admin = _daoFactory.DAOUser().GetUser(createBanDto.BannedByAdminId);
         if (admin == null)
             return NotFound("Usuario administrador no encontrado");
 
-        // Validación 3: No banear usuario ya baneado activamente
+        
         var existingBan = _daoFactory.DAOBan().CheckBanStatus(createBanDto.BannedUserId);
         if (existingBan)
             return BadRequest("El usuario ya está baneado activamente");
 
-        // Validación 4: EndDate debe ser mayor que StartDate (si no es permanente)
+        
         if (createBanDto.EndDate.HasValue && createBanDto.EndDate <= createBanDto.StartDate)
             return BadRequest("La fecha de fin debe ser mayor que la fecha de inicio");
 
-        // Validación adicional: StartDate no puede ser en el pasado
+        
         if (createBanDto.StartDate < DateTime.Now.AddMinutes(-1)) // Tolerancia de 1 minuto
             return BadRequest("La fecha de inicio no puede ser en el pasado");
 
-        // Crear el ban
+        
         var ban = new Ban
         {
             BannedUserId = createBanDto.BannedUserId,
@@ -80,7 +80,7 @@ public class BanController : ControllerBase
     [HttpDelete("{userId}")]
     public ActionResult<bool> UnbanUser(long userId)
     {
-        // Validar que el usuario existe
+        
         var user = _daoFactory.DAOUser().GetUser(userId);
         if (user == null)
             return NotFound("Usuario no encontrado");
@@ -89,7 +89,7 @@ public class BanController : ControllerBase
         if (ban == null)
             return NotFound("No se encontró un ban para este usuario");
 
-        // Validar que el ban esté activo
+        
         if (!ban.IsActive)
             return BadRequest("El usuario ya no está baneado");
 

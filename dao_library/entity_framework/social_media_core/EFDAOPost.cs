@@ -10,7 +10,7 @@ public class EFDAOPost : DAOPost
     }
     public Post? GetPost(long id)
     {
-        throw new NotImplementedException();
+        return dbContext.Posts.FirstOrDefault(p => p.Id == id);
     }
     public List<Post> GetPostFromUser(long IdUser)
     {
