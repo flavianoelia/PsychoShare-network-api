@@ -22,15 +22,23 @@ public class EFDAOUser : DAOUser
 
     public void Save(User user)
     {
-        throw new NotImplementedException();
+        this.dbContext.Users.Add(user);
+        this.dbContext.SaveChanges();
     }
+    
     public void UpdateUser(long idUser)
     {
         throw new NotImplementedException();
     }
+    
     public void Delete(long IdUser)
     {
-        throw new NotImplementedException();
+        var user = this.dbContext.Users.Find(IdUser);
+        if (user != null)
+        {
+            this.dbContext.Users.Remove(user);
+            this.dbContext.SaveChanges();
+        }
     }
     public async Task SaveAsync(User user)
     {

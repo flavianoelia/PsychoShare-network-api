@@ -18,7 +18,7 @@ public class EFDAOPost : DAOPost
     }
     public List<Post> GetAllPosts()
     {
-        throw new NotImplementedException();
+        return this.dbContext.Posts.ToList();
     }
     public void Save(Post post)
     {

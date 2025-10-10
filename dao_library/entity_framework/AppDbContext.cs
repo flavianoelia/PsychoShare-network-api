@@ -41,5 +41,18 @@ public class AppDbContext : DbContext
             .Property(u => u.Email)
             .HasMaxLength(191)
             .IsRequired();
+
+        // Configure Comment foreign keys with CASCADE delete
+        modelBuilder.Entity<Comment>()
+            .HasOne(c => c.User)
+            .WithMany()
+            .HasForeignKey(c => c.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Comment>()
+            .HasOne(c => c.Post)
+            .WithMany(p => p.Comments)
+            .HasForeignKey(c => c.PostId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
