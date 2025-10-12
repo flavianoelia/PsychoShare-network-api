@@ -1,10 +1,8 @@
-//using entity_library.following;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
+using entity_library.following;
+using entity_library.system;
 using Microsoft.AspNetCore.Mvc;
 using psychoshare_api.DTOs.Following;
-using dao_library.Contexts;
-
+using psychoshare_api.DTOs.User;
 
 namespace psychoshare_api.Controllers;
 
@@ -13,97 +11,128 @@ namespace psychoshare_api.Controllers;
 public class FollowingController : ControllerBase
 {
     private readonly ILogger<FollowingController> _logger;
-    private readonly AppDbContext _db;
+    private DAOFactory? df;
 
-    public FollowingController(ILogger<FollowingController> logger, AppDbContext db)
+    public FollowingController(ILogger<FollowingController> logger, DAOFactory df)
     {
         _logger = logger;
-        _db = db;
+        this.df = df;
     }
-}
 
-
-/*
     [HttpPost]
-    public async Task<ActionResult<FollowingResponseDto>> Follow([FromBody] CreateFollowingDto createFollowingDto)
+    public ActionResult<FollowingResponseDto> Follow([FromBody] CreateFollowingDto createFollowingDto)
     {
-        var following = new Following
+        try
         {
-            UserId = createFollowingDto.UserId,
-            FollowedId = createFollowingDto.FollowedId,
-            StartDate = DateTime.Now
-        };
-        _db.Followings.Add(following);
-        await _db.SaveChangesAsync();
-        var response = new FollowingResponseDto
+            var following = new Following
+            {
+                UserId = createFollowingDto.UserId,
+                FollowedId = createFollowingDto.FollowedUserId,
+                StartDate = DateTime.Now
+            };
+            
+            df!.DAOFollowing().Save(following);
+            
+            var response = new FollowingResponseDto
+            {
+                FollowingId = following.FollowingId,
+                UserId = following.UserId,
+                FollowedUserId = following.FollowedId,
+                StartDate = following.StartDate
+            };
+            return Ok(response);
+        }
+        catch (Exception ex)
         {
-            FollowingId = following.FollowingId,
-            UserId = following.UserId,
-            FollowedId = following.FollowedId,
-            StartDate = following.StartDate
-        };
-        return Ok(response);
+            _logger.LogError(ex, "Error creating following");
+            return BadRequest("Error creating following relationship");
+        }
     }
 
-    [HttpDelete("{userId}/{followedId}")]
-    public async Task<ActionResult<bool>> Unfollow(long userId, long followedId)
+    [HttpDelete("{userId}/{followedUserId}")]
+    public ActionResult<bool> Unfollow(long userId, long followedUserId)
     {
-        var following = await _db.Followings.FirstOrDefaultAsync(f => f.UserId == userId && f.FollowedId == followedId);
-        if (following == null)
-            return Ok(false);
-        _db.Followings.Remove(following);
-        await _db.SaveChangesAsync();
-        return Ok(true);
+        try
+        {
+            DAOFactory? df = HttpContext.RequestServices.GetService(typeof(DAOFactory)) as DAOFactory;
+            bool isFollowing = df!.DAOFollowing().CheckFollowing(userId, followedUserId);
+            if (!isFollowing)
+                return Ok(false);
+                
+            var following = new Following
+            {
+                UserId = userId,
+                FollowedId = followedUserId
+            };
+            
+            df!.DAOFollowing().Delete(following);
+            return Ok(true);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error unfollowing user");
+            return BadRequest("Error removing following relationship");
+        }
     }
 
     [HttpGet("followers/{userId}")]
-    public async Task<ActionResult<List<FollowingResponseDto>>> GetFollowers(long userId)
+    public ActionResult<List<UserResponseDto>> GetFollowers(long userId)
     {
-        var followers = await _db.Followings.Where(f => f.FollowedId == userId).ToListAsync();
-        var response = followers.Select(f => new FollowingResponseDto
+        try
         {
-            FollowingId = f.FollowingId,
-            UserId = f.UserId,
-            FollowedId = f.FollowedId,
-            StartDate = f.StartDate
-        }).ToList();
-        return Ok(response);
+            var followers = df!.DAOFollowing().GetFollowersFromUser(userId);
+            var response = followers.Select(user => new UserResponseDto
+            {
+                IdPerson = user.Id,
+                Name = user.Name,
+                LastName = user.LastName,
+                Email = user.Email,
+                CreatedAt = DateTime.Now
+            }).ToList();
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting followers");
+            return BadRequest("Error retrieving followers");
+        }
     }
 
     [HttpGet("following/{userId}")]
-    public async Task<ActionResult<List<FollowingResponseDto>>> GetFollowing(long userId)
+    public ActionResult<List<UserResponseDto>> GetFollowing(long userId)
     {
-        var following = await _db.Followings.Where(f => f.UserId == userId).ToListAsync();
-        var response = following.Select(f => new FollowingResponseDto
+        try
         {
-            FollowingId = f.FollowingId,
-            UserId = f.UserId,
-            FollowedId = f.FollowedId,
-            StartDate = f.StartDate
-        }).ToList();
-        return Ok(response);
+            var following = df!.DAOFollowing().GetContactsFromUser(userId);
+            var response = following.Select(user => new UserResponseDto
+            {
+                IdPerson = user.Id,
+                Name = user.Name,
+                LastName = user.LastName,
+                Email = user.Email,
+                CreatedAt = DateTime.Now
+            }).ToList();
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting following users");
+            return BadRequest("Error retrieving following users");
+        }
     }
 
     [HttpGet("check/{userId}/{targetUserId}")]
-    public async Task<ActionResult<bool>> CheckFollowing(long userId, long targetUserId)
+    public ActionResult<bool> CheckFollowing(long userId, long targetUserId)
     {
-        var exists = await _db.Followings.AnyAsync(f => f.UserId == userId && f.FollowedId == targetUserId);
-        return Ok(exists);
-    }
-
-    [HttpGet("followers/count/{userId}")]
-    public async Task<ActionResult<int>> GetFollowersCount(long userId)
-    {
-    // ...existing code...
-        var count = await _db.Followings.CountAsync(f => f.FollowedId == userId);
-        return Ok(count);
-    }
-
-    [HttpGet("following/count/{userId}")]
-    public async Task<ActionResult<int>> GetFollowingCount(long userId)
-    {
-        var count = await _db.Followings.CountAsync(f => f.UserId == userId);
-        return Ok(count);
+        try
+        {
+            var isFollowing = df!.DAOFollowing().CheckFollowing(userId, targetUserId);
+            return Ok(isFollowing);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error checking following status");
+            return BadRequest("Error checking following status");
+        }
     }
 }
-*/
