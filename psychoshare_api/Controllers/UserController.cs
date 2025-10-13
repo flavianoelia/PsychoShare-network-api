@@ -10,11 +10,14 @@ public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger;
     private DAOFactory? df;
+    private readonly TokenService _tokenService;
 
-    public UserController(ILogger<UserController> logger, DAOFactory df)
+
+    public UserController(ILogger<UserController> logger, DAOFactory df, TokenService tokenService)
     {
         _logger = logger;
         this.df = df;
+        _tokenService = tokenService;
     }
 
     private bool IsValidNameOrLastName(string? value)
@@ -71,7 +74,7 @@ public class UserController : ControllerBase
         if (existingUser != null)
             return Conflict(new { success = false, message = "El email ya está registrado." });
 
-        
+
         var user = new entity_library.system.User
         {
             Name = req.Name!,
@@ -85,8 +88,9 @@ public class UserController : ControllerBase
             // BP
             await df.DAOUser().SaveAsync(user);
         }
-
-        return Ok(new { success = true, message = "Usuario registrado y guardado." });
+        
+        var token = _tokenService.CreateToken(user);
+        return Ok(new { success = true, message = "Usuario registrado y guardado.", token = token });
     }
 
     [HttpGet("login")]

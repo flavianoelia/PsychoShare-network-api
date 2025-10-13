@@ -3,11 +3,38 @@ using dao_library;
 using psychoshare_api;
 using dao_library.Contexts;
 using DotNetEnv;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 // Load .env.local file
 Env.Load("../.env.local");
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<TokenService>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            // Valida la firma del token usando la clave secreta
+            ValidateIssuerSigningKey = true, 
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
+            
+            // Valida el emisor (debe coincidir con "Jwt:Issuer")
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            
+            // Valida la audiencia (debe coincidir con "Jwt:Audience")
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            
+            // Valida que el token no haya expirado
+            ValidateLifetime = true
+        };
+    });
 
 // Build connection string using environment variables
 var dbServer = Environment.GetEnvironmentVariable("DB_SERVER") ?? "localhost";
@@ -61,6 +88,8 @@ builder.Services.AddScoped<DAOFactory, EFDAOFactory>();
 
 var app = builder.Build();
 
+
+
 app.UseCors("AllowAll");
 
 // Configure the HTTP request pipeline.
@@ -72,6 +101,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
