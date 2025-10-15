@@ -1,20 +1,65 @@
 using dao_library.Contexts;
+using dao_library.interfaces.following;
+using entity_library.following;
 using entity_library.system;
+using Microsoft.EntityFrameworkCore;
+
+namespace dao_library.entity_framework.following;
 
 public class EFDAOFollowing : DAOFollowing
 {   
-    private AppDbContext dbContext; //agregado
-    public EFDAOFollowing(AppDbContext dbContext) //agregado
+    private readonly AppDbContext _dbContext;
+    
+    public EFDAOFollowing(AppDbContext dbContext)
     {
-        this.dbContext = dbContext;//agregado
+        _dbContext = dbContext;
     }
     public List<User> GetContactsFromUser(long userId)
     {
-        throw new NotImplementedException();
+        return _dbContext.Followings
+            .Where(f => f.UserId == userId)
+            .Include(f => f.FollowedUser)
+            .Select(f => f.FollowedUser!)
+            .ToList();
     }
 
     public void Save(Following following)
     {
-        throw new NotImplementedException();
+        _dbContext.Followings.Add(following);
+        _dbContext.SaveChanges();
+    }
+    
+    public void Delete(Following following)
+    {
+        _dbContext.Followings.Remove(following);
+        _dbContext.SaveChanges();
+    }
+    
+    public List<User> GetFollowersFromUser(long userId)
+    {
+        return _dbContext.Followings
+            .Where(f => f.FollowedId == userId)
+            .Include(f => f.User)
+            .Select(f => f.User!)
+            .ToList();
+    }
+    
+    public bool CheckFollowing(long userId, long followedUserId)
+    {
+        return _dbContext.Followings
+            .Any(f => f.UserId == userId && f.FollowedId == followedUserId);
+    }
+    
+    public bool DeleteByUserIds(long userId, long followedUserId)
+    {
+        var following = _dbContext.Followings
+            .FirstOrDefault(f => f.UserId == userId && f.FollowedId == followedUserId);
+            
+        if (following == null)
+            return false;
+            
+        _dbContext.Followings.Remove(following);
+        _dbContext.SaveChanges();
+        return true;
     }
 }

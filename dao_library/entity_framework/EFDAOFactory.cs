@@ -1,7 +1,9 @@
 using dao_library.Contexts;
 using dao_library.interfaces.admin;
 using dao_library.interfaces.social_media_core;
+using dao_library.interfaces.following;
 using dao_library.entity_framework.admin;
+using dao_library.entity_framework.following;
 
 public class EFDAOFactory : DAOFactory
 {

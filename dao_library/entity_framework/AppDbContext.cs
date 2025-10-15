@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using entity_library.system;
 using entity_library.ReportPolicy;
+using entity_library.following;
 namespace dao_library.Contexts;
 
 
@@ -53,6 +54,19 @@ public class AppDbContext : DbContext
             .HasOne(c => c.Post)
             .WithMany(p => p.Comments)
             .HasForeignKey(c => c.PostId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Configure Following relationships
+        modelBuilder.Entity<Following>()
+            .HasOne(f => f.User)
+            .WithMany()
+            .HasForeignKey(f => f.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Following>()
+            .HasOne(f => f.FollowedUser)
+            .WithMany()
+            .HasForeignKey(f => f.FollowedId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

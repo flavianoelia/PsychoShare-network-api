@@ -59,7 +59,7 @@ public class LikeController : ControllerBase
             var recentLikes = _daoFactory.DAOLike().GetPostLikes(postId).Take(3).ToList();
             var recentLikerNames = recentLikes
                 .Where(l => l.User != null)
-                .Select(l => l.User.Name)
+                .Select(l => l.User!.Name)
                 .ToList();
 
             var statsDto = new LikeStatsDto
