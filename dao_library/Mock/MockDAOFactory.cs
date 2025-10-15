@@ -1,5 +1,6 @@
 using dao_library.interfaces.admin;
 using dao_library.interfaces.social_media_core;
+using dao_library.interfaces.following;
 
 public class MockDAOFactory : DAOFactory
 {
