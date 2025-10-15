@@ -49,4 +49,17 @@ public class EFDAOFollowing : DAOFollowing
         return _dbContext.Followings
             .Any(f => f.UserId == userId && f.FollowedId == followedUserId);
     }
+    
+    public bool DeleteByUserIds(long userId, long followedUserId)
+    {
+        var following = _dbContext.Followings
+            .FirstOrDefault(f => f.UserId == userId && f.FollowedId == followedUserId);
+            
+        if (following == null)
+            return false;
+            
+        _dbContext.Followings.Remove(following);
+        _dbContext.SaveChanges();
+        return true;
+    }
 }

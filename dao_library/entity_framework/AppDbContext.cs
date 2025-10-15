@@ -55,5 +55,18 @@ public class AppDbContext : DbContext
             .WithMany(p => p.Comments)
             .HasForeignKey(c => c.PostId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        // Configure Following relationships
+        modelBuilder.Entity<Following>()
+            .HasOne(f => f.User)
+            .WithMany()
+            .HasForeignKey(f => f.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Following>()
+            .HasOne(f => f.FollowedUser)
+            .WithMany()
+            .HasForeignKey(f => f.FollowedId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

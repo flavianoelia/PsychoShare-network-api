@@ -13,5 +13,7 @@ public interface DAOFollowing
     
     public List<User> GetFollowersFromUser(long userId);
     
-    public bool CheckFollowing(long userId, long followedUserId);
+    public bool CheckFollowing(long userId, long followedId);
+    
+    public bool DeleteByUserIds(long userId, long followedUserId);
 }

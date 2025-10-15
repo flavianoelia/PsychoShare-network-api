@@ -24,6 +24,19 @@ public class FollowingController : ControllerBase
     {
         try
         {
+            // Validación: Un usuario no puede seguirse a sí mismo
+            if (createFollowingDto.UserId == createFollowingDto.FollowedUserId)
+            {
+                return BadRequest("A user cannot follow themselves");
+            }
+
+            // Validación: Verificar si ya está siguiendo al usuario
+            bool alreadyFollowing = df!.DAOFollowing().CheckFollowing(createFollowingDto.UserId, createFollowingDto.FollowedUserId);
+            if (alreadyFollowing)
+            {
+                return BadRequest("User is already following this person");
+            }
+
             var following = new Following
             {
                 UserId = createFollowingDto.UserId,
@@ -35,7 +48,7 @@ public class FollowingController : ControllerBase
             
             var response = new FollowingResponseDto
             {
-                FollowingId = following.FollowingId,
+                Id = following.Id,
                 UserId = following.UserId,
                 FollowedUserId = following.FollowedId,
                 StartDate = following.StartDate
@@ -54,19 +67,15 @@ public class FollowingController : ControllerBase
     {
         try
         {
-            DAOFactory? df = HttpContext.RequestServices.GetService(typeof(DAOFactory)) as DAOFactory;
-            bool isFollowing = df!.DAOFollowing().CheckFollowing(userId, followedUserId);
-            if (!isFollowing)
-                return Ok(false);
-                
-            var following = new Following
+            // Validación: Un usuario no puede hacer unfollow de sí mismo
+            if (userId == followedUserId)
             {
-                UserId = userId,
-                FollowedId = followedUserId
-            };
-            
-            df!.DAOFollowing().Delete(following);
-            return Ok(true);
+                return BadRequest("A user cannot unfollow themselves");
+            }
+
+            DAOFactory? df = HttpContext.RequestServices.GetService(typeof(DAOFactory)) as DAOFactory;
+            bool deleted = df!.DAOFollowing().DeleteByUserIds(userId, followedUserId);
+            return Ok(deleted);
         }
         catch (Exception ex)
         {
@@ -133,6 +142,38 @@ public class FollowingController : ControllerBase
         {
             _logger.LogError(ex, "Error checking following status");
             return BadRequest("Error checking following status");
+        }
+    }
+
+    
+    [HttpGet("followers/{userId}/count")]
+    public ActionResult<int> GetFollowersCount(long userId)
+    {
+        try
+        {
+            var followers = df!.DAOFollowing().GetFollowersFromUser(userId);
+            return Ok(followers.Count());
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting followers count");
+            return BadRequest("Error retrieving followers count");
+        }
+    }
+
+    
+    [HttpGet("following/{userId}/count")]
+    public ActionResult<int> GetFollowingCount(long userId)
+    {
+        try
+        {
+            var following = df!.DAOFollowing().GetContactsFromUser(userId);
+            return Ok(following.Count());
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting following count");
+            return BadRequest("Error retrieving following count");
         }
     }
 }
