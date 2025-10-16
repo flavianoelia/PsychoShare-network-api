@@ -12,8 +12,8 @@ Env.Load("../.env.local");
 
 var builder = WebApplication.CreateBuilder(args);
 
+#region Token
 builder.Services.AddScoped<TokenService>();
-
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -35,7 +35,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true
         };
     });
+#endregion
 
+#region Conexion
 // Build connection string using environment variables
 var dbServer = Environment.GetEnvironmentVariable("DB_SERVER") ?? "localhost";
 var dbPort = Environment.GetEnvironmentVariable("DB_PORT") ?? "3306";
@@ -56,6 +58,7 @@ var connectionString = $"Server={dbServer};" +
                        $"Pwd={dbPassword};";
 
 Console.WriteLine($"DEBUG: Connection String = {connectionString.Replace(dbPassword, "***")}");
+#endregion
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options

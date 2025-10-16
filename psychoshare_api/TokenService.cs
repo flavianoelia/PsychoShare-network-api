@@ -11,35 +11,30 @@ public class TokenService
     {
         _config = config;
     }
-
-    /// <summary>
-    /// Crea el token JWT completo a partir de un objeto User.
-    /// </summary>
     public string CreateToken(entity_library.system.User user)
     {
         // ----------------------------------------------------
-        // PASO 1: DEFINICIÓN DE LA IDENTIDAD (PAYLOAD / CLAIMS)
+        // STEP 1: DEFINITION OF THE IDENTITY (PAYLOAD / CLAIMS)
         // ----------------------------------------------------
-        
-        // 1.1. Crea una lista de 'Claims' (declaraciones sobre el usuario).
-        // Estas declaraciones son la información que se codificará en el cuerpo del token.
+
+        // Claims that go to be codified for the body of the token
         var userClaims = new List<Claim>
         {
-            // Claim 1: Email del usuario (Útil para identificarlo sin ir a la DB)
+            // Claim 1: Email form User
             new Claim(ClaimTypes.Email, user.Email),
             
-            // Claim 2: ID único del usuario (Fundamental para la autorización)
+            // Claim 2: ID from User
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             
-            // Si tuvieras roles, añadirías: new Claim(ClaimTypes.Role, user.Rol)
+            // Cuando tengamos roles: new Claim(ClaimTypes.Role, user.Rol)
         };
 
-        // Asigna las claims creadas a una nueva identidad.
-        var identidadDelSujeto = new ClaimsIdentity(userClaims);
+        // Assign created claims to a new identity.
+        var subjectIdentity = new ClaimsIdentity(userClaims);
 
 
         // ----------------------------------------------------
-        // PASO 2: CREACIÓN DE LA FIRMA DIGITAL (SIGNATURE)
+        // STEP 2: CREATION OF THE SIGNATURE
         // ----------------------------------------------------
         
         // 2.1. Obtiene la Clave Secreta desde el archivo de configuración (appsettings.json)
@@ -65,7 +60,7 @@ public class TokenService
         var descriptorDelToken = new SecurityTokenDescriptor
         {
             // El Sujeto del token es la identidad que creamos en el Paso 1.
-            Subject = identidadDelSujeto, 
+            Subject = subjectIdentity, 
             
             // Define el tiempo de expiración (Ej: 7 días desde ahora).
             Expires = DateTime.Now.AddDays(7), 

@@ -20,6 +20,7 @@ public class UserController : ControllerBase
         _tokenService = tokenService;
     }
 
+    #region validations
     private bool IsValidNameOrLastName(string? value)
     {
         var nameRegex = new Regex(@"^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,30}$");
@@ -41,8 +42,8 @@ public class UserController : ControllerBase
         return passwordRegex.IsMatch(password);
     }
 
-    
-    private List<string> ValidateUserFields(CreateUserRequestDTO req)
+
+    private List<string> ValidateUserFields(RegisterRequestDTO req)
     {
         var errores = new List<string>();
 
@@ -60,10 +61,11 @@ public class UserController : ControllerBase
 
         return errores;
     }
+    #endregion
 
-    // 🔹 POST: Register
+    #region Register
     [HttpPost]
-    public async Task<IActionResult> Register([FromBody] CreateUserRequestDTO req)
+    public async Task<IActionResult> Register([FromBody] RegisterRequestDTO req)
     {
         var errores = ValidateUserFields(req);
 
@@ -83,21 +85,42 @@ public class UserController : ControllerBase
             PasswordHash = entity_library.system.User.HashPassword(req.Password!)
         };
 
-        if (df != null)
-        {
-            // BP
-            await df.DAOUser().SaveAsync(user);
-        }
-        
+        await df!.DAOUser().SaveAsync(user);
+
         var token = _tokenService.CreateToken(user);
         return Ok(new { success = true, message = "Usuario registrado y guardado.", token = token });
     }
+    #endregion
 
-    [HttpGet("login")]
-    public void Login()
+    #region Login
+    [HttpPost("login")]
+    public IActionResult Login(LoginRequestDTO req)
     {
-        // TODO: Implement user login
+        if (!IsValidEmail(req.Email))
+        {
+            return BadRequest(new { success = false, message = "El email no tiene un formato válido." });
+        }
+        var user = df!.DAOUser().GetUserByEmail(req.Email.Trim());
+        if (user == null)
+        {
+            return Unauthorized(new { success = false, message = "Mail o contraseña inválidos" });
+        }
+        if (!entity_library.system.User.VerifyPassword(req.Password, user.PasswordHash))
+        {
+            return Unauthorized(new { success = false, message = "Mail o contraseña inválidos" });
+        }
+        var token = _tokenService.CreateToken(user);
+
+        return Ok(new LoginResponseDTO
+        {
+            succes = true,
+            message = "Inicio de sesión exitoso",
+            email = user.Email,
+            userId = user.Id,
+            token = token
+        });
     }
+    #endregion
 
     [HttpGet("{id}")]
     public void GetUser(long id)
