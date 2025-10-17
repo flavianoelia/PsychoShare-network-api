@@ -3,6 +3,7 @@ using dao_library;
 using psychoshare_api;
 using dao_library.Contexts;
 using DotNetEnv;
+using psychoshare_api.Services;
 
 // Load .env.local file
 Env.Load("../.env.local");
@@ -20,7 +21,7 @@ Console.WriteLine($"DEBUG: DB_SERVER = {dbServer}");
 Console.WriteLine($"DEBUG: DB_PORT = {dbPort}");
 Console.WriteLine($"DEBUG: DB_NAME = {dbName}");
 Console.WriteLine($"DEBUG: DB_USER = {dbUser}");
-Console.WriteLine($"DEBUG: DB_PASSWORD = {(string.IsNullOrEmpty(dbPassword) ? "EMPTY" : "SET")}");
+Console.WriteLine($"DEBUG: DB_PASSWORD = {dbPassword}");
 
 var connectionString = $"Server={dbServer};" +
                        $"Port={dbPort};" +
@@ -40,7 +41,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 );
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -58,7 +58,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddScoped<DAOFactory, EFDAOFactory>();
-
+builder.Services.AddScoped<FileUploadService>();
 var app = builder.Build();
 
 app.UseCors("AllowAll");
@@ -73,6 +73,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseStaticFiles();
 
 app.MapControllers();
 
