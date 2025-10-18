@@ -14,7 +14,7 @@ public class EFDAOPost : DAOPost
     }
     public List<Post> GetPostFromUser(long IdUser)
     {
-        throw new NotImplementedException();
+        return dbContext.Posts.Where(p => p.UserId == IdUser).ToList();
     }
     public List<Post> GetAllPosts()
     {
@@ -22,11 +22,17 @@ public class EFDAOPost : DAOPost
     }
     public void Save(Post post)
     {
-        throw new NotImplementedException();
+        dbContext.Posts.Add(post);
+        dbContext.SaveChanges();
     }
     public void UpdatePost(long IdPost)
     {
-        throw new NotImplementedException();
+        var existingPost = dbContext.Posts.FirstOrDefault(p => p.Id == IdPost);
+        if (existingPost != null)
+        {
+            dbContext.Posts.Update(existingPost);
+            dbContext.SaveChanges();
+        }
     }
     public async Task SaveAsync(Post post)
     {
