@@ -17,7 +17,7 @@ public class PostController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreatePost([FromBody] CreatePostRequest dto)
+    public IActionResult CreatePost([FromBody] CreatePostRequest dto)
     {
         var errors = new List<string>();
 
@@ -33,16 +33,16 @@ public class PostController : ControllerBase
         if (string.IsNullOrWhiteSpace(dto.Resume) || dto.Resume.Trim().Length < 2)
             errors.Add("Campo Resume requerido, mínimo 2 caracteres");
 
-        if (!string.IsNullOrWhiteSpace(dto.Description) && (!System.Text.RegularExpressions.Regex.IsMatch(dto.Description.Trim(), @"^[a-zA-Z0-9\s.,!?()-áéíóúñ]+$") || dto.Description.Trim() == "."))
+        if (!string.IsNullOrWhiteSpace(dto.Description) && (!System.Text.RegularExpressions.Regex.IsMatch(dto.Description.Trim(), @"^[a-zA-Z0-9\s.,!?()""':;@#%&+=<>/_-áéíóúñüàèìòù]+$") || dto.Description.Trim() == "."))
             errors.Add("Contenido inválido en Description");
 
-        if (!string.IsNullOrWhiteSpace(dto.Title) && (!System.Text.RegularExpressions.Regex.IsMatch(dto.Title.Trim(), @"^[a-zA-Z0-9\s.,!?()-áéíóúñ]+$") || dto.Title.Trim() == "."))
+        if (!string.IsNullOrWhiteSpace(dto.Title) && (!System.Text.RegularExpressions.Regex.IsMatch(dto.Title.Trim(), @"^[a-zA-Z0-9\s.,!?()""':;@#%&+=<>/_-áéíóúñüàèìòù]+$") || dto.Title.Trim() == "."))
             errors.Add("Contenido inválido en Title");
 
-        if (!string.IsNullOrWhiteSpace(dto.Authorship) && (!System.Text.RegularExpressions.Regex.IsMatch(dto.Authorship.Trim(), @"^[a-zA-Z0-9\s.,!?()-áéíóúñ]+$") || dto.Authorship.Trim() == "."))
+        if (!string.IsNullOrWhiteSpace(dto.Authorship) && (!System.Text.RegularExpressions.Regex.IsMatch(dto.Authorship.Trim(), @"^[a-zA-Z0-9\s.,!?()""':;@#%&+=<>/_-áéíóúñüàèìòù]+$") || dto.Authorship.Trim() == "."))
             errors.Add("Contenido inválido en Authorship");
 
-        if (!string.IsNullOrWhiteSpace(dto.Resume) && (!System.Text.RegularExpressions.Regex.IsMatch(dto.Resume.Trim(), @"^[a-zA-Z0-9\s.,!?()-áéíóúñ]+$") || dto.Resume.Trim() == "."))
+        if (!string.IsNullOrWhiteSpace(dto.Resume) && (!System.Text.RegularExpressions.Regex.IsMatch(dto.Resume.Trim(), @"^[a-zA-Z0-9\s.,!?()""':;@#%&+=<>/_-áéíóúñüàèìòù]+$") || dto.Resume.Trim() == "."))
             errors.Add("Contenido inválido en Resume");
 
         dto.Image = dto.Image ?? string.Empty;
@@ -58,9 +58,15 @@ public class PostController : ControllerBase
             Authorship = dto.Authorship!.Trim(),
             Resume = dto.Resume!.Trim(),
             UserId = 1,
-            NameOwner = "TODO",
-            LastnameOwner = "TODO"
+            NameOwner = "Pepe", // Usuario Mock ID=1 (Pepe Roldan)
+            LastnameOwner = "Roldan" // Usuario Mock ID=1 (Pepe Roldan)
         };
+
+        Console.WriteLine("DEBUG: Creando post - Title: " + post.Title);
+        var daoPost = _daoFactory.DaoPost();
+        Console.WriteLine("DEBUG: DAO obtenido, llamando Save...");
+        daoPost.Save(post);
+        Console.WriteLine("DEBUG: Save completado");
 
         return Ok();
     }
@@ -189,13 +195,13 @@ public class PostController : ControllerBase
             if (errors.Count > 0)
                 return BadRequest(errors);
 
-            // Actualizar propiedades
+    
             existingPost.Description = dto.Description!.Trim();
             existingPost.Title = dto.Title!.Trim();
             existingPost.Authorship = dto.Authorship!.Trim();
             existingPost.Resume = dto.Resume!.Trim();
             
-            // Actualizar URLs de imagen y PDF si se proporcionan
+            
             if (dto.Image != null && existingPost.Image != null)
                 existingPost.Image.Url = dto.Image;
             
@@ -224,10 +230,8 @@ public class PostController : ControllerBase
             if (existingPost == null)
                 return NotFound($"Post con ID {id} no encontrado");
 
-            // Por ahora usamos UpdatePost como workaround - necesitamos agregar Delete al DAO
-            // TODO: Agregar método Delete a DAOPost interface y EFDAOPost
-            // Como workaround temporal, usemos el contexto directamente
-            return StatusCode(501, "Delete functionality needs to be implemented in DAOPost");
+            daoPost.Delete(id);
+            return Ok($"Post con ID {id} eliminado correctamente");
         }
         catch (Exception ex)
         {

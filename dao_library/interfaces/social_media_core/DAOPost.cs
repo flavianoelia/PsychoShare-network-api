@@ -5,4 +5,5 @@ public interface DAOPost
     List<Post> GetAllPosts();
     void Save(Post post);
     void UpdatePost(long IdPost);
+    void Delete(long IdPost);
 }

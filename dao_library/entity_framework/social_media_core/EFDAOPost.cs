@@ -34,6 +34,15 @@ public class EFDAOPost : DAOPost
             dbContext.SaveChanges();
         }
     }
+    public void Delete(long IdPost)
+    {
+        var existingPost = dbContext.Posts.FirstOrDefault(p => p.Id == IdPost);
+        if (existingPost != null)
+        {
+            dbContext.Posts.Remove(existingPost);
+            dbContext.SaveChanges();
+        }
+    }
     public async Task SaveAsync(Post post)
     {
         await dbContext.Posts.AddAsync(post);
