@@ -5,19 +5,17 @@ using System.Text.RegularExpressions;
 namespace psychoshare_api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger;
-    private readonly DAOFactory _daoFactory;
+    private DAOFactory? df;
 
-    public UserController(ILogger<UserController> logger, DAOFactory daoFactory)
+    public UserController(ILogger<UserController> logger, DAOFactory df)
     {
         _logger = logger;
-        _daoFactory = daoFactory;
+        this.df = df;
     }
-
-    #region 🔹 Validaciones privadas
 
     private bool IsValidNameOrLastName(string? value)
     {
@@ -40,6 +38,7 @@ public class UserController : ControllerBase
         return passwordRegex.IsMatch(password);
     }
 
+    
     private List<string> ValidateUserFields(CreateUserRequestDTO req)
     {
         var errores = new List<string>();
@@ -59,67 +58,60 @@ public class UserController : ControllerBase
         return errores;
     }
 
-    #endregion
-
-    #region 🔹 Endpoints públicos
-
-    // POST: api/User
+    // 🔹 POST: Register
     [HttpPost]
     public async Task<IActionResult> Register([FromBody] CreateUserRequestDTO req)
     {
         var errores = ValidateUserFields(req);
+
         if (errores.Any())
             return BadRequest(new { success = false, errors = errores });
 
-        var existingUser = _daoFactory.DAOUser().GetUserByEmail(req.Email!.Trim());
+        var existingUser = df?.DAOUser().GetUserByEmail(req.Email!.Trim());
         if (existingUser != null)
             return Conflict(new { success = false, message = "El email ya está registrado." });
 
+        
         var user = new entity_library.system.User
         {
-            Name = req.Name!.Trim(),
-            LastName = req.LastName!.Trim(),
-            Email = req.Email!.Trim(),
+            Name = req.Name!,
+            LastName = req.LastName!,
+            Email = req.Email!,
             PasswordHash = entity_library.system.User.HashPassword(req.Password!)
         };
 
-        await _daoFactory.DAOUser().SaveAsync(user);
+        if (df != null)
+        {
+            // BP
+            await df.DAOUser().SaveAsync(user);
+        }
 
         return Ok(new { success = true, message = "Usuario registrado y guardado." });
     }
 
-    // GET: api/User/login
     [HttpGet("login")]
     public void Login()
     {
         // TODO: Implement user login
     }
 
-    // GET: api/User/{id}
-    [HttpGet("{id:long}")]
+    [HttpGet("{id}")]
     public void GetUser(long id)
     {
         // TODO: Implement user getUser
     }
 
-    // PUT: api/User/edit/{id}
-    [HttpPut("edit/{id:long}")]
-    public IActionResult EditProfile(long id)
+    [HttpPut("edit/{id}")]
+    public IActionResult EditProfile(int id)
     {
         // TODO: Edit user profile
         return Ok();
     }
 
-    // GET: api/User/check-email?email=example@test.com
     [HttpGet("check-email")]
     public IActionResult CheckEmail([FromQuery] string email)
     {
-        if (string.IsNullOrWhiteSpace(email))
-            return BadRequest("El parámetro 'email' es obligatorio.");
-
-        var user = _daoFactory.DAOUser().GetUserByEmail(email.Trim());
+        var user = df?.DAOUser().GetUserByEmail(email);
         return Ok(new { exists = user != null });
     }
-
-    #endregion
 }
