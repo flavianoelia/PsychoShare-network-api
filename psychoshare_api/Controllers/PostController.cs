@@ -58,8 +58,8 @@ public class PostController : ControllerBase
             Authorship = dto.Authorship!.Trim(),
             Resume = dto.Resume!.Trim(),
             UserId = 1,
-            NameOwner = "Pepe", // Usuario Mock ID=1 (Pepe Roldan)
-            LastnameOwner = "Roldan" // Usuario Mock ID=1 (Pepe Roldan)
+            NameOwner = "Pepe", 
+            LastnameOwner = "Roldan" 
         };
 
         Console.WriteLine("DEBUG: Creando post - Title: " + post.Title);
@@ -137,14 +137,24 @@ public class PostController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetAllPosts()
+    public IActionResult GetAllPosts([FromQuery] FeedRequestDto? request = null)
     {
         try
         {
-            var daoPost = _daoFactory.DaoPost();
-            var posts = daoPost.GetAllPosts();
+            request ??= new FeedRequestDto(); 
 
-            var response = posts.Select(post => new PostResponseDto
+            
+            if (request.Page < 1) request.Page = 1;
+            if (request.Size < 1 || request.Size > 20) request.Size = 10; 
+
+            var daoPost = _daoFactory.DaoPost();
+            var (posts, totalCount) = daoPost.GetAllPostsPaginated(
+                request.Page, 
+                request.Size, 
+                request.SearchTerm
+            );
+
+            var postDtos = posts.Select(post => new PostResponseDto
             {
                 Id = post.Id,
                 Description = post.Description,
@@ -157,6 +167,15 @@ public class PostController : ControllerBase
                 NameOwner = post.NameOwner,
                 LastnameOwner = post.LastnameOwner
             }).ToList();
+
+            var response = new PostFeedResponseDto
+            {
+                Posts = postDtos,
+                TotalCount = totalCount,
+                Page = request.Page,
+                Size = request.Size,
+                HasMore = (request.Page * request.Size) < totalCount
+            };
 
             return Ok(response);
         }
@@ -236,6 +255,54 @@ public class PostController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error al eliminar post {PostId}", id);
+            return StatusCode(500, "Error interno del servidor");
+        }
+    }
+
+    [HttpGet("feed")]
+    public IActionResult GetFeed([FromQuery] FeedRequestDto request)
+    {
+        try
+        {
+            
+            if (request.Page < 1) request.Page = 1;
+            if (request.Size < 1 || request.Size > 20) request.Size = 10; 
+
+            var daoPost = _daoFactory.DaoPost();
+            var (posts, totalCount) = daoPost.GetAllPostsPaginated(
+                request.Page, 
+                request.Size, 
+                request.SearchTerm
+            );
+
+            var postDtos = posts.Select(post => new PostResponseDto
+            {
+                Id = post.Id,
+                Description = post.Description,
+                Title = post.Title,
+                Authorship = post.Authorship,
+                Resume = post.Resume,
+                ImageUrl = post.Image?.Url,
+                PdfUrl = post.Pdf?.Url,
+                UserId = post.UserId,
+                NameOwner = post.NameOwner,
+                LastnameOwner = post.LastnameOwner
+            }).ToList();
+
+            var response = new PostFeedResponseDto
+            {
+                Posts = postDtos,
+                TotalCount = totalCount,
+                Page = request.Page,
+                Size = request.Size,
+                HasMore = (request.Page * request.Size) < totalCount
+            };
+
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al obtener feed de posts");
             return StatusCode(500, "Error interno del servidor");
         }
     }

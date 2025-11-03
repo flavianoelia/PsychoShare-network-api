@@ -20,6 +20,33 @@ public class EFDAOPost : DAOPost
     {
         return this.dbContext.Posts.ToList();
     }
+
+    public (List<Post> Posts, int TotalCount) GetAllPostsPaginated(int page, int size, string? searchTerm = null)
+    {
+        var query = dbContext.Posts.AsQueryable();
+
+        // Aplicar filtro de búsqueda si existe
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            var search = searchTerm.Trim().ToLower();
+            query = query.Where(p => 
+                p.Title.ToLower().Contains(search) || 
+                p.Description.ToLower().Contains(search) ||
+                p.Authorship.ToLower().Contains(search));
+        }
+
+        // Obtener total count antes de la paginación
+        var totalCount = query.Count();
+
+        // Aplicar paginación
+        var posts = query
+            .OrderByDescending(p => p.Id) // Orden por fecha de creación (más recientes primero)
+            .Skip((page - 1) * size)
+            .Take(size)
+            .ToList();
+
+        return (posts, totalCount);
+    }
     public void Save(Post post)
     {
         dbContext.Posts.Add(post);
