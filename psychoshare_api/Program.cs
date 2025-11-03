@@ -29,7 +29,7 @@ var connectionString = $"Server={dbServer};" +
                        $"Uid={dbUser};" +
                        $"Pwd={dbPassword};";
 
-Console.WriteLine($"DEBUG: Connection String = {connectionString.Replace(dbPassword, "***")}");
+Console.WriteLine($"DEBUG: Connection String = {connectionString.Replace(dbPassword ?? "", "***")}");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options
