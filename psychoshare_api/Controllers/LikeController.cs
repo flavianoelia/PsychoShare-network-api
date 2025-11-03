@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using psychoshare_api.DTOs.Like;
 
@@ -5,6 +6,7 @@ namespace psychoshare_api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize]
 public class LikeController : ControllerBase
 {
     private readonly ILogger<LikeController> _logger;

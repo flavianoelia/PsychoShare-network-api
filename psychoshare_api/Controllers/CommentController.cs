@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using psychoshare_api.DTOs.Comment;
 using entity_library.system;
+using Microsoft.AspNetCore.Authorization;
 
 namespace psychoshare_api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize]
 public class CommentController : ControllerBase
 {
     private readonly ILogger<CommentController> _logger;

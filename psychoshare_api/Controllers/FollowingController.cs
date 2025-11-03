@@ -1,5 +1,6 @@
 using entity_library.following;
 using entity_library.system;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using psychoshare_api.DTOs.Following;
 using psychoshare_api.DTOs.User;
@@ -8,6 +9,7 @@ namespace psychoshare_api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize]
 public class FollowingController : ControllerBase
 {
     private readonly ILogger<FollowingController> _logger;

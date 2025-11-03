@@ -14,7 +14,7 @@ public class TokenService
     public string CreateToken(entity_library.system.User user)
     {
         // ----------------------------------------------------
-        // STEP 1: DEFINITION OF THE IDENTITY (PAYLOAD / CLAIMS)
+        //STEP 1: DEFINITION OF THE IDENTITY (PAYLOAD / CLAIMS)
         // ----------------------------------------------------
 
         // Claims that go to be codified for the body of the token
@@ -32,62 +32,58 @@ public class TokenService
         // Assign created claims to a new identity.
         var subjectIdentity = new ClaimsIdentity(userClaims);
 
-
         // ----------------------------------------------------
         // STEP 2: CREATION OF THE SIGNATURE
         // ----------------------------------------------------
         
-        // 2.1. Obtiene la Clave Secreta desde el archivo de configuración (appsettings.json)
-        // La clave se convierte a bytes usando UTF8.
+        // 2.1. Get key from appssetingDevelopment.json
         string jwtKey = _config["Jwt:Key"] 
             ?? throw new ArgumentNullException("La clave 'Jwt:Key' no fue encontrada en la configuración.");
             
         var claveSecreta = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
         
-        // 2.2. Define las credenciales de firma: la clave y el algoritmo criptográfico.
-        // HmacSha512Signature es el algoritmo estándar y seguro para firmar el token.
+        // 2.2. Define credentiasl of the signature: pass and algorithm.
         var credencialesDeFirma = new SigningCredentials(
             claveSecreta, 
             SecurityAlgorithms.HmacSha512Signature
         );
 
-
         // ----------------------------------------------------
-        // PASO 3: DESCRIPTOR DEL TOKEN (REGLAS Y METADATOS)
+        // STEP 3: DESCRIPTOR OF TOKEN (RULES AND METADATA)
         // ----------------------------------------------------
         
-        // 3.1. Crea un objeto que describe TODAS las propiedades del token a generar.
+        // 3.1. Create an object that describes ALL the properties of the token to be generated.
         var descriptorDelToken = new SecurityTokenDescriptor
         {
-            // El Sujeto del token es la identidad que creamos en el Paso 1.
+            // The Subject of the token is the identity we created in Step 1.
             Subject = subjectIdentity, 
             
-            // Define el tiempo de expiración (Ej: 7 días desde ahora).
+            // Define the expiration time (In: 7 days from now).
             Expires = DateTime.Now.AddDays(7), 
             
-            // Asigna las credenciales de firma creadas en el Paso 2.
+            // Assign the signing credentials created in Step 2.
             SigningCredentials = credencialesDeFirma, 
             
-            // Quién EMITE el token (el nombre de tu API, tomado de appsettings).
+            // Who ISSUES the token (your API name, taken from appsettings).
             Issuer = _config["Jwt:Issuer"],
             
-            // Quién DEBE USAR el token (el cliente, tomado de appsettings).
+            // Who MUST USE the token (the client, taken from appsettings).
             Audience = _config["Jwt:Audience"] 
         };
 
 
         // ----------------------------------------------------
-        // PASO 4: CREACIÓN Y SERIALIZACIÓN FINAL
+        // STEP 4: FINAL CREATION AND SERIALIZATION
         // ----------------------------------------------------
 
-        // 4.1. Instancia la clase que sabe cómo crear el objeto token.
+        // 4.1. Instantiate the class that knows how to create the token object.
         var manejadorDeToken = new JwtSecurityTokenHandler();
 
-        // 4.2. Crea el objeto SecurityToken usando el descriptor (es el objeto C# del JWT).
+        // 4.2. Create the Security Token object using the descriptor (it's the C# object of the JWT).
         var objetoToken = manejadorDeToken.CreateToken(descriptorDelToken);
 
-        // 4.3. Convierte el objeto token en la cadena de texto final (Header.Payload.Signature)
-        // y la retorna para ser enviada al cliente.
+        // 4.3. Convert the token object into the final text string (Header.Payload.Signature)
+        // and returns it to be sent to the customer.
         return manejadorDeToken.WriteToken(objetoToken);
     }
 }

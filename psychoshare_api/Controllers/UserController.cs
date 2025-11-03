@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using psychoshare_api.DTOs.User;
 using System.Text.RegularExpressions;
@@ -6,6 +7,7 @@ namespace psychoshare_api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize]
 public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger;
@@ -65,6 +67,7 @@ public class UserController : ControllerBase
 
     #region Register
     [HttpPost]
+    [AllowAnonymous]
     public async Task<IActionResult> Register([FromBody] RegisterRequestDTO req)
     {
         var errores = ValidateUserFields(req);
@@ -94,6 +97,7 @@ public class UserController : ControllerBase
 
     #region Login
     [HttpPost("login")]
+    [AllowAnonymous]
     public IActionResult Login(LoginRequestDTO req)
     {
         if (!IsValidEmail(req.Email))
@@ -136,6 +140,7 @@ public class UserController : ControllerBase
     }
 
     [HttpGet("check-email")]
+    [AllowAnonymous]
     public IActionResult CheckEmail([FromQuery] string email)
     {
         var user = df?.DAOUser().GetUserByEmail(email);
