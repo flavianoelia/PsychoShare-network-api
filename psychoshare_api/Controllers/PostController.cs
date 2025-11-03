@@ -51,22 +51,20 @@ public class PostController : ControllerBase
         if (errors.Count > 0)
             return BadRequest(errors);
 
+        // TODO: Get user info from authenticated session/JWT token
         var post = new Post
         {
             Description = dto.Description!.Trim(),
             Title = dto.Title!.Trim(),
             Authorship = dto.Authorship!.Trim(),
             Resume = dto.Resume!.Trim(),
-            UserId = 1,
-            NameOwner = "Pepe", 
-            LastnameOwner = "Roldan" 
+            UserId = 1, // TODO: Get from authenticated user
+            NameOwner = "Test User", // TODO: Get from authenticated user  
+            LastnameOwner = "Demo" // TODO: Get from authenticated user
         };
 
-        Console.WriteLine("DEBUG: Creando post - Title: " + post.Title);
         var daoPost = _daoFactory.DaoPost();
-        Console.WriteLine("DEBUG: DAO obtenido, llamando Save...");
         daoPost.Save(post);
-        Console.WriteLine("DEBUG: Save completado");
 
         return Ok();
     }
