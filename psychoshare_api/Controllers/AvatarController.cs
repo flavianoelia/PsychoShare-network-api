@@ -1,6 +1,7 @@
 using psychoshare_api.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using entity_library.media;
 
 namespace psychoshare_api.Controllers;
 
@@ -9,13 +10,12 @@ namespace psychoshare_api.Controllers;
 public class AvatarController : ControllerBase
 {
     private readonly ILogger<AvatarController> _logger;
-    private readonly FileUploadService? _fileUploadService;
+    private readonly FileUploadService _fileUploadService;
 
     public AvatarController(ILogger<AvatarController> logger, FileUploadService fileUploadService)
     {
         _logger = logger;
-        _fileUploadService = fileUploadService ?? throw new ArgumentNullException(nameof(fileUploadService));
-;
+        _fileUploadService = fileUploadService;
     }
 
     [HttpPost("upload/{userId}")] //El endpoint ahora recibe el archivo (IFormFile)

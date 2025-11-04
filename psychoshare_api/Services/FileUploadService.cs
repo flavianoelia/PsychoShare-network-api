@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using psychoshare_api.Services.Interfaces;
 using System.IO;
 
 namespace psychoshare_api.Services
 {
-    public class FileUploadService
+    public class FileUploadService : IFileUploadService
     {
         private readonly IWebHostEnvironment _env;
 

@@ -1,3 +1,5 @@
+using entity_library.system;
+namespace entity_library.media;
 public class Image : File
 {
     private string imageType = "";

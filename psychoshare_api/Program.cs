@@ -79,3 +79,20 @@ app.UseStaticFiles();
 app.MapControllers();
 
 app.Run();
+
+/* 
+app.UseStaticFiles(new StaticFileOptions {
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
+    RequestPath = ""
+});
+
+builder.Services.AddScoped<IFileUploadService, FileUploadService>();
+public static class FileUploadConstants
+{
+    public const long MaxFileSize = 5 * 1024 * 1024; // 5MB
+    public static readonly string[] AllowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
+    public const string AvatarFolder = "wwwroot/uploads/avatars/";
+    public const string AvatarUrlPrefix = "/uploads/avatars/";
+}
+*/
