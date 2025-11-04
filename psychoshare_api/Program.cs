@@ -4,6 +4,7 @@ using psychoshare_api;
 using dao_library.Contexts;
 using DotNetEnv;
 using psychoshare_api.Services;
+using psychoshare_api.Services.Interfaces;
 
 // Load .env.local file
 Env.Load("../.env.local");
@@ -59,6 +60,8 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddScoped<DAOFactory, EFDAOFactory>();
 builder.Services.AddScoped<FileUploadService>();
+builder.Services.AddScoped<IFileUploadService, FileUploadService>();
+
 var app = builder.Build();
 
 app.UseCors("AllowAll");
