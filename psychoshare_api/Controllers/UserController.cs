@@ -117,7 +117,7 @@ public class UserController : ControllerBase
 
         return Ok(new LoginResponseDTO
         {
-            succes = true,
+            success = true,
             message = "Inicio de sesión exitoso",
             email = user.Email,
             userId = user.Id,

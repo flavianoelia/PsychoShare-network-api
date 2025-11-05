@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using psychoshare_api.DTOs.Post;
 
@@ -5,6 +6,7 @@ namespace psychoshare_api.Controllers;
 
 [ApiController]
 [Route("api/post")]
+[Authorize]
 public class PostController : ControllerBase
 {
     private readonly ILogger<PostController> _logger;
