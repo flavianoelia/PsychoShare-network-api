@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using psychoshare_api.DTOs.Report;
 using entity_library.ReportPolicy;
+using Microsoft.AspNetCore.Authorization;
 
 namespace psychoshare_api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize]
 public class ReportController : ControllerBase
 {
     private readonly ILogger<ReportController> _logger;
