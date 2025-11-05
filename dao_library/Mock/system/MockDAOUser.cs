@@ -63,6 +63,7 @@ public class MockDAOUser : DAOUser
     }
     public Task SaveAsync(User user)
     {
+        // Mock implementation - no actual async work needed
         return Task.CompletedTask;
     }
 }
