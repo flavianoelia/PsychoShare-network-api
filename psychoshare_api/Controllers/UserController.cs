@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using psychoshare_api.DTOs.User;
 using System.Text.RegularExpressions;
+using entity_library.media;
 
 namespace psychoshare_api.Controllers;
 
@@ -139,7 +140,7 @@ public class UserController : ControllerBase
             user.Name,
             user.LastName,
             user.Email,
-            ProfilePictureUrl = user.Image?.Url,
+           ProfilePictureUrl = user.Avatar?.Url,
             RoleName = user.Role?.RoleName
         };
 
@@ -172,10 +173,10 @@ public IActionResult EditProfile(long id, [FromBody] UpdateUserRequestDto req)
     // 🔹 Imagen de perfil (solo si tu entidad tiene relación Image)
     if (!string.IsNullOrWhiteSpace(req.ProfilePictureUrl))
     {
-        if (user.Image == null)
-            user.Image = new Image();
+        if (user.Avatar == null)
+            user.Avatar = new Avatar();
 
-        user.Image.Url = req.ProfilePictureUrl.Trim();
+        user.Avatar.Url = req.ProfilePictureUrl.Trim();
     }
 
     // 🔹 Guardar cambios
@@ -189,7 +190,7 @@ public IActionResult EditProfile(long id, [FromBody] UpdateUserRequestDto req)
         LastName = user.LastName,
         Email = user.Email,
         RoleName = user.Role?.RoleName ?? "",
-        ImageUrl = user.Image?.Url ?? ""
+        ImageUrl = user.Avatar?.Url ?? ""
     };
 
     return Ok(new

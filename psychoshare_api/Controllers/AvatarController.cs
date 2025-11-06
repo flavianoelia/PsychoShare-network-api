@@ -19,9 +19,9 @@ public class AvatarController : ControllerBase
         _fileUploadService = fileUploadService;
     }
 
-    /*[HttpPost("upload/{userId}")]
+    [HttpPost("upload/{userId}")]
     [Consumes("multipart/form-data")]
-    public IActionResult UploadAvatar(int userId, [FromForm] IFormFile file)
+    public IActionResult UploadAvatar(int userId, IFormFile file)
     {
         if (_fileUploadService == null)
         {
@@ -31,7 +31,7 @@ public class AvatarController : ControllerBase
         string fileUrl = _fileUploadService.SaveAvatar(file);
         return Ok(new { url = fileUrl });
     }
-    */
+    
 
     [HttpGet("{userId}")]
     public void GetUserAvatar(int userId)
@@ -39,7 +39,7 @@ public class AvatarController : ControllerBase
         // TODO: Get user avatar
     }
 
-    /*[HttpPut("{userId}")]
+    [HttpPut("{userId}")]
     public void UpdateAvatar(int userId)
     {
         // TODO: Update user avatar
@@ -50,5 +50,5 @@ public class AvatarController : ControllerBase
     {
         // TODO: Delete user avatar
     }
-    */
+    
 }

@@ -29,7 +29,7 @@ public class EFDAOUser : DAOUser
     public void UpdateUser(long idUser)
     {
         var user = dbContext.Users
-            //.Include(u => u.Image) // solo si usas imagen
+            .Include(u => u.Avatar) // solo si usas imagen
             .Include(u => u.Role)  // solo si usas role
             .FirstOrDefault(u => u.Id == idUser);
 

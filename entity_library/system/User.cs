@@ -7,16 +7,6 @@ namespace entity_library.system
         private string passwordHash = "";
         private Role? role;
         private Avatar? avatar;
-        private ICollection<Image>? images;
-
-        public virtual ICollection<Image>? Images
-        {
-            get { return images; }
-            set
-            {
-                images = value?.Where(img => img.Url != "").ToList();
-            }
-        }
 
         public string Email
         {
