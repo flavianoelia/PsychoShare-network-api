@@ -22,48 +22,6 @@ namespace dao_library.Migrations
                 .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("Ban", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("BanType")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<long?>("BanUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("BannedByAdminId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("BannedUserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("Reason")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<long?>("RelatedReportId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BanUserId");
-
-                    b.ToTable("Bans");
-                });
-
             modelBuilder.Entity("Comment", b =>
                 {
                     b.Property<long>("Id")
@@ -89,6 +47,26 @@ namespace dao_library.Migrations
                     b.ToTable("Comments");
                 });
 
+            modelBuilder.Entity("File", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(5)
+                        .HasColumnType("varchar(5)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Files");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("File");
+
+                    b.UseTphMappingStrategy();
+                });
+
             modelBuilder.Entity("Following", b =>
                 {
                     b.Property<long>("Id")
@@ -109,28 +87,6 @@ namespace dao_library.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Followings");
-                });
-
-            modelBuilder.Entity("Image", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("IdUser")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("ImageType")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("Like", b =>
@@ -154,26 +110,32 @@ namespace dao_library.Migrations
                     b.ToTable("Likes");
                 });
 
-            modelBuilder.Entity("Pdf", b =>
+            modelBuilder.Entity("Person", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    b.Property<long>("IdUser")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Title")
+                    b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Url")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<string>("PersonType")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("varchar(8)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Pdfs");
+                    b.ToTable("Persons");
+
+                    b.HasDiscriminator<string>("PersonType").HasValue("Person");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Post", b =>
@@ -229,7 +191,64 @@ namespace dao_library.Migrations
                     b.ToTable("Posts");
                 });
 
-            modelBuilder.Entity("Report", b =>
+            modelBuilder.Entity("Role", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+                });
+
+            modelBuilder.Entity("entity_library.ReportPolicy.Ban", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("BanType")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<long?>("BanUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("BannedByAdminId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("BannedUserId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<long?>("RelatedReportId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BanUserId");
+
+                    b.ToTable("Bans");
+                });
+
+            modelBuilder.Entity("entity_library.ReportPolicy.Report", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -272,26 +291,54 @@ namespace dao_library.Migrations
                     b.ToTable("Reports");
                 });
 
-            modelBuilder.Entity("Role", b =>
+            modelBuilder.Entity("Image", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.HasBaseType("File");
+
+                    b.Property<long>("IdUser")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("RoleName")
+                    b.Property<string>("ImageType")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.HasKey("Id");
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
-                    b.ToTable("Roles");
+                    b.HasDiscriminator().HasValue("Image");
+                });
+
+            modelBuilder.Entity("Pdf", b =>
+                {
+                    b.HasBaseType("File");
+
+                    b.Property<long>("IdUser")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.ToTable("Files", t =>
+                        {
+                            t.Property("IdUser")
+                                .HasColumnName("Pdf_IdUser");
+
+                            t.Property("Url")
+                                .HasColumnName("Pdf_Url");
+                        });
+
+                    b.HasDiscriminator().HasValue("Pdf");
                 });
 
             modelBuilder.Entity("entity_library.system.User", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                    b.HasBaseType("Person");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -301,22 +348,12 @@ namespace dao_library.Migrations
                     b.Property<long?>("ImageId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<long?>("RoleId")
                         .HasColumnType("bigint");
-
-                    b.HasKey("Id");
 
                     b.HasIndex("Email")
                         .IsUnique();
@@ -325,16 +362,7 @@ namespace dao_library.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("Ban", b =>
-                {
-                    b.HasOne("entity_library.system.User", "BanUser")
-                        .WithMany()
-                        .HasForeignKey("BanUserId");
-
-                    b.Navigation("BanUser");
+                    b.HasDiscriminator().HasValue("User");
                 });
 
             modelBuilder.Entity("Comment", b =>
@@ -407,7 +435,16 @@ namespace dao_library.Migrations
                     b.Navigation("Pdf");
                 });
 
-            modelBuilder.Entity("Report", b =>
+            modelBuilder.Entity("entity_library.ReportPolicy.Ban", b =>
+                {
+                    b.HasOne("entity_library.system.User", "BanUser")
+                        .WithMany()
+                        .HasForeignKey("BanUserId");
+
+                    b.Navigation("BanUser");
+                });
+
+            modelBuilder.Entity("entity_library.ReportPolicy.Report", b =>
                 {
                     b.HasOne("entity_library.system.User", "ReportedUser")
                         .WithMany()

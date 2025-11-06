@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace psychoshare_api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize]
 public class RoleController : ControllerBase
 {
     private readonly ILogger<RoleController> _logger;

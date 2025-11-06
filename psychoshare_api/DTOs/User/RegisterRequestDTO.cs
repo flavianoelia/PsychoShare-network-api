@@ -1,6 +1,6 @@
 namespace psychoshare_api.DTOs.User;
 
-public class CreateUserRequestDTO
+public class RegisterRequestDTO
 {
     public string? Name { get; set; }
     public string? LastName { get; set; }

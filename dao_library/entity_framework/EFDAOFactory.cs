@@ -1,4 +1,9 @@
 using dao_library.Contexts;
+using dao_library.interfaces.admin;
+using dao_library.interfaces.social_media_core;
+using dao_library.interfaces.following;
+using dao_library.entity_framework.admin;
+using dao_library.entity_framework.following;
 
 public class EFDAOFactory : DAOFactory
 {
@@ -25,6 +30,21 @@ public class EFDAOFactory : DAOFactory
 
     public DAOUser DAOUser()
     {
-        return new EFDAOUser(this.appDbContext); //agregado
+        return new EFDAOUser(this.appDbContext);
+    }
+
+    public DAOReport DAOReport()
+    {
+        return new EFDAOReport(this.appDbContext);
+    }
+
+    public DAOLike DAOLike()
+    {
+        return new EFDAOLike(this.appDbContext);
+    }
+
+    public DAOBan DAOBan()
+    {
+        return new EFDAOBan(this.appDbContext);
     }
 }

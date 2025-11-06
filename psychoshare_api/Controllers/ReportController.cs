@@ -1,50 +1,120 @@
 using Microsoft.AspNetCore.Mvc;
+using psychoshare_api.DTOs.Report;
+using entity_library.ReportPolicy;
+using Microsoft.AspNetCore.Authorization;
 
 namespace psychoshare_api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize]
 public class ReportController : ControllerBase
 {
     private readonly ILogger<ReportController> _logger;
+    private readonly DAOFactory _daoFactory;
 
-    public ReportController(ILogger<ReportController> logger)
+    public ReportController(ILogger<ReportController> logger, DAOFactory daoFactory)
     {
         _logger = logger;
+        _daoFactory = daoFactory;
     }
 
     [HttpPost]
-    public Task<ActionResult<ReportResponseDto>> ReportUser([FromBody] CreateReportDto createReportDto)
+    public ActionResult<ReportResponseDto> ReportUser([FromBody] CreateReportDto createReportDto)
     {
-        // TODO: Implement report creation logic using EF Core
-    return Task.FromResult<ActionResult<ReportResponseDto>>(Ok(new { success = false, message = "Not implemented" }));
+        var report = new Report
+        {
+            ReporterUserId = createReportDto.ReporterUserId,
+            ReportedUserId = createReportDto.ReportedUserId,
+            Reason = createReportDto.Reason,
+            Details = createReportDto.Details,
+            ContentType = createReportDto.ContentType,
+            ContentId = createReportDto.ContentId,
+            ReportDate = DateTime.Now
+        };
+
+        _daoFactory.DAOReport().Save(report);
+
+        var response = new ReportResponseDto
+        {
+            Id = report.Id,
+            ReporterUserId = report.ReporterUserId,
+            ReportedUserId = report.ReportedUserId,
+            Reason = report.Reason,
+            Details = report.Details,
+            ReportDate = report.ReportDate,
+            Status = report.Status,
+            ContentType = report.ContentType,
+            ContentId = report.ContentId
+        };
+
+        return Ok(response);
     }
 
     [HttpGet]
-    public Task<ActionResult<List<ReportResponseDto>>> GetAllReports()
+    public ActionResult<List<ReportResponseDto>> GetAllReports()
     {
-        // TODO: Implement get all reports logic using EF Core
-    return Task.FromResult<ActionResult<List<ReportResponseDto>>>(Ok(new { success = false, message = "Not implemented" }));
+        var reports = _daoFactory.DAOReport().GetAll();
+        var response = reports.Select(r => new ReportResponseDto
+        {
+            Id = r.Id,
+            ReporterUserId = r.ReporterUserId,
+            ReportedUserId = r.ReportedUserId,
+            Reason = r.Reason,
+            Details = r.Details,
+            ReportDate = r.ReportDate,
+            Status = r.Status,
+            ContentType = r.ContentType,
+            ContentId = r.ContentId
+        }).ToList();
+
+        return Ok(response);
     }
 
     [HttpGet("{id}")]
-    public Task<ActionResult<ReportResponseDto>> GetReport(long id)
+    public ActionResult<ReportResponseDto> GetReport(long id)
     {
-        // TODO: Implement get report by id logic using EF Core
-    return Task.FromResult<ActionResult<ReportResponseDto>>(Ok(new { success = false, message = "Not implemented" }));
+        var report = _daoFactory.DAOReport().GetById(id);
+        if (report == null)
+            return NotFound();
+
+        var response = new ReportResponseDto
+        {
+            Id = report.Id,
+            ReporterUserId = report.ReporterUserId,
+            ReportedUserId = report.ReportedUserId,
+            Reason = report.Reason,
+            Details = report.Details,
+            ReportDate = report.ReportDate,
+            Status = report.Status,
+            ContentType = report.ContentType,
+            ContentId = report.ContentId
+        };
+
+        return Ok(response);
     }
 
     [HttpPut("{id}/resolve")]
-    public Task<ActionResult<bool>> ResolveReport(long id)
+    public ActionResult<bool> ResolveReport(long id)
     {
-        // TODO: Implement resolve report logic using EF Core
-    return Task.FromResult<ActionResult<bool>>(Ok(new { success = false, message = "Not implemented" }));
+        var report = _daoFactory.DAOReport().GetById(id);
+        if (report == null)
+            return NotFound();
+
+        report.Status = "Resolved";
+        _daoFactory.DAOReport().Update(report);
+
+        return Ok(true);
     }
 
     [HttpDelete("{id}")]
-    public Task<ActionResult<bool>> DeleteReport(long id)
+    public ActionResult<bool> DeleteReport(long id)
     {
-        // TODO: Implement delete report logic using EF Core
-    return Task.FromResult<ActionResult<bool>>(Ok(new { success = false, message = "Not implemented" }));
+        var report = _daoFactory.DAOReport().GetById(id);
+        if (report == null)
+            return NotFound();
+
+        _daoFactory.DAOReport().Delete(report);
+        return Ok(true);
     }
 }

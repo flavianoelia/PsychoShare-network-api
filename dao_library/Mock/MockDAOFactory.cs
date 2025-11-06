@@ -1,3 +1,7 @@
+using dao_library.interfaces.admin;
+using dao_library.interfaces.social_media_core;
+using dao_library.interfaces.following;
+
 public class MockDAOFactory : DAOFactory
 {
     public DAOUser CreateDAOUser()
@@ -21,6 +25,21 @@ public class MockDAOFactory : DAOFactory
     }
 
     public DAOUser DAOUser()
+    {
+        throw new NotImplementedException();
+    }
+
+    public DAOReport DAOReport()
+    {
+        throw new NotImplementedException();
+    }
+
+    public DAOLike DAOLike()
+    {
+        throw new NotImplementedException();
+    }
+
+    public DAOBan DAOBan()
     {
         throw new NotImplementedException();
     }

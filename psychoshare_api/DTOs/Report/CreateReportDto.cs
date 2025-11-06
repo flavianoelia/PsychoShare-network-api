@@ -1,6 +1,11 @@
+namespace psychoshare_api.DTOs.Report;
+
 public class CreateReportDto
 {
-    public string Name { get; set; } = "";
-    public string Lastname { get; set; } = "";
-    public DateTime ReportDate { get; set; }
+    public long ReporterUserId { get; set; }
+    public long ReportedUserId { get; set; }
+    public string Reason { get; set; } = "";
+    public string Details { get; set; } = "";
+    public string ContentType { get; set; } = "User";
+    public long? ContentId { get; set; }
 }
