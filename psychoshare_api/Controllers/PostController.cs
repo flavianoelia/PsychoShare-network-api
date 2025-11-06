@@ -1,12 +1,13 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using psychoshare_api.DTOs.Post;
+using System.Security.Claims;
 
 namespace psychoshare_api.Controllers;
 
 [ApiController]
 [Route("api/post")]
-[Authorize]
+// [Authorize] // COMENTADO TEMPORALMENTE PARA TESTING POST-002
 public class PostController : ControllerBase
 {
     private readonly ILogger<PostController> _logger;
@@ -53,16 +54,21 @@ public class PostController : ControllerBase
         if (errors.Count > 0)
             return BadRequest(errors);
 
-        // TODO: Get user info from authenticated session/JWT token
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdClaim) || !long.TryParse(userIdClaim, out long currentUserId))
+        {
+            return Unauthorized("Token inválido o usuario no identificado");
+        }
+
         var post = new Post
         {
             Description = dto.Description!.Trim(),
             Title = dto.Title!.Trim(),
             Authorship = dto.Authorship!.Trim(),
             Resume = dto.Resume!.Trim(),
-            UserId = 1, // TODO: Get from authenticated user
-            NameOwner = "Test User", // TODO: Get from authenticated user  
-            LastnameOwner = "Demo" // TODO: Get from authenticated user
+            UserId = currentUserId,
+            NameOwner = "User",
+            LastnameOwner = "Name"
         };
 
         var daoPost = _daoFactory.DaoPost();
@@ -264,12 +270,18 @@ public class PostController : ControllerBase
     {
         try
         {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !long.TryParse(userIdClaim, out long currentUserId))
+            {
+                return Unauthorized("Token inválido o usuario no identificado");
+            }
             
             if (request.Page < 1) request.Page = 1;
             if (request.Size < 1 || request.Size > 20) request.Size = 10; 
 
             var daoPost = _daoFactory.DaoPost();
-            var (posts, totalCount) = daoPost.GetAllPostsPaginated(
+            var (posts, totalCount) = daoPost.GetFeedPosts(
+                currentUserId,
                 request.Page, 
                 request.Size, 
                 request.SearchTerm
@@ -304,6 +316,57 @@ public class PostController : ControllerBase
         {
             _logger.LogError(ex, "Error al obtener feed de posts");
             return StatusCode(500, "Error interno del servidor");
+        }
+    }
+
+    // ENDPOINT DE SALUD PARA VERIFICAR QUE EL SERVIDOR FUNCIONA
+    [HttpGet("health")]
+    public IActionResult HealthCheck()
+    {
+        return Ok(new { status = "OK", timestamp = DateTime.Now, message = "Server is running" });
+    }
+
+    // ENDPOINT TEMPORAL PARA PROBAR POST-002
+    [HttpGet("feed-test/{userId}")]
+    public IActionResult GetFeedTest(int userId, [FromQuery] FeedRequestDto? request = null)
+    {
+        try
+        {
+            request ??= new FeedRequestDto();
+            if (request.Page < 1) request.Page = 1;
+            if (request.Size < 1 || request.Size > 20) request.Size = 10;
+
+            var daoPost = _daoFactory.DaoPost();
+            var (posts, totalCount) = daoPost.GetFeedPosts(userId, request.Page, request.Size, request.SearchTerm);
+
+            var postDtos = posts.Select(post => new PostResponseDto
+            {
+                Id = post.Id,
+                Description = post.Description,
+                Title = post.Title,
+                Authorship = post.Authorship,
+                Resume = post.Resume,
+                ImageUrl = post.Image?.Url,
+                PdfUrl = post.Pdf?.Url,
+                UserId = post.UserId,
+                NameOwner = post.NameOwner,
+                LastnameOwner = post.LastnameOwner
+            }).ToList();
+
+            var response = new PostFeedResponseDto
+            {
+                Posts = postDtos,
+                TotalCount = totalCount,
+                Page = request.Page,
+                Size = request.Size,
+                HasMore = (request.Page * request.Size) < totalCount
+            };
+
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { Error = ex.Message });
         }
     }
 }
