@@ -3,6 +3,9 @@ using dao_library;
 using psychoshare_api;
 using dao_library.Contexts;
 using DotNetEnv;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using psychoshare_api.Services;
 using psychoshare_api.Services.Interfaces;
 using Microsoft.OpenApi.Models;
@@ -13,6 +16,32 @@ Env.Load(Path.Combine(AppContext.BaseDirectory, "..", "..", ".env.local"));
 
 var builder = WebApplication.CreateBuilder(args);
 
+#region Token
+builder.Services.AddScoped<TokenService>();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            // Valida la firma del token usando la clave secreta
+            ValidateIssuerSigningKey = true, 
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!)),
+            
+            // Valida el emisor (debe coincidir con "Jwt:Issuer")
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            
+            // Valida la audiencia (debe coincidir con "Jwt:Audience")
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            
+            // Valida que el token no haya expirado
+            ValidateLifetime = true
+        };
+    });
+#endregion
+
+#region Conexion
 // Build connection string using environment variables
 var dbServer = Environment.GetEnvironmentVariable("DB_SERVER") ?? "localhost";
 var dbPort = Environment.GetEnvironmentVariable("DB_PORT") ?? "3306";
@@ -35,8 +64,7 @@ var connectionString = $"Server={dbServer};" +
 var maskedConnectionString = !string.IsNullOrWhiteSpace(dbPassword)
     ? connectionString.Replace(dbPassword, "***")
     : connectionString;
-
-Console.WriteLine($"DEBUG: Connection String = {maskedConnectionString}");
+//Console.WriteLine($"DEBUG: Connection String = {connectionString.Replace(dbPassword ?? "", "***")}");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options
@@ -82,6 +110,8 @@ builder.Services.AddScoped<IFileUploadService, FileUploadService>();
 
 var app = builder.Build();
 
+
+
 app.UseCors("AllowAll");
 
 // Configure the HTTP request pipeline.
@@ -93,6 +123,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseStaticFiles();

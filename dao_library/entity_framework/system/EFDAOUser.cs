@@ -28,7 +28,20 @@ public class EFDAOUser : DAOUser
     
     public void UpdateUser(long idUser)
     {
-        throw new NotImplementedException();
+        var user = dbContext.Users
+            //.Include(u => u.Image) // solo si usas imagen
+            .Include(u => u.Role)  // solo si usas role
+            .FirstOrDefault(u => u.Id == idUser);
+
+        if (user == null)
+            throw new Exception("Usuario no encontrado.");
+
+        dbContext.Users.Update(user);
+        dbContext.SaveChanges();
+    }
+    public bool ExistsByEmailExceptUser(string email, long userId)
+    {
+        return dbContext.Users.Any(u => u.Email == email && u.Id != userId);
     }
     
     public void Delete(long IdUser)

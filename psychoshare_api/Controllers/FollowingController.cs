@@ -1,5 +1,6 @@
 using entity_library.following;
 using entity_library.system;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using psychoshare_api.DTOs.Following;
 using psychoshare_api.DTOs.User;
@@ -8,6 +9,7 @@ namespace psychoshare_api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Authorize]
 public class FollowingController : ControllerBase
 {
     private readonly ILogger<FollowingController> _logger;
@@ -92,11 +94,10 @@ public class FollowingController : ControllerBase
             var followers = df!.DAOFollowing().GetFollowersFromUser(userId);
             var response = followers.Select(user => new UserResponseDto
             {
-                IdPerson = user.Id,
+                Id = user.Id,
                 Name = user.Name,
                 LastName = user.LastName,
-                Email = user.Email,
-                CreatedAt = DateTime.Now
+                Email = user.Email
             }).ToList();
             return Ok(response);
         }
@@ -115,11 +116,10 @@ public class FollowingController : ControllerBase
             var following = df!.DAOFollowing().GetContactsFromUser(userId);
             var response = following.Select(user => new UserResponseDto
             {
-                IdPerson = user.Id,
+                Id = user.Id,
                 Name = user.Name,
                 LastName = user.LastName,
-                Email = user.Email,
-                CreatedAt = DateTime.Now
+                Email = user.Email
             }).ToList();
             return Ok(response);
         }
