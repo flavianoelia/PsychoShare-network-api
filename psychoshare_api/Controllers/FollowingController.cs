@@ -94,11 +94,10 @@ public class FollowingController : ControllerBase
             var followers = df!.DAOFollowing().GetFollowersFromUser(userId);
             var response = followers.Select(user => new UserResponseDto
             {
-                IdPerson = user.Id,
+                Id = user.Id,
                 Name = user.Name,
                 LastName = user.LastName,
-                Email = user.Email,
-                CreatedAt = DateTime.Now
+                Email = user.Email
             }).ToList();
             return Ok(response);
         }
@@ -117,11 +116,10 @@ public class FollowingController : ControllerBase
             var following = df!.DAOFollowing().GetContactsFromUser(userId);
             var response = following.Select(user => new UserResponseDto
             {
-                IdPerson = user.Id,
+                Id = user.Id,
                 Name = user.Name,
                 LastName = user.LastName,
-                Email = user.Email,
-                CreatedAt = DateTime.Now
+                Email = user.Email
             }).ToList();
             return Ok(response);
         }
