@@ -19,19 +19,19 @@ public class AvatarController : ControllerBase
         _fileUploadService = fileUploadService;
     }
 
-    [HttpPost("upload/{userId}")] //El endpoint ahora recibe el archivo (IFormFile)
-    public IActionResult UploadAvatar(int userId, [FromForm] IFormFile file) //ELEGAR la tarea al servicio (Separación de Responsabilidades)
-    {   
+    /*[HttpPost("upload/{userId}")]
+    [Consumes("multipart/form-data")]
+    public IActionResult UploadAvatar(int userId, [FromForm] IFormFile file)
+    {
         if (_fileUploadService == null)
         {
             return StatusCode(500, "Servicio de carga no disponible.");
         }
-        //TODO: Validación de archivos y errores (FASE 2)
+
         string fileUrl = _fileUploadService.SaveAvatar(file);
-        // TODO: Guardar la URL en la BD (FASE 4)
-        
         return Ok(new { url = fileUrl });
     }
+    */
 
     [HttpGet("{userId}")]
     public void GetUserAvatar(int userId)
@@ -39,7 +39,7 @@ public class AvatarController : ControllerBase
         // TODO: Get user avatar
     }
 
-    [HttpPut("{userId}")]
+    /*[HttpPut("{userId}")]
     public void UpdateAvatar(int userId)
     {
         // TODO: Update user avatar
@@ -50,4 +50,5 @@ public class AvatarController : ControllerBase
     {
         // TODO: Delete user avatar
     }
+    */
 }

@@ -5,9 +5,11 @@ using dao_library.Contexts;
 using DotNetEnv;
 using psychoshare_api.Services;
 using psychoshare_api.Services.Interfaces;
+using Microsoft.OpenApi.Models;
 
 // Load .env.local file
-Env.Load("../.env.local");
+//Env.Load("../.env.local");
+Env.Load(Path.Combine(AppContext.BaseDirectory, "..", "..", ".env.local"));
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,7 +32,11 @@ var connectionString = $"Server={dbServer};" +
                        $"Uid={dbUser};" +
                        $"Pwd={dbPassword};";
 
-Console.WriteLine($"DEBUG: Connection String = {connectionString.Replace(dbPassword ?? "", "***")}");
+var maskedConnectionString = !string.IsNullOrWhiteSpace(dbPassword)
+    ? connectionString.Replace(dbPassword, "***")
+    : connectionString;
+
+Console.WriteLine($"DEBUG: Connection String = {maskedConnectionString}");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options
@@ -45,7 +51,19 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SupportNonNullableReferenceTypes();
+    options.MapType<IFormFile>(() => new OpenApiSchema { Type = "string", Format = "binary" });
+
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "psychoshare_api",
+        Version = "v1",
+        Description = "API para gestión de avatares y usuarios"
+    });
+
+});
 
 builder.Services.AddCors(options =>
 {
@@ -82,20 +100,3 @@ app.UseStaticFiles();
 app.MapControllers();
 
 app.Run();
-
-/* 
-app.UseStaticFiles(new StaticFileOptions {
-    FileProvider = new PhysicalFileProvider(
-        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
-    RequestPath = ""
-});
-
-builder.Services.AddScoped<IFileUploadService, FileUploadService>();
-public static class FileUploadConstants
-{
-    public const long MaxFileSize = 5 * 1024 * 1024; // 5MB
-    public static readonly string[] AllowedExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
-    public const string AvatarFolder = "wwwroot/uploads/avatars/";
-    public const string AvatarUrlPrefix = "/uploads/avatars/";
-}
-*/
