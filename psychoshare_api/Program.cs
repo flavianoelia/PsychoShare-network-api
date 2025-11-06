@@ -7,8 +7,21 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-// Load .env.local file
-Env.Load("../.env.local");
+// Load .env.local file (try multiple locations)
+var envPaths = new[] {
+    System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), ".env.local"),
+    System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "..", ".env.local"),
+    System.IO.Path.Combine(AppContext.BaseDirectory, "..", "..", ".env.local")
+};
+foreach (var p in envPaths)
+{
+    if (System.IO.File.Exists(p))
+    {
+        Env.Load(p);
+        Console.WriteLine($"DEBUG: Loaded .env from {p}");
+        break;
+    }
+}
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,7 +53,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 #region Conexion
 // Build connection string using environment variables
 var dbServer = Environment.GetEnvironmentVariable("DB_SERVER") ?? "localhost";
-var dbPort = Environment.GetEnvironmentVariable("DB_PORT") ?? "3306";
+var dbPortStr = Environment.GetEnvironmentVariable("DB_PORT") ?? "3306";
+if (!int.TryParse(dbPortStr, out var dbPort)) dbPort = 3306;
 var dbName = Environment.GetEnvironmentVariable("DB_NAME") ?? "psychoshare";
 var dbUser = Environment.GetEnvironmentVariable("DB_USER") ?? "root";
 var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "";
