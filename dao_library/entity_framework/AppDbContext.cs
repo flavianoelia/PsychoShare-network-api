@@ -16,7 +16,7 @@ public class AppDbContext : DbContext
     public DbSet<Following> Followings { get; set; }
     public DbSet<File> Files { get; set; }
     public DbSet<Image> Images { get; set; }
-    public DbSet<Image> Avatar{ get; set; }
+    public DbSet<Avatar> Avatar{ get; set; }
     public DbSet<Pdf> Pdfs { get; set; }
     public DbSet<Report> Reports { get; set; }
     public DbSet<Comment> Comments { get; set; }
@@ -70,5 +70,10 @@ public class AppDbContext : DbContext
             .WithMany()
             .HasForeignKey(f => f.FollowedId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<User>()
+            .HasOne(u => u.Avatar)
+            .WithOne(a => a.User)
+            .HasForeignKey<Avatar>(a => a.UserId);
     }
 }

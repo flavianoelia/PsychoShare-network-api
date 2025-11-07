@@ -94,7 +94,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
+/*builder.Services.AddSwaggerGen(options =>
 {
     options.SupportNonNullableReferenceTypes();
     options.MapType<IFormFile>(() => new OpenApiSchema { Type = "string", Format = "binary" });
@@ -107,7 +107,7 @@ builder.Services.AddSwaggerGen(options =>
     });
 
 });
-
+*/
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
