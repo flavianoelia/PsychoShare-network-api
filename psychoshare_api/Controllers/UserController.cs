@@ -6,23 +6,23 @@ using System.Text.RegularExpressions;
 namespace psychoshare_api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 [Authorize]
 public class UserController : ControllerBase
 {
     private readonly ILogger<UserController> _logger;
-    private DAOFactory? df;
+    private readonly DAOFactory _daoFactory;
     private readonly TokenService _tokenService;
 
 
-    public UserController(ILogger<UserController> logger, DAOFactory df, TokenService tokenService)
+    public UserController(ILogger<UserController> logger, DAOFactory daoFactory, TokenService tokenService)
     {
         _logger = logger;
-        this.df = df;
+        _daoFactory = daoFactory;
         _tokenService = tokenService;
     }
 
-    #region validations
+    #region Validations
     private bool IsValidNameOrLastName(string? value)
     {
         var nameRegex = new Regex(@"^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,30}$");
@@ -65,7 +65,7 @@ public class UserController : ControllerBase
     }
     #endregion
 
-    #region Register
+    #region Endpoints
     [HttpPost]
     [AllowAnonymous]
     public async Task<IActionResult> Register([FromBody] RegisterRequestDTO req)
@@ -75,27 +75,27 @@ public class UserController : ControllerBase
         if (errores.Any())
             return BadRequest(new { success = false, errors = errores });
 
-        var existingUser = df?.DAOUser().GetUserByEmail(req.Email!.Trim());
+        var existingUser = _daoFactory.DAOUser().GetUserByEmail(req.Email!.Trim());
         if (existingUser != null)
             return Conflict(new { success = false, message = "El email ya está registrado." });
 
 
         var user = new entity_library.system.User
         {
-            Name = req.Name!,
-            LastName = req.LastName!,
-            Email = req.Email!,
+            Name = req.Name!.Trim(),
+            LastName = req.LastName!.Trim(),
+            Email = req.Email!.Trim(),
             PasswordHash = entity_library.system.User.HashPassword(req.Password!)
         };
 
-        await df!.DAOUser().SaveAsync(user);
+        await _daoFactory.DAOUser().SaveAsync(user);
 
         var token = _tokenService.CreateToken(user);
         return Ok(new { success = true, message = "Usuario registrado y guardado.", token = token });
     }
+
     #endregion
 
-    #region Login
     [HttpPost("login")]
     [AllowAnonymous]
     public IActionResult Login(LoginRequestDTO req)
@@ -104,7 +104,7 @@ public class UserController : ControllerBase
         {
             return BadRequest(new { success = false, message = "El email no tiene un formato válido." });
         }
-        var user = df!.DAOUser().GetUserByEmail(req.Email.Trim());
+        var user = _daoFactory.DAOUser().GetUserByEmail(req.Email.Trim());
         if (user == null)
         {
             return Unauthorized(new { success = false, message = "Mail o contraseña inválidos" });
@@ -124,12 +124,11 @@ public class UserController : ControllerBase
             token = token
         });
     }
-    #endregion
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:long}")]
     public IActionResult GetUser(long id)
     {
-        var user = df?.DAOUser().GetUser(id);
+        var user = _daoFactory.DAOUser().GetUser(id);
         if (user == null)
             return NotFound(new { message = "Usuario no encontrado." });
 
@@ -147,29 +146,25 @@ public class UserController : ControllerBase
     }
 
 
-[HttpPut("edit/{id}")]
-public IActionResult EditProfile(long id, [FromBody] UpdateUserRequestDto req)
+    [HttpPut("edit/{id:long}")]
+    public IActionResult EditProfile(long id, [FromBody] UpdateUserRequestDto req)
 {
     if (!ModelState.IsValid)
         return BadRequest(ModelState);
 
-    var user = df?.DAOUser().GetUser(id);
+    var user = _daoFactory.DAOUser().GetUser(id);
     if (user == null)
         return NotFound(new { message = "Usuario no encontrado." });
 
-    // 🔹 Validar nombre
     if (!string.IsNullOrWhiteSpace(req.Name))
         user.Name = req.Name.Trim();
 
-    // 🔹 Validar apellido
     if (!string.IsNullOrWhiteSpace(req.LastName))
         user.LastName = req.LastName.Trim();
 
-    // 🔹 Validar email
     if (!string.IsNullOrWhiteSpace(req.Email))
         user.Email = req.Email.Trim();
 
-    // 🔹 Imagen de perfil (solo si tu entidad tiene relación Image)
     if (!string.IsNullOrWhiteSpace(req.ProfilePictureUrl))
     {
         if (user.Image == null)
@@ -178,10 +173,9 @@ public IActionResult EditProfile(long id, [FromBody] UpdateUserRequestDto req)
         user.Image.Url = req.ProfilePictureUrl.Trim();
     }
 
-    // 🔹 Guardar cambios
-    df?.DAOUser().UpdateUser(id);// 👈 si tu método UpdateUser(User user) existe
+    _daoFactory.DAOUser().UpdateUser(id);
 
-    // 🔹 Armar respuesta
+    
     var response = new UserResponseDto
     {
         Id = user.Id,
@@ -205,7 +199,10 @@ public IActionResult EditProfile(long id, [FromBody] UpdateUserRequestDto req)
     [AllowAnonymous]
     public IActionResult CheckEmail([FromQuery] string email)
     {
-        var user = df?.DAOUser().GetUserByEmail(email);
+        if (string.IsNullOrWhiteSpace(email))
+            return BadRequest("El parámetro 'email' es obligatorio.");
+
+        var user = _daoFactory.DAOUser().GetUserByEmail(email.Trim());
         return Ok(new { exists = user != null });
     }
 }
