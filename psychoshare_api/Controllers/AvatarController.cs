@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using entity_library.media;
 using psychoshare_api.Services.Interfaces;
+using psychoshare_api.DTOs.Media.AvatarDto;
 
 namespace psychoshare_api.Controllers;
 
@@ -29,7 +30,16 @@ public class AvatarController : ControllerBase
         }
 
         string fileUrl = _fileUploadService.SaveAvatar(file);
-        return Ok(new { url = fileUrl });
+
+        var response = new AvatarResponseDTO
+        {
+            Url = fileUrl,
+            FileName = file.FileName,
+            ContentType = file.ContentType,
+            Size = file.Length
+        };
+
+        return Ok(response);
     }
     
 

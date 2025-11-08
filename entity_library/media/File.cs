@@ -1,3 +1,4 @@
+namespace entity_library.media;
 public class File
 {
     private long id;
