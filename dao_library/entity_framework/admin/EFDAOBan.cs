@@ -56,6 +56,24 @@ public class EFDAOBan : DAOBan
             .FirstOrDefault();
     }
 
+    public (List<Ban> Bans, int TotalCount) GetActiveBansPaginated(int page, int size)
+    {
+        var query = _dbContext.Bans
+            .Where(b => b.IsActive == true)
+            .Include(b => b.BanUser)
+            .AsQueryable();
+
+        var totalCount = query.Count();
+
+        var bans = query
+            .OrderByDescending(b => b.StartDate)
+            .Skip((page - 1) * size)
+            .Take(size)
+            .ToList();
+
+        return (bans, totalCount);
+    }
+
     public bool CheckBanStatus(long userId)
     {
         return _dbContext.Bans

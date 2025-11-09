@@ -12,6 +12,7 @@ public interface DAOBan
     
     
     public List<Ban> GetActiveBans();
+    public (List<Ban> Bans, int TotalCount) GetActiveBansPaginated(int page, int size);
     public Ban? GetUserBan(long userId);
     public bool CheckBanStatus(long userId);
 }

@@ -4,6 +4,7 @@ namespace psychoshare_api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[ApiExplorerSettings(IgnoreApi = true)]
 public class PersonController : ControllerBase
 {
     private readonly ILogger<PersonController> _logger;
