@@ -205,4 +205,49 @@ public class UserController : ControllerBase
         var user = _daoFactory.DAOUser().GetUserByEmail(email.Trim());
         return Ok(new { exists = user != null });
     }
+
+    [HttpGet("all")]
+    public IActionResult GetAllUsers([FromQuery] UserFilterDto? filter = null)
+    {
+        try
+        {
+            filter ??= new UserFilterDto();
+
+            if (filter.Page < 1) filter.Page = 1;
+            if (filter.Size < 1 || filter.Size > 25) filter.Size = 10;
+
+            var (users, totalCount) = _daoFactory.DAOUser().GetAllPaginated(
+                filter.Page,
+                filter.Size,
+                filter.Search,
+                filter.Role
+            );
+
+            var userDtos = users.Select(u => new UserResponseDto
+            {
+                Id = u.Id,
+                Name = u.Name,
+                LastName = u.LastName,
+                Email = u.Email,
+                RoleName = u.Role?.RoleName,
+                ImageUrl = u.Image?.Url
+            }).ToList();
+
+            var response = new UserPagedResponseDto
+            {
+                Users = userDtos,
+                TotalCount = totalCount,
+                Page = filter.Page,
+                Size = filter.Size,
+                HasMore = (filter.Page * filter.Size) < totalCount
+            };
+
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al obtener usuarios paginados");
+            return StatusCode(500, "Error interno del servidor");
+        }
+    }
 }
