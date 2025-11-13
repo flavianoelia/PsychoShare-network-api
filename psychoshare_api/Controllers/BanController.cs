@@ -5,7 +5,7 @@ using psychoshare_api.DTOs.Ban;
 namespace psychoshare_api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class BanController : ControllerBase
 {
     private readonly ILogger<BanController> _logger;

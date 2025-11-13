@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace psychoshare_api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 [Authorize]
 public class ReportController : ControllerBase
 {

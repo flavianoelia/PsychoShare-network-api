@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace psychoshare_api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 [ApiExplorerSettings(IgnoreApi = true)]
 public class PersonController : ControllerBase
 {
