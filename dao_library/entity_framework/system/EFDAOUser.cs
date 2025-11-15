@@ -53,6 +53,38 @@ public class EFDAOUser : DAOUser
             this.dbContext.SaveChanges();
         }
     }
+    public (List<User> Users, int TotalCount) GetAllPaginated(int page, int size, string? search = null, string? role = null)
+    {
+        var query = dbContext.Users
+            .Include(u => u.Role)
+            .Include(u => u.Image)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var searchLower = search.Trim().ToLower();
+            query = query.Where(u => 
+                u.Name.ToLower().Contains(searchLower) ||
+                u.LastName.ToLower().Contains(searchLower) ||
+                u.Email.ToLower().Contains(searchLower));
+        }
+
+        if (!string.IsNullOrWhiteSpace(role))
+        {
+            query = query.Where(u => u.Role != null && u.Role.RoleName == role);
+        }
+
+        var totalCount = query.Count();
+
+        var users = query
+            .OrderBy(u => u.Id)
+            .Skip((page - 1) * size)
+            .Take(size)
+            .ToList();
+
+        return (users, totalCount);
+    }
+
     public async Task SaveAsync(User user)
     {
         await dbContext.Users.AddAsync(user);

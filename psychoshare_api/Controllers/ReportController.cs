@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 namespace psychoshare_api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 [Authorize]
 public class ReportController : ControllerBase
 {
@@ -52,23 +52,53 @@ public class ReportController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<List<ReportResponseDto>> GetAllReports()
+    public ActionResult<ReportPagedResponseDto> GetAllReports([FromQuery] ReportFilterDto? filter = null)
     {
-        var reports = _daoFactory.DAOReport().GetAll();
-        var response = reports.Select(r => new ReportResponseDto
+        try
         {
-            Id = r.Id,
-            ReporterUserId = r.ReporterUserId,
-            ReportedUserId = r.ReportedUserId,
-            Reason = r.Reason,
-            Details = r.Details,
-            ReportDate = r.ReportDate,
-            Status = r.Status,
-            ContentType = r.ContentType,
-            ContentId = r.ContentId
-        }).ToList();
+            filter ??= new ReportFilterDto();
 
-        return Ok(response);
+            if (filter.Page < 1) filter.Page = 1;
+            if (filter.Size < 1 || filter.Size > 25) filter.Size = 10;
+
+            var (reports, totalCount) = _daoFactory.DAOReport().GetAllPaginated(
+                filter.Page,
+                filter.Size,
+                filter.Status,
+                filter.ContentType,
+                filter.DateFrom,
+                filter.DateTo
+            );
+
+            var reportDtos = reports.Select(r => new ReportResponseDto
+            {
+                Id = r.Id,
+                ReporterUserId = r.ReporterUserId,
+                ReportedUserId = r.ReportedUserId,
+                Reason = r.Reason,
+                Details = r.Details,
+                ReportDate = r.ReportDate,
+                Status = r.Status,
+                ContentType = r.ContentType,
+                ContentId = r.ContentId
+            }).ToList();
+
+            var response = new ReportPagedResponseDto
+            {
+                Reports = reportDtos,
+                TotalCount = totalCount,
+                Page = filter.Page,
+                Size = filter.Size,
+                HasMore = (filter.Page * filter.Size) < totalCount
+            };
+
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al obtener reportes paginados");
+            return StatusCode(500, "Error interno del servidor");
+        }
     }
 
     [HttpGet("{id}")]

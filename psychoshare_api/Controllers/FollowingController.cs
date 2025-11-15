@@ -8,7 +8,7 @@ using psychoshare_api.DTOs.User;
 namespace psychoshare_api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 [Authorize]
 public class FollowingController : ControllerBase
 {

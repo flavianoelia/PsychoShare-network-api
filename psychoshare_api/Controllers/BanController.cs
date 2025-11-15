@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using entity_library.ReportPolicy;
+using psychoshare_api.DTOs.Ban;
 
 namespace psychoshare_api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class BanController : ControllerBase
 {
     private readonly ILogger<BanController> _logger;
@@ -125,23 +126,44 @@ public class BanController : ControllerBase
     }
 
     [HttpGet("active")]
-    public ActionResult<List<BanResponseDto>> GetActiveBans()
+    public ActionResult<BanPagedResponseDto> GetActiveBans([FromQuery] int page = 1, [FromQuery] int size = 10)
     {
-        var bans = _daoFactory.DAOBan().GetActiveBans();
-        var response = bans.Select(b => new BanResponseDto
+        try
         {
-            Id = b.Id,
-            BannedUserId = b.BannedUserId,
-            BannedByAdminId = b.BannedByAdminId,
-            BanType = b.BanType,
-            RelatedReportId = b.RelatedReportId,
-            StartDate = b.StartDate,
-            EndDate = b.EndDate,
-            Reason = b.Reason,
-            IsActive = b.IsActive
-        }).ToList();
+            if (page < 1) page = 1;
+            if (size < 1 || size > 25) size = 10;
 
-        return Ok(response);
+            var (bans, totalCount) = _daoFactory.DAOBan().GetActiveBansPaginated(page, size);
+            
+            var banDtos = bans.Select(b => new BanResponseDto
+            {
+                Id = b.Id,
+                BannedUserId = b.BannedUserId,
+                BannedByAdminId = b.BannedByAdminId,
+                BanType = b.BanType,
+                RelatedReportId = b.RelatedReportId,
+                StartDate = b.StartDate,
+                EndDate = b.EndDate,
+                Reason = b.Reason,
+                IsActive = b.IsActive
+            }).ToList();
+
+            var response = new BanPagedResponseDto
+            {
+                Bans = banDtos,
+                TotalCount = totalCount,
+                Page = page,
+                Size = size,
+                HasMore = (page * size) < totalCount
+            };
+
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al obtener bans activos paginados");
+            return StatusCode(500, "Error interno del servidor");
+        }
     }
 
     [HttpGet("check/{userId}")]
@@ -149,5 +171,44 @@ public class BanController : ControllerBase
     {
         var isBanned = _daoFactory.DAOBan().CheckBanStatus(userId);
         return Ok(isBanned);
+    }
+
+    [HttpGet]
+    public ActionResult<BanPagedResponseDto> GetAllBans([FromQuery] int page = 1, [FromQuery] int size = 10)
+    {
+        try
+        {
+            if (page < 1) page = 1;
+            if (size < 1 || size > 25) size = 10;
+
+            var (bans, totalCount) = _daoFactory.DAOBan().GetAllBansPaginated(page, size);
+            
+            var banDtos = bans.Select(b => new BanResponseDto
+            {
+                Id = b.Id,
+                BannedUserId = b.BannedUserId,
+                BannedByAdminId = b.BannedByAdminId,
+                BanType = b.BanType,
+                RelatedReportId = b.RelatedReportId,
+                StartDate = b.StartDate,
+                EndDate = b.EndDate,
+                Reason = b.Reason,
+                IsActive = b.IsActive
+            }).ToList();
+
+            return Ok(new BanPagedResponseDto
+            {
+                Bans = banDtos,
+                TotalCount = totalCount,
+                Page = page,
+                Size = size,
+                HasMore = (page * size) < totalCount
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al obtener todos los bans");
+            return StatusCode(500, "Error interno del servidor");
+        }
     }
 }
