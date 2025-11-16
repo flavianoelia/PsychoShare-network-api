@@ -28,13 +28,4 @@
     <ProjectReference Include="..\dao_library\dao_library.csproj" />
     <ProjectReference Include="..\entity_library\entity_library.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\PsychoShare-network-api\PsychoShare-network-api.csproj" />
-</ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="Configurations\FileUploadConstants.cs" />
-  </ItemGroup>
-
 </Project>

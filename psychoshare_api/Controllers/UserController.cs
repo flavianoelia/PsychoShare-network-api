@@ -184,7 +184,7 @@ public class UserController : ControllerBase
         LastName = user.LastName,
         Email = user.Email,
         RoleName = user.Role?.RoleName ?? "",
-        ImageUrl = user.Avatar?.Url ?? ""
+        AvatarUrl = user.Avatar?.Url ?? ""
     };
 
     return Ok(new
@@ -231,7 +231,7 @@ public class UserController : ControllerBase
                 LastName = u.LastName,
                 Email = u.Email,
                 RoleName = u.Role?.RoleName,
-                ImageUrl = u.Image?.Url
+                AvatarUrl = u.Avatar?.Url
             }).ToList();
 
             var response = new UserPagedResponseDto

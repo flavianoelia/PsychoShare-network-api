@@ -1,5 +1,5 @@
 namespace entity_library.media;
-public class File
+public class BaseFile
 {
     private long id;
 

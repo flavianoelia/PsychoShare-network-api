@@ -53,6 +53,6 @@ public class FileUploadService : IFileUploadService
             throw new Exception("Error al guardar el avatar", ex);
         }
 
-        return $"https://psychoshare_api.com/relativePath/{fileName}";
+        return $"https://psychoshare_api.com/{relativePath}/{fileName}";
     }
 }

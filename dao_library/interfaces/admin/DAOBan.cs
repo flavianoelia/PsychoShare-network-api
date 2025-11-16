@@ -1,5 +1,5 @@
 using entity_library.ReportPolicy;
-
+using dao_library.entity_framework.admin;
 namespace dao_library.interfaces.admin;
 
 public interface DAOBan

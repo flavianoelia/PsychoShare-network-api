@@ -1,4 +1,5 @@
 using dao_library.Contexts;
+using entity_library.media;
 using entity_library.system;
 using Microsoft.EntityFrameworkCore;
 
@@ -57,7 +58,7 @@ public class EFDAOUser : DAOUser
     {
         var query = dbContext.Users
             .Include(u => u.Role)
-            .Include(u => u.Image)
+            .Include(u => u.Avatar)
             .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(search))
