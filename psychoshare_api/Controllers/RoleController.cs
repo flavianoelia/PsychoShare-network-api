@@ -18,6 +18,18 @@ public class RoleController : ControllerBase
         _daoFactory = daoFactory;
     }
 
+    private string GetRoleName(long? roleId)
+    {
+        return roleId switch
+        {
+            1 => "User",
+            2 => "Admin",
+            3 => "SuperAdmin",
+            null => "No Role",
+            _ => "Unknown"
+        };
+    }
+
     [HttpGet]
     public IActionResult GetAllRoles()
     {
@@ -50,14 +62,7 @@ public class RoleController : ControllerBase
             if (user == null)
                 return NotFound($"User with ID {userId} not found");
 
-            var roleName = user.RoleId switch
-            {
-                1 => "User",
-                2 => "Admin",
-                3 => "SuperAdmin",
-                null => "No Role",
-                _ => "Unknown"
-            };
+            var roleName = GetRoleName(user.RoleId);
 
             return Ok(new { RoleId = user.RoleId ?? 0, RoleName = roleName });
         }
@@ -93,13 +98,7 @@ public class RoleController : ControllerBase
             user.RoleId = request.RoleId;
             daoUser.UpdateUser(userId);
 
-            var roleName = request.RoleId switch
-            {
-                1 => "User",
-                2 => "Admin",
-                3 => "SuperAdmin",
-                _ => "Unknown"
-            };
+            var roleName = GetRoleName(request.RoleId);
 
             return Ok(new { Message = $"Role updated successfully to {roleName}", RoleId = request.RoleId });
         }
