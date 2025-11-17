@@ -95,6 +95,10 @@ public class RoleController : ControllerBase
             if (user == null)
                 return NotFound($"User with ID {userId} not found");
 
+            // Impedir asignar SuperAdmin a usuarios que no lo tienen ya en la BD
+            if (request.RoleId == 3 && user.RoleId != 3)
+                return BadRequest("No está permitido asignar el rol de SuperAdmin.");
+
             user.RoleId = request.RoleId;
             daoUser.UpdateUser(userId);
 
