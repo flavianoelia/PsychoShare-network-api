@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using psychoshare_api.DTOs.Report;
 using entity_library.ReportPolicy;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace psychoshare_api.Controllers;
 
@@ -19,9 +20,18 @@ public class ReportController : ControllerBase
         _daoFactory = daoFactory;
     }
 
+    private bool IsAdminOrSuperAdmin()
+    {
+        var roleId = long.Parse(User.FindFirst(ClaimTypes.Role)?.Value ?? "1");
+        return roleId >= 2;
+    }
+
     [HttpPost]
     public ActionResult<ReportResponseDto> ReportUser([FromBody] CreateReportDto createReportDto)
     {
+        if (!IsAdminOrSuperAdmin())
+            return Forbid();
+
         var report = new Report
         {
             ReporterUserId = createReportDto.ReporterUserId,
@@ -54,6 +64,9 @@ public class ReportController : ControllerBase
     [HttpGet]
     public ActionResult<ReportPagedResponseDto> GetAllReports([FromQuery] ReportFilterDto? filter = null)
     {
+        if (!IsAdminOrSuperAdmin())
+            return Forbid();
+
         try
         {
             filter ??= new ReportFilterDto();

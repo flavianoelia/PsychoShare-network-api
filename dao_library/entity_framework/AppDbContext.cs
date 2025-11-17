@@ -34,6 +34,13 @@ public class AppDbContext : DbContext
             .HasValue<Person>("Person")
             .HasValue<User>("User");
 
+        // Configure User-Role relationship using RoleId from base Person class
+        modelBuilder.Entity<User>()
+            .HasOne(u => u.Role)
+            .WithMany()
+            .HasForeignKey("RoleId")
+            .IsRequired(false);
+
         // Configure User entity constraints
         modelBuilder.Entity<User>()
             .HasIndex(u => u.Email)

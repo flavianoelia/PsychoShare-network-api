@@ -1,11 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using entity_library.ReportPolicy;
 using psychoshare_api.DTOs.Ban;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace psychoshare_api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class BanController : ControllerBase
 {
     private readonly ILogger<BanController> _logger;
@@ -17,10 +20,18 @@ public class BanController : ControllerBase
         _daoFactory = daoFactory;
     }
 
+    private bool IsAdminOrSuperAdmin()
+    {
+        var roleId = long.Parse(User.FindFirst(ClaimTypes.Role)?.Value ?? "1");
+        return roleId >= 2;
+    }
+
     [HttpPost]
     public ActionResult<BanResponseDto> BanUser([FromBody] CreateBanDto createBanDto)
     {
-        
+        if (!IsAdminOrSuperAdmin())
+            return Forbid();
+
         if (createBanDto.BannedUserId == createBanDto.BannedByAdminId)
             return BadRequest("Un usuario no puede banearse a sí mismo");
 
@@ -176,6 +187,9 @@ public class BanController : ControllerBase
     [HttpGet]
     public ActionResult<BanPagedResponseDto> GetAllBans([FromQuery] int page = 1, [FromQuery] int size = 10)
     {
+        if (!IsAdminOrSuperAdmin())
+            return Forbid();
+
         try
         {
             if (page < 1) page = 1;
