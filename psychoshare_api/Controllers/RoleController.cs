@@ -84,7 +84,7 @@ public class RoleController : ControllerBase
                 currentUserRoleId = 1;
 
             if (currentUserRoleId != 3)
-                return Forbid("Only SuperAdmin can assign roles");
+                return StatusCode(403, "Only SuperAdmin can assign roles");
 
             if (request.RoleId < 1 || request.RoleId > 3)
                 return BadRequest("Invalid RoleId. Must be 1 (User), 2 (Admin), or 3 (SuperAdmin)");
