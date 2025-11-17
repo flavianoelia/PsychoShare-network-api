@@ -24,7 +24,12 @@ public class BanController : BaseAuthorizedController
         if (!IsAdminOrSuperAdmin())
             return Forbid();
 
-        if (createBanDto.BannedUserId == createBanDto.BannedByAdminId)
+        // Obtener el ID del admin autenticado desde el token JWT
+        var adminIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (!long.TryParse(adminIdClaim, out long adminId))
+            return Unauthorized("Token inválido");
+
+        if (createBanDto.BannedUserId == adminId)
             return BadRequest("Un usuario no puede banearse a sí mismo");
 
         
@@ -33,7 +38,7 @@ public class BanController : BaseAuthorizedController
             return NotFound("Usuario a banear no encontrado");
 
         
-        var admin = _daoFactory.DAOUser().GetUser(createBanDto.BannedByAdminId);
+        var admin = _daoFactory.DAOUser().GetUser(adminId);
         if (admin == null)
             return NotFound("Usuario administrador no encontrado");
 
@@ -54,7 +59,7 @@ public class BanController : BaseAuthorizedController
         var ban = new Ban
         {
             BannedUserId = createBanDto.BannedUserId,
-            BannedByAdminId = createBanDto.BannedByAdminId,
+            BannedByAdminId = adminId, // Usar el ID del admin autenticado
             BanType = createBanDto.BanType,
             RelatedReportId = createBanDto.RelatedReportId,
             StartDate = createBanDto.StartDate,
