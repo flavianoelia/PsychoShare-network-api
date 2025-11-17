@@ -99,6 +99,10 @@ public class RoleController : ControllerBase
             if (request.RoleId == 3 && user.RoleId != 3)
                 return BadRequest("No está permitido asignar el rol de SuperAdmin.");
 
+            // Impedir que un SuperAdmin se quite su propio rol de SuperAdmin
+            if (user.RoleId == 3 && request.RoleId != 3)
+                return BadRequest("No puedes quitarte tu propio rol de SuperAdmin.");
+
             user.RoleId = request.RoleId;
             daoUser.UpdateUser(userId);
 
