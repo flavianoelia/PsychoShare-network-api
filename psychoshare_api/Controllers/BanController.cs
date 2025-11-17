@@ -22,7 +22,10 @@ public class BanController : ControllerBase
 
     private bool IsAdminOrSuperAdmin()
     {
-        var roleId = long.Parse(User.FindFirst(ClaimTypes.Role)?.Value ?? "1");
+        var roleClaimValue = User.FindFirst(ClaimTypes.Role)?.Value;
+        long roleId;
+        if (!long.TryParse(roleClaimValue, out roleId))
+            roleId = 1;
         return roleId >= 2;
     }
 

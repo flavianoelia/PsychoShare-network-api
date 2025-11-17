@@ -73,7 +73,10 @@ public class RoleController : ControllerBase
     {
         try
         {
-            var currentUserRoleId = long.Parse(User.FindFirst(ClaimTypes.Role)?.Value ?? "1");
+            var roleClaimValue = User.FindFirst(ClaimTypes.Role)?.Value;
+            long currentUserRoleId;
+            if (!long.TryParse(roleClaimValue, out currentUserRoleId))
+                currentUserRoleId = 1;
 
             if (currentUserRoleId != 3)
                 return Forbid("Only SuperAdmin can assign roles");
