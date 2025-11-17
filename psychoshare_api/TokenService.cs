@@ -20,13 +20,9 @@ public class TokenService
         // Claims that go to be codified for the body of the token
         var userClaims = new List<Claim>
         {
-            // Claim 1: Email form User
             new Claim(ClaimTypes.Email, user.Email),
-            
-            // Claim 2: ID from User
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            
-            // Cuando tengamos roles: new Claim(ClaimTypes.Role, user.Rol)
+            new Claim(ClaimTypes.Role, (user.RoleId ?? 1).ToString())
         };
 
         // Assign created claims to a new identity.
