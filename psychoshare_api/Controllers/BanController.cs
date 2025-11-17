@@ -2,14 +2,12 @@ using Microsoft.AspNetCore.Mvc;
 using entity_library.ReportPolicy;
 using psychoshare_api.DTOs.Ban;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
 
 namespace psychoshare_api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
-public class BanController : ControllerBase
+public class BanController : BaseAuthorizedController
 {
     private readonly ILogger<BanController> _logger;
     private readonly DAOFactory _daoFactory;
@@ -18,15 +16,6 @@ public class BanController : ControllerBase
     {
         _logger = logger;
         _daoFactory = daoFactory;
-    }
-
-    private bool IsAdminOrSuperAdmin()
-    {
-        var roleClaimValue = User.FindFirst(ClaimTypes.Role)?.Value;
-        long roleId;
-        if (!long.TryParse(roleClaimValue, out roleId))
-            roleId = 1;
-        return roleId >= 2;
     }
 
     [HttpPost]

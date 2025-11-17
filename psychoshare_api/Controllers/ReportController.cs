@@ -2,14 +2,12 @@ using Microsoft.AspNetCore.Mvc;
 using psychoshare_api.DTOs.Report;
 using entity_library.ReportPolicy;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
 
 namespace psychoshare_api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
-public class ReportController : ControllerBase
+public class ReportController : BaseAuthorizedController
 {
     private readonly ILogger<ReportController> _logger;
     private readonly DAOFactory _daoFactory;
@@ -18,15 +16,6 @@ public class ReportController : ControllerBase
     {
         _logger = logger;
         _daoFactory = daoFactory;
-    }
-
-    private bool IsAdminOrSuperAdmin()
-    {
-        var roleClaimValue = User.FindFirst(ClaimTypes.Role)?.Value;
-        long roleId;
-        if (!long.TryParse(roleClaimValue, out roleId))
-            roleId = 1;
-        return roleId >= 2;
     }
 
     [HttpPost]

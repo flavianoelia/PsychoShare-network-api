@@ -38,7 +38,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<User>()
             .HasOne(u => u.Role)
             .WithMany()
-            .HasForeignKey("RoleId")
+            .HasForeignKey(u => u.RoleId)
             .IsRequired(false);
 
         // Configure User entity constraints
