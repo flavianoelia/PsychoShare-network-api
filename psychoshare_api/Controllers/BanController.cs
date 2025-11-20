@@ -2,12 +2,13 @@ using Microsoft.AspNetCore.Mvc;
 using entity_library.ReportPolicy;
 using psychoshare_api.DTOs.Ban;
 using dao_library.interfaces.admin;
+using Microsoft.AspNetCore.Authorization;
 
 namespace psychoshare_api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class BanController : ControllerBase
+public class BanController : BaseAuthorizedController
 {
     private readonly ILogger<BanController> _logger;
     private readonly DAOFactory _daoFactory;
@@ -21,8 +22,15 @@ public class BanController : ControllerBase
     [HttpPost]
     public ActionResult<BanResponseDto> BanUser([FromBody] CreateBanDto createBanDto)
     {
-        
-        if (createBanDto.BannedUserId == createBanDto.BannedByAdminId)
+        if (!IsAdminOrSuperAdmin())
+            return Forbid();
+
+        // Obtener el ID del admin autenticado desde el token JWT
+        var adminIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        if (!long.TryParse(adminIdClaim, out long adminId))
+            return Unauthorized("Token inválido");
+
+        if (createBanDto.BannedUserId == adminId)
             return BadRequest("Un usuario no puede banearse a sí mismo");
 
         
@@ -31,7 +39,7 @@ public class BanController : ControllerBase
             return NotFound("Usuario a banear no encontrado");
 
         
-        var admin = _daoFactory.DAOUser().GetUser(createBanDto.BannedByAdminId);
+        var admin = _daoFactory.DAOUser().GetUser(adminId);
         if (admin == null)
             return NotFound("Usuario administrador no encontrado");
 
@@ -52,7 +60,7 @@ public class BanController : ControllerBase
         var ban = new Ban
         {
             BannedUserId = createBanDto.BannedUserId,
-            BannedByAdminId = createBanDto.BannedByAdminId,
+            BannedByAdminId = adminId, // Usar el ID del admin autenticado
             BanType = createBanDto.BanType,
             RelatedReportId = createBanDto.RelatedReportId,
             StartDate = createBanDto.StartDate,
@@ -177,6 +185,9 @@ public class BanController : ControllerBase
     [HttpGet]
     public ActionResult<BanPagedResponseDto> GetAllBans([FromQuery] int page = 1, [FromQuery] int size = 10)
     {
+        if (!IsAdminOrSuperAdmin())
+            return Forbid();
+
         try
         {
             if (page < 1) page = 1;

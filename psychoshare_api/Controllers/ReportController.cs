@@ -7,8 +7,7 @@ namespace psychoshare_api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
-public class ReportController : ControllerBase
+public class ReportController : BaseAuthorizedController
 {
     private readonly ILogger<ReportController> _logger;
     private readonly DAOFactory _daoFactory;
@@ -22,6 +21,9 @@ public class ReportController : ControllerBase
     [HttpPost]
     public ActionResult<ReportResponseDto> ReportUser([FromBody] CreateReportDto createReportDto)
     {
+        if (!IsAdminOrSuperAdmin())
+            return Forbid();
+
         var report = new Report
         {
             ReporterUserId = createReportDto.ReporterUserId,
@@ -54,6 +56,9 @@ public class ReportController : ControllerBase
     [HttpGet]
     public ActionResult<ReportPagedResponseDto> GetAllReports([FromQuery] ReportFilterDto? filter = null)
     {
+        if (!IsAdminOrSuperAdmin())
+            return Forbid();
+
         try
         {
             filter ??= new ReportFilterDto();
