@@ -2,6 +2,6 @@
 * text=auto
 
 # Asegurar CRLF en checkout para archivos de C# en Windows
-*.cs     text eol=crlf
+*.cs     text eol=auto
 *.csproj text eol=crlf
 *.sln    text eol=crlf
