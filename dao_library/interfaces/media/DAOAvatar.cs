@@ -1,10 +1,10 @@
 using entity_library.media;
-using entity_library.system;
-
+namespace dao_library.interfaces.media;
 public interface DAOAvatar
 {
-    public Avatar? GetAvatarByUserId(long idUser);
+    public Avatar? GetAvatarByUserId(long userId);
     public void Save(Avatar avatar);
-    public void UpdateAvatar(long idUser);
-    public void Delete(long idUser);
+    public void UpdateAvatar(long userId, Avatar avatar);
+    public void DeleteByUserId(long userId);
+    
 }

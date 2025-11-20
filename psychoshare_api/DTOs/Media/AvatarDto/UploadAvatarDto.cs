@@ -1,19 +1,16 @@
-using Microsoft.AspNetCore.Http;
-using psychoshare_api.Configurations;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 using psychoshare_api.Validations;
-using entity_library.media;
-
-namespace psychoshare_api.DTOs.Media.avatarDto
+using psychoshare_api.Configurations;
+namespace psychoshare_api.DTOs.Media.AvatarDto
 {
     public class UploadAvatarDto
-    {
-
-        [Required(ErrorMessage = "El archivo es obligatorio.")]
+    {   
+        [Required]
+        [AllowedExtensions(new[] { ".jpg", ".jpeg", ".png", ".webp", ".gif" })]
         [MaxFileSize(FileUploadConstants.MaxImageSize)]
-        [AllowedExtensions(new[] { ".jpg", ".jpeg", ".png", ".webp" })]
-        public IFormFile? File { get; set; }
-
+        [AllowedMimeTypes(new[] { "image/jpeg", "image/png", "image/webp", "image/gif" })]
+        public IFormFile File { get; set; } = null!;
     }
 }
 //Recibe un archivo (IFormFile) desde el cliente y tiene validaciones

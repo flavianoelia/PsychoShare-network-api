@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using dao_library.Contexts;
 
@@ -10,9 +11,11 @@ using dao_library.Contexts;
 namespace dao_library.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251116205247_Alter_Table_Avatar ")]
+    partial class Alter_Table_Avatar
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -286,7 +289,7 @@ namespace dao_library.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BaseFiles");
+                    b.ToTable("Files");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("BaseFile");
 
@@ -350,7 +353,7 @@ namespace dao_library.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.ToTable("BaseFiles", t =>
+                    b.ToTable("Files", t =>
                         {
                             t.Property("IdUser")
                                 .HasColumnName("Pdf_IdUser");

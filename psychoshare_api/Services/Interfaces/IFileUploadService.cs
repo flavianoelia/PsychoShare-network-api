@@ -4,4 +4,5 @@ public interface IFileUploadService
 {
     public string SaveAvatar(IFormFile file);
     public string SaveImage(IFormFile file);
+    public void DeleteFileByUrl(string url);
 }

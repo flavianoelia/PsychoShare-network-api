@@ -5,16 +5,26 @@ using psychoshare_api.Configurations;
 using System.IO;
 using System;
 using System.Linq;
+using Microsoft.Extensions.Logging;
+
 namespace psychoshare_api.Services;
+
 public class FileUploadService : IFileUploadService
 {
     private readonly IWebHostEnvironment _env;
-    public FileUploadService(IWebHostEnvironment env)// IWebHostEnvironment se inyecta para obtener la ruta de wwwroot
+    private readonly IHttpContextAccessor _http;
+    private readonly ILogger<FileUploadService> _logger;
+
+    public FileUploadService(IWebHostEnvironment env, IHttpContextAccessor http, ILogger<FileUploadService> logger)
     {
-        if (env == null || string.IsNullOrEmpty(env.WebRootPath))
-        throw new InvalidOperationException("WebRootPath no está disponible.");
+        if (env == null)
+            throw new InvalidOperationException("WebRootPath no está disponible.");
+
         _env = env;
+        _http = http;
+        _logger = logger;
     }
+
     public string SaveAvatar(IFormFile file)
     {
         return SaveImage(file, FileUploadConstants.AvatarUploadPath);
@@ -35,24 +45,71 @@ public class FileUploadService : IFileUploadService
 
         if (file.Length > FileUploadConstants.MaxImageSize)
             throw new Exception("El archivo excede el tamaño máximo permitido.");
+        
+        var uniqueName = $"{Guid.NewGuid()}{extension}";
 
         var uploads = Path.Combine(_env.WebRootPath, relativePath);
-            Directory.CreateDirectory(uploads);
-            var filePath = Path.Combine(uploads, fileName);
+        Directory.CreateDirectory(uploads);
+        var filePath = Path.Combine(uploads, uniqueName);
 
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            file.CopyTo(stream);
+        }
+
+        var request = _http.HttpContext?.Request
+                ?? throw new InvalidOperationException("No hay HttpContext disponible.");
+        
+        string baseUrl = $"{request.Scheme}://{request.Host}";
+        return $"{baseUrl}/{relativePath}/{uniqueName}";
+    }
+
+    public void DeleteFileByUrl(string url)
+    {
+        if (string.IsNullOrWhiteSpace(url))
+            return;
+
+        if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
+        {
+            _logger.LogWarning("DeleteFileByUrl recibió una URL inválida: {Url}", url);
+            return;
+        }
+
+        var relative = uri.AbsolutePath.TrimStart('/'); // e.g. uploads/avatars/uuid.jpg
+
+        // Whitelist allowed upload folders
+        if (!relative.StartsWith(FileUploadConstants.AvatarUploadPath, StringComparison.OrdinalIgnoreCase)
+            && !relative.StartsWith(FileUploadConstants.ImageUploadPath, StringComparison.OrdinalIgnoreCase))
+        {
+            _logger.LogWarning("DeleteFileByUrl: ruta no permitida para borrado: {Relative}", relative);
+            return;
+        }
+
+        var candidate = Path.Combine(_env.WebRootPath ?? FileUploadConstants.UploadRoot, relative.Replace('/', Path.DirectorySeparatorChar));
         try
         {
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            var fullWebRoot = Path.GetFullPath(_env.WebRootPath ?? FileUploadConstants.UploadRoot);
+            var fullCandidate = Path.GetFullPath(candidate);
+
+            if (!fullCandidate.StartsWith(fullWebRoot, StringComparison.OrdinalIgnoreCase))
             {
-                file.CopyTo(stream);
+                _logger.LogWarning("DeleteFileByUrl: intento de borrar fuera de webroot. candidate={Candidate}", fullCandidate);
+                return;
+            }
+
+            if (File.Exists(fullCandidate))
+            {
+                File.Delete(fullCandidate);
+                _logger.LogInformation("Archivo eliminado: {Path}", fullCandidate);
+            }
+            else
+            {
+                _logger.LogInformation("DeleteFileByUrl: archivo no encontrado: {Path}", fullCandidate);
             }
         }
         catch (Exception ex)
         {
-            // Manejo de errores (puedes registrar el error o lanzar una excepción personalizada)
-            throw new Exception("Error al guardar el avatar", ex);
+            _logger.LogError(ex, "Error al eliminar archivo físico: {Url}", url);
         }
-
-        return $"https://psychoshare_api.com/{relativePath}/{fileName}";
     }
 }

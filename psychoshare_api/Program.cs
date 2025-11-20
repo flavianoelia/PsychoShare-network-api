@@ -9,6 +9,7 @@ using System.Text;
 using psychoshare_api.Services;
 using psychoshare_api.Services.Interfaces;
 using Microsoft.OpenApi.Models;
+using dao_library.interfaces.media;
 
 // Load .env.local file (try multiple locations)
 var envPaths = new[] {
@@ -94,34 +95,22 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-/*builder.Services.AddSwaggerGen(options =>
-{
-    options.SupportNonNullableReferenceTypes();
-    options.MapType<IFormFile>(() => new OpenApiSchema { Type = "string", Format = "binary" });
-
-    options.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "psychoshare_api",
-        Version = "v1",
-        Description = "API para gestión de avatares y usuarios"
-    });
-
-});
-*/
+builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
         policy =>
         {
             policy.AllowAnyOrigin()
-                  .AllowAnyMethod()
-                  .AllowAnyHeader();
+                .AllowAnyMethod()
+                .AllowAnyHeader();
         });
 });
 
 builder.Services.AddScoped<DAOFactory, EFDAOFactory>();
-builder.Services.AddScoped<FileUploadService>();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IFileUploadService, FileUploadService>();
+builder.Services.AddScoped<IAvatarService, AvatarService>();
 
 var app = builder.Build();
 

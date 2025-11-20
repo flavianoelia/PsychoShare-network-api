@@ -6,7 +6,7 @@ namespace psychoshare_api.Configurations
         public const long MaxImageSize = 5 * 1024 * 1024;
 
         // Formatos permitidos
-        public static readonly string[] AllowedImageExtensions = { ".jpg", ".jpeg", ".png", ".webp" };
+        public static readonly string[] AllowedImageExtensions = { ".jpg", ".jpeg", ".png", ".webp", ".gif" };
 
         // Rutas relativas
         public const string AvatarUploadPath = "uploads/avatars";
