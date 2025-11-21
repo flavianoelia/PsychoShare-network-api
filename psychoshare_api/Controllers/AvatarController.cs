@@ -31,7 +31,7 @@ public class AvatarController : ControllerBase
 
         try
         {
-            var response = _avatarService.UploadAvatar(userId, dto.File);
+            var response = _avatarService.UpsertAvatar(userId, dto.File);
             return Ok(response);
         }
         catch (KeyNotFoundException)
@@ -55,7 +55,7 @@ public class AvatarController : ControllerBase
     }
 
 
-    // PUT endpoint removed: POST /api/avatar/{userId} handles both create and replace
+    // Se eliminó el punto de conexión PUT: POST /api/avatar/{userId} gestiona tanto la creación como el reemplazo.
 
     [HttpDelete("{userId}")]
     public IActionResult DeleteAvatar(long userId)
