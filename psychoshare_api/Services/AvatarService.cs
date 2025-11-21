@@ -23,7 +23,7 @@ public class AvatarService : IAvatarService
         _logger = logger;
     }
 
-    public AvatarResponseDTO UploadAvatar(long userId, IFormFile file)
+    public AvatarResponseDTO UpsertAvatar(long userId, IFormFile file)
     {
         var user = _daoFactory.DAOUser().GetUser(userId);
         if (user == null) throw new KeyNotFoundException("Usuario no encontrado");
@@ -91,11 +91,7 @@ public class AvatarService : IAvatarService
         }
     }
 
-    public AvatarResponseDTO UpdateAvatar(long userId, UploadAvatarDto dto)
-    {
-        // Delegar a UploadAvatar para mantener una única implementación
-        return UploadAvatar(userId, dto.File);
-    }
+    // UpdateAvatar removed; UpsertAvatar handles create/replace
 
     public AvatarResponseDTO? GetUserAvatar(long userId)
     {

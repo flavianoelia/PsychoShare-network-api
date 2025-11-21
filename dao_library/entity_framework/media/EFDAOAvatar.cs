@@ -19,9 +19,12 @@ public class EFDAOAvatar : DAOAvatar
         _context.SaveChanges();
     }
 
-    public void UpdateAvatar(long userId, Avatar avatar)
+    public void UpdateAvatarByUserId(long userId, Avatar avatar)
     {
-        _context.Avatar.Update(avatar);
+        // Implementa una actualización segura por userId: actualiza solo el campo URL para evitar sobrescribir otras columnas.
+        var existing = _context.Avatar.FirstOrDefault(a => a.IdUser == userId);
+        if (existing == null) return; // no hay avatar para actualizar
+        existing.Url = avatar.Url;
         _context.SaveChanges();
     }
 
