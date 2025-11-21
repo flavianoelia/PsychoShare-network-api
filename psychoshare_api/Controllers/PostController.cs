@@ -2,63 +2,55 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using psychoshare_api.DTOs.Post;
 using System.Security.Claims;
+using entity_library.media;
+using psychoshare_api.Services;
+using psychoshare_api.Configurations;
+
 
 namespace psychoshare_api.Controllers;
 
 [ApiController]
 [Route("api/post")]
-// [Authorize] // COMENTADO TEMPORALMENTE PARA TESTING POST-002
 public class PostController : ControllerBase
 {
     private readonly ILogger<PostController> _logger;
     private readonly DAOFactory _daoFactory;
 
-    public PostController(ILogger<PostController> logger, DAOFactory daoFactory)
-    {
-        _logger = logger;
-        _daoFactory = daoFactory;
-    }
+private readonly FileUploadService _fileUploadService;
 
-    [HttpPost]
-    public IActionResult CreatePost([FromBody] CreatePostRequest dto)
-    {
-        var errors = new List<string>();
+public PostController(
+    ILogger<PostController> logger,
+    DAOFactory daoFactory,
+    FileUploadService fileUploadService
+)
+{
+    _logger = logger;
+    _daoFactory = daoFactory;
+    _fileUploadService = fileUploadService;
+}
 
-        if (string.IsNullOrWhiteSpace(dto.Description) || dto.Description.Trim().Length < 2)
-            errors.Add("Campo Description requerido, mínimo 2 caracteres");
+[Authorize]
+[HttpPost]
+public async Task<IActionResult> CreatePost([FromForm] CreatePostRequest dto)
+{
+    var errors = new List<string>();
 
-        if (string.IsNullOrWhiteSpace(dto.Title) || dto.Title.Trim().Length < 2)
-            errors.Add("Campo Title requerido, mínimo 2 caracteres");
+    if (string.IsNullOrWhiteSpace(dto.Description) || dto.Description.Trim().Length < 2)
+        errors.Add("Campo Description requerido, mínimo 2 caracteres");
+    if (string.IsNullOrWhiteSpace(dto.Title) || dto.Title.Trim().Length < 2)
+        errors.Add("Campo Title requerido, mínimo 2 caracteres");
+    if (string.IsNullOrWhiteSpace(dto.Authorship) || dto.Authorship.Trim().Length < 2)
+        errors.Add("Campo Authorship requerido, mínimo 2 caracteres");
+    if (string.IsNullOrWhiteSpace(dto.Resume) || dto.Resume.Trim().Length < 2)
+        errors.Add("Campo Resume requerido, mínimo 2 caracteres");
 
-        if (string.IsNullOrWhiteSpace(dto.Authorship) || dto.Authorship.Trim().Length < 2)
-            errors.Add("Campo Authorship requerido, mínimo 2 caracteres");
+    if (errors.Count > 0)
+        return BadRequest(errors);
 
-        if (string.IsNullOrWhiteSpace(dto.Resume) || dto.Resume.Trim().Length < 2)
-            errors.Add("Campo Resume requerido, mínimo 2 caracteres");
+    var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    if (!long.TryParse(userIdClaim, out long currentUserId))
+        return Unauthorized("Token inválido o usuario no identificado");
 
-        if (!string.IsNullOrWhiteSpace(dto.Description) && (!System.Text.RegularExpressions.Regex.IsMatch(dto.Description.Trim(), @"^[a-zA-Z0-9\s.,!?()""':;@#%&+=<>/_-áéíóúñüàèìòù]+$") || dto.Description.Trim() == "."))
-            errors.Add("Contenido inválido en Description");
-
-        if (!string.IsNullOrWhiteSpace(dto.Title) && (!System.Text.RegularExpressions.Regex.IsMatch(dto.Title.Trim(), @"^[a-zA-Z0-9\s.,!?()""':;@#%&+=<>/_-áéíóúñüàèìòù]+$") || dto.Title.Trim() == "."))
-            errors.Add("Contenido inválido en Title");
-
-        if (!string.IsNullOrWhiteSpace(dto.Authorship) && (!System.Text.RegularExpressions.Regex.IsMatch(dto.Authorship.Trim(), @"^[a-zA-Z0-9\s.,!?()""':;@#%&+=<>/_-áéíóúñüàèìòù]+$") || dto.Authorship.Trim() == "."))
-            errors.Add("Contenido inválido en Authorship");
-
-        if (!string.IsNullOrWhiteSpace(dto.Resume) && (!System.Text.RegularExpressions.Regex.IsMatch(dto.Resume.Trim(), @"^[a-zA-Z0-9\s.,!?()""':;@#%&+=<>/_-áéíóúñüàèìòù]+$") || dto.Resume.Trim() == "."))
-            errors.Add("Contenido inválido en Resume");
-
-        dto.Image = dto.Image ?? string.Empty;
-        dto.Pdf = dto.Pdf ?? string.Empty;
-
-        if (errors.Count > 0)
-            return BadRequest(errors);
-
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrEmpty(userIdClaim) || !long.TryParse(userIdClaim, out long currentUserId))
-        {
-            return Unauthorized("Token inválido o usuario no identificado");
-        }
 
         var post = new Post
         {
@@ -70,6 +62,44 @@ public class PostController : ControllerBase
             NameOwner = "User",
             LastnameOwner = "Name"
         };
+
+    // Imagen
+    if (dto.Image != null && dto.Image.Length > 0)
+    {
+        try
+        {
+            var url = _fileUploadService.SaveImage(dto.Image);
+            post.Image = new Image
+            {
+                Url = url,
+                Name = dto.Image.FileName,
+                IdUser = currentUserId
+            };
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Error al guardar imagen: {ex.Message}");
+        }
+    }
+
+    // PDF
+    if (dto.Pdf != null && dto.Pdf.Length > 0)
+    {
+        try
+        {
+            var url = _fileUploadService.SavePdf(dto.Pdf);
+            post.Pdf = new Pdf
+            {
+                Url = url,
+                Name = dto.Pdf.FileName,
+                IdUser = currentUserId
+            };
+        }
+        catch (Exception ex)
+        {
+            return BadRequest($"Error al guardar PDF: {ex.Message}");
+        }
+    }
 
         var daoPost = _daoFactory.DaoPost();
         daoPost.Save(post);

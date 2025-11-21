@@ -1,10 +1,13 @@
 using entity_library.system;
+
 namespace entity_library.media;
+
 public class Image : BaseFile
 {
     private string imageType = "";
     private long idUser;
     private string url = "";
+    private string name = "";
 
     public string ImageType
     {
@@ -23,5 +26,12 @@ public class Image : BaseFile
         get { return this.url; }
         set { this.url = value; }
     }
+
+    public string Name
+    {
+        get { return this.name; }   
+        set { this.name = value; }  
+    }
+
     public virtual User User { get; set; } = null!;
 }

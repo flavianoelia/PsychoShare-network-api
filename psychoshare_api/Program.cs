@@ -138,6 +138,7 @@ builder.Services.AddScoped<DAOFactory, EFDAOFactory>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IFileUploadService, FileUploadService>();
 builder.Services.AddScoped<IAvatarService, AvatarService>();
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
