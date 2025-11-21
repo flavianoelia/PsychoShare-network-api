@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using psychoshare_api.DTOs.Following;
 using psychoshare_api.DTOs.User;
+using System.Security.Claims;
 
 namespace psychoshare_api.Controllers;
 
@@ -21,19 +22,27 @@ public class FollowingController : ControllerBase
         this.df = df;
     }
 
-    [HttpPost]
-    public ActionResult<FollowingResponseDto> Follow([FromBody] CreateFollowingDto createFollowingDto)
+    [HttpPost("{followedUserId}")]
+    public ActionResult<FollowingResponseDto> Follow(long followedUserId)
     {
         try
         {
+            // Extraer userId del JWT token
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+            {
+                return Unauthorized("User ID not found in token");
+            }
+            long userId = long.Parse(userIdClaim.Value);
+
             // Validación: Un usuario no puede seguirse a sí mismo
-            if (createFollowingDto.UserId == createFollowingDto.FollowedUserId)
+            if (userId == followedUserId)
             {
                 return BadRequest("A user cannot follow themselves");
             }
 
             // Validación: Verificar si ya está siguiendo al usuario
-            bool alreadyFollowing = df!.DAOFollowing().CheckFollowing(createFollowingDto.UserId, createFollowingDto.FollowedUserId);
+            bool alreadyFollowing = df!.DAOFollowing().CheckFollowing(userId, followedUserId);
             if (alreadyFollowing)
             {
                 return BadRequest("User is already following this person");
@@ -41,8 +50,8 @@ public class FollowingController : ControllerBase
 
             var following = new Following
             {
-                UserId = createFollowingDto.UserId,
-                FollowedId = createFollowingDto.FollowedUserId,
+                UserId = userId,
+                FollowedId = followedUserId,
                 StartDate = DateTime.Now
             };
             
@@ -64,18 +73,25 @@ public class FollowingController : ControllerBase
         }
     }
 
-    [HttpDelete("{userId}/{followedUserId}")]
-    public ActionResult<bool> Unfollow(long userId, long followedUserId)
+    [HttpDelete("{followedUserId}")]
+    public ActionResult<bool> Unfollow(long followedUserId)
     {
         try
         {
+            // Extraer userId del JWT token
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+            {
+                return Unauthorized("User ID not found in token");
+            }
+            long userId = long.Parse(userIdClaim.Value);
+
             // Validación: Un usuario no puede hacer unfollow de sí mismo
             if (userId == followedUserId)
             {
                 return BadRequest("A user cannot unfollow themselves");
             }
 
-            DAOFactory? df = HttpContext.RequestServices.GetService(typeof(DAOFactory)) as DAOFactory;
             bool deleted = df!.DAOFollowing().DeleteByUserIds(userId, followedUserId);
             return Ok(deleted);
         }
@@ -130,11 +146,19 @@ public class FollowingController : ControllerBase
         }
     }
 
-    [HttpGet("check/{userId}/{targetUserId}")]
-    public ActionResult<bool> CheckFollowing(long userId, long targetUserId)
+    [HttpGet("check/{targetUserId}")]
+    public ActionResult<bool> CheckFollowing(long targetUserId)
     {
         try
         {
+            // Extraer userId del JWT token
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+            {
+                return Unauthorized("User ID not found in token");
+            }
+            long userId = long.Parse(userIdClaim.Value);
+
             var isFollowing = df!.DAOFollowing().CheckFollowing(userId, targetUserId);
             return Ok(isFollowing);
         }
