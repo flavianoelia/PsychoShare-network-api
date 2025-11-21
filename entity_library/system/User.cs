@@ -1,3 +1,4 @@
+using entity_library.media;
 namespace entity_library.system
 {
     public class User : Person
@@ -5,14 +6,14 @@ namespace entity_library.system
         private string email = "";
         private string passwordHash = "";
         private Role? role;
-        private Image? image;
+        private Avatar? avatar;
 
         public string Email
         {
             get { return email; }
             set { email = value; }
         }
-    
+
         public string PasswordHash
         {
             get { return passwordHash; }
@@ -25,10 +26,10 @@ namespace entity_library.system
             set { this.role = value; }
         }
 
-        public virtual Image? Image
+        public virtual Avatar? Avatar
         {
-            get { return this.image; }
-            set { this.image = value; }
+            get { return this.avatar; }
+            set { this.avatar = value; }
         }
 
         public static string HashPassword(string plainPassword)

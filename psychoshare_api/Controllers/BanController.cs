@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using entity_library.ReportPolicy;
 using psychoshare_api.DTOs.Ban;
+using dao_library.interfaces.admin;
 using Microsoft.AspNetCore.Authorization;
 
 namespace psychoshare_api.Controllers;
@@ -192,7 +193,7 @@ public class BanController : BaseAuthorizedController
             if (page < 1) page = 1;
             if (size < 1 || size > 25) size = 10;
 
-            var (bans, totalCount) = _daoFactory.DAOBan().GetAllBansPaginated(page, size);
+            var (bans, totalCount) = _daoFactory.DAOBan().GetActiveBansPaginated(page, size);
             
             var banDtos = bans.Select(b => new BanResponseDto
             {

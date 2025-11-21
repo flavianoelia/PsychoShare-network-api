@@ -6,6 +6,10 @@ using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using psychoshare_api.Services;
+using psychoshare_api.Services.Interfaces;
+using Microsoft.OpenApi.Models;
+using dao_library.interfaces.media;
 
 // Load .env.local file (try multiple locations)
 var envPaths = new[] {
@@ -22,6 +26,9 @@ foreach (var p in envPaths)
         break;
     }
 }
+// Load .env.local file
+//Env.Load("../.env.local");
+Env.Load(Path.Combine(AppContext.BaseDirectory, "..", "..", ".env.local"));
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,7 +57,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 #endregion
 
-#region Conexion
 // Build connection string using environment variables
 var dbServer = Environment.GetEnvironmentVariable("DB_SERVER") ?? "localhost";
 var dbPortStr = Environment.GetEnvironmentVariable("DB_PORT") ?? "3306";
@@ -63,7 +69,7 @@ Console.WriteLine($"DEBUG: DB_SERVER = {dbServer}");
 Console.WriteLine($"DEBUG: DB_PORT = {dbPort}");
 Console.WriteLine($"DEBUG: DB_NAME = {dbName}");
 Console.WriteLine($"DEBUG: DB_USER = {dbUser}");
-Console.WriteLine($"DEBUG: DB_PASSWORD = {(string.IsNullOrEmpty(dbPassword) ? "EMPTY" : "SET")}");
+Console.WriteLine($"DEBUG: DB_PASSWORD = {dbPassword}");
 
 var connectionString = $"Server={dbServer};" +
                        $"Port={dbPort};" +
@@ -71,10 +77,10 @@ var connectionString = $"Server={dbServer};" +
                        $"Uid={dbUser};" +
                        $"Pwd={dbPassword};";
 
-
-#endregion
-
-Console.WriteLine($"DEBUG: Connection String = {connectionString.Replace(dbPassword ?? "", "***")}");
+var maskedConnectionString = !string.IsNullOrWhiteSpace(dbPassword)
+    ? connectionString.Replace(dbPassword, "***")
+    : connectionString;
+//Console.WriteLine($"DEBUG: Connection String = {connectionString.Replace(dbPassword ?? "", "***")}");
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options
@@ -86,7 +92,6 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 );
 
 // Add services to the container.
-
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -124,12 +129,15 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy.AllowAnyOrigin()
-                  .AllowAnyMethod()
-                  .AllowAnyHeader();
+                .AllowAnyMethod()
+                .AllowAnyHeader();
         });
 });
 
 builder.Services.AddScoped<DAOFactory, EFDAOFactory>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IFileUploadService, FileUploadService>();
+builder.Services.AddScoped<IAvatarService, AvatarService>();
 
 var app = builder.Build();
 
@@ -148,6 +156,8 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseStaticFiles();
 
 app.MapControllers();
 

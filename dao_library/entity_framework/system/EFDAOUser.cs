@@ -1,4 +1,5 @@
 using dao_library.Contexts;
+using entity_library.media;
 using entity_library.system;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,7 +30,7 @@ public class EFDAOUser : DAOUser
     public void UpdateUser(long idUser)
     {
         var user = dbContext.Users
-            .Include(u => u.Image) // solo si usas imagen
+            .Include(u => u.Avatar) // solo si usas imagen
             .Include(u => u.Role)  // solo si usas role
             .FirstOrDefault(u => u.Id == idUser);
 
@@ -57,7 +58,7 @@ public class EFDAOUser : DAOUser
     {
         var query = dbContext.Users
             .Include(u => u.Role)
-            .Include(u => u.Image)
+            .Include(u => u.Avatar)
             .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(search))

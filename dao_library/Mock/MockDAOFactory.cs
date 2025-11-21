@@ -1,6 +1,7 @@
 using dao_library.interfaces.admin;
 using dao_library.interfaces.social_media_core;
 using dao_library.interfaces.following;
+using dao_library.interfaces.media;
 
 public class MockDAOFactory : DAOFactory
 {
@@ -40,6 +41,11 @@ public class MockDAOFactory : DAOFactory
     }
 
     public DAOBan DAOBan()
+    {
+        throw new NotImplementedException();
+    }
+
+    public DAOAvatar DAOAvatar()
     {
         throw new NotImplementedException();
     }

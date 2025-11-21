@@ -4,6 +4,8 @@ using dao_library.interfaces.social_media_core;
 using dao_library.interfaces.following;
 using dao_library.entity_framework.admin;
 using dao_library.entity_framework.following;
+using dao_library.entity_framework.media;
+namespace dao_library.interfaces.media;
 
 public class EFDAOFactory : DAOFactory
 {
@@ -46,5 +48,9 @@ public class EFDAOFactory : DAOFactory
     public DAOBan DAOBan()
     {
         return new EFDAOBan(this.appDbContext);
+    }
+    public DAOAvatar DAOAvatar()
+    {
+        return new EFDAOAvatar(this.appDbContext);
     }
 }

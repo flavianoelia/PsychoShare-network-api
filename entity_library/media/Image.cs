@@ -1,4 +1,6 @@
-public class Image : File
+using entity_library.system;
+namespace entity_library.media;
+public class Image : BaseFile
 {
     private string imageType = "";
     private long idUser;
@@ -21,4 +23,5 @@ public class Image : File
         get { return this.url; }
         set { this.url = value; }
     }
+    public virtual User User { get; set; } = null!;
 }
