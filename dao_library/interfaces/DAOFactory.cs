@@ -1,6 +1,7 @@
 using dao_library.interfaces.admin;
 using dao_library.interfaces.social_media_core;
 using dao_library.interfaces.following;
+using dao_library.interfaces.media;
 
 public interface DAOFactory
 {
@@ -11,4 +12,5 @@ public interface DAOFactory
     DAOFollowing DAOFollowing();
     DAOReport DAOReport();
     DAOBan DAOBan();
+    DAOAvatar DAOAvatar();
 }   

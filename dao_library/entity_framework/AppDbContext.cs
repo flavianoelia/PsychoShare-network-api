@@ -3,6 +3,7 @@ using entity_library.system;
 using entity_library.ReportPolicy;
 using entity_library.following;
 namespace dao_library.Contexts;
+using entity_library.media;
 
 
 public class AppDbContext : DbContext
@@ -13,8 +14,9 @@ public class AppDbContext : DbContext
 
     public DbSet<Ban> Bans { get; set; }
     public DbSet<Following> Followings { get; set; }
-    public DbSet<File> Files { get; set; }
+    public DbSet<BaseFile> BaseFiles { get; set; }
     public DbSet<Image> Images { get; set; }
+    public DbSet<Avatar> Avatar{ get; set; }
     public DbSet<Pdf> Pdfs { get; set; }
     public DbSet<Report> Reports { get; set; }
     public DbSet<Comment> Comments { get; set; }
@@ -75,5 +77,10 @@ public class AppDbContext : DbContext
             .WithMany()
             .HasForeignKey(f => f.FollowedId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<User>()
+            .HasOne(u => u.Avatar)
+            .WithOne(a => a.User)       // relación avatar-user
+            .HasForeignKey<Avatar>(a => a.IdUser); // FK está en Avatar (heredada de Image)
     }
 }

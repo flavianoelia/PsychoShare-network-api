@@ -1,4 +1,6 @@
-public class Pdf : File
+using entity_library.system;
+namespace entity_library.media;
+public class Pdf : BaseFile
 {
     private string title = "";
     private string url = "";

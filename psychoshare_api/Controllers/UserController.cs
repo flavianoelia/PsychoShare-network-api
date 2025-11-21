@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using psychoshare_api.DTOs.User;
 using System.Text.RegularExpressions;
+using entity_library.media;
 
 namespace psychoshare_api.Controllers;
 
@@ -138,7 +139,7 @@ public class UserController : ControllerBase
             user.Name,
             user.LastName,
             user.Email,
-            ProfilePictureUrl = user.Image?.Url,
+           ProfilePictureUrl = user.Avatar?.Url,
             RoleName = user.Role?.RoleName
         };
 
@@ -167,10 +168,10 @@ public class UserController : ControllerBase
 
     if (!string.IsNullOrWhiteSpace(req.ProfilePictureUrl))
     {
-        if (user.Image == null)
-            user.Image = new Image();
+        if (user.Avatar == null)
+            user.Avatar = new Avatar();
 
-        user.Image.Url = req.ProfilePictureUrl.Trim();
+        user.Avatar.Url = req.ProfilePictureUrl.Trim();
     }
 
     _daoFactory.DAOUser().UpdateUser(id);
@@ -183,7 +184,7 @@ public class UserController : ControllerBase
         LastName = user.LastName,
         Email = user.Email,
         RoleName = user.Role?.RoleName ?? "",
-        ImageUrl = user.Image?.Url ?? ""
+        AvatarUrl = user.Avatar?.Url ?? ""
     };
 
     return Ok(new
@@ -230,7 +231,7 @@ public class UserController : ControllerBase
                 LastName = u.LastName,
                 Email = u.Email,
                 RoleName = u.Role?.RoleName,
-                ImageUrl = u.Image?.Url
+                AvatarUrl = u.Avatar?.Url
             }).ToList();
 
             var response = new UserPagedResponseDto
