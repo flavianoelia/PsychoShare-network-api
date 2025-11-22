@@ -19,6 +19,8 @@ public class Post
     private string resume = "";
     private Image? image;
     private Pdf? pdf;
+    private DateTime createdAt = DateTime.UtcNow;
+    private DateTime updatedAt = DateTime.UtcNow;
     #endregion
 
     #region Public Atributes
@@ -80,6 +82,18 @@ public class Post
     }
     public virtual List<Comment> Comments { get; set; } = new List<Comment>();
     public virtual List<Like> Likes { get; set; } = new List<Like>();
+
+    public DateTime CreatedAt
+    {
+        get { return this.createdAt; }
+        set { this.createdAt = value; }
+    }
+
+    public DateTime UpdatedAt
+    {
+        get { return this.updatedAt; }
+        set { this.updatedAt = value; }
+    }
 
     #endregion
 }

@@ -11,8 +11,8 @@ using dao_library.Contexts;
 namespace dao_library.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251107144330_Alter_table_avatar")]
-    partial class Alter_table_avatar
+    [Migration("20251122194013_AddTimestampsToPost")]
+    partial class AddTimestampsToPost
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,26 +48,6 @@ namespace dao_library.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Comments");
-                });
-
-            modelBuilder.Entity("File", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("varchar(8)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Files");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("File");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Like", b =>
@@ -110,6 +90,9 @@ namespace dao_library.Migrations
                         .HasMaxLength(8)
                         .HasColumnType("varchar(8)");
 
+                    b.Property<long?>("RoleId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
                     b.ToTable("Persons");
@@ -128,6 +111,9 @@ namespace dao_library.Migrations
                     b.Property<string>("Authorship")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -157,6 +143,9 @@ namespace dao_library.Migrations
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
@@ -296,49 +285,24 @@ namespace dao_library.Migrations
                     b.ToTable("Followings");
                 });
 
-            modelBuilder.Entity("Pdf", b =>
+            modelBuilder.Entity("entity_library.media.BaseFile", b =>
                 {
-                    b.HasBaseType("File");
-
-                    b.Property<long>("IdUser")
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    b.Property<string>("Title")
+                    b.Property<string>("Discriminator")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(8)
+                        .HasColumnType("varchar(8)");
 
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.HasKey("Id");
 
-                    b.HasDiscriminator().HasValue("Pdf");
-                });
+                    b.ToTable("BaseFiles");
 
-            modelBuilder.Entity("entity_library.media.Image", b =>
-                {
-                    b.HasBaseType("File");
+                    b.HasDiscriminator<string>("Discriminator").HasValue("BaseFile");
 
-                    b.Property<long>("IdUser")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("ImageType")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.ToTable("Files", t =>
-                        {
-                            t.Property("IdUser")
-                                .HasColumnName("Image_IdUser");
-
-                            t.Property("Url")
-                                .HasColumnName("Image_Url");
-                        });
-
-                    b.HasDiscriminator().HasValue("Image");
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("entity_library.system.User", b =>
@@ -354,9 +318,6 @@ namespace dao_library.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<long?>("RoleId")
-                        .HasColumnType("bigint");
-
                     b.HasIndex("Email")
                         .IsUnique();
 
@@ -365,24 +326,57 @@ namespace dao_library.Migrations
                     b.HasDiscriminator().HasValue("User");
                 });
 
+            modelBuilder.Entity("entity_library.media.Image", b =>
+                {
+                    b.HasBaseType("entity_library.media.BaseFile");
+
+                    b.Property<long>("IdUser")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("ImageType")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasDiscriminator().HasValue("Image");
+                });
+
+            modelBuilder.Entity("entity_library.media.Pdf", b =>
+                {
+                    b.HasBaseType("entity_library.media.BaseFile");
+
+                    b.Property<long>("IdUser")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.ToTable("BaseFiles", t =>
+                        {
+                            t.Property("IdUser")
+                                .HasColumnName("Pdf_IdUser");
+
+                            t.Property("Url")
+                                .HasColumnName("Pdf_Url");
+                        });
+
+                    b.HasDiscriminator().HasValue("Pdf");
+                });
+
             modelBuilder.Entity("entity_library.media.Avatar", b =>
                 {
                     b.HasBaseType("entity_library.media.Image");
 
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.HasIndex("UserId")
+                    b.HasIndex("IdUser")
                         .IsUnique();
-
-                    b.ToTable("Files", t =>
-                        {
-                            t.Property("IdUser")
-                                .HasColumnName("Image_IdUser");
-
-                            t.Property("Url")
-                                .HasColumnName("Image_Url");
-                        });
 
                     b.HasDiscriminator().HasValue("Avatar");
                 });
@@ -435,7 +429,7 @@ namespace dao_library.Migrations
                         .WithMany()
                         .HasForeignKey("ImgOwnerId");
 
-                    b.HasOne("Pdf", "Pdf")
+                    b.HasOne("entity_library.media.Pdf", "Pdf")
                         .WithMany()
                         .HasForeignKey("PdfId");
 
@@ -506,7 +500,7 @@ namespace dao_library.Migrations
                 {
                     b.HasOne("entity_library.system.User", "User")
                         .WithOne("Avatar")
-                        .HasForeignKey("entity_library.media.Avatar", "UserId")
+                        .HasForeignKey("entity_library.media.Avatar", "IdUser")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

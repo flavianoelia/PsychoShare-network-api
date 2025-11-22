@@ -99,7 +99,8 @@ public class PostController : ControllerBase
                 PdfUrl = post.Pdf?.Url,
                 UserId = post.UserId,
                 NameOwner = post.NameOwner,
-                LastnameOwner = post.LastnameOwner
+                LastnameOwner = post.LastnameOwner,
+                CreatedAt = post.CreatedAt
             };
 
             return Ok(response);
@@ -130,7 +131,8 @@ public class PostController : ControllerBase
                 PdfUrl = post.Pdf?.Url,
                 UserId = post.UserId,
                 NameOwner = post.NameOwner,
-                LastnameOwner = post.LastnameOwner
+                LastnameOwner = post.LastnameOwner,
+                CreatedAt = post.CreatedAt
             }).ToList();
 
             return Ok(response);
@@ -171,7 +173,8 @@ public class PostController : ControllerBase
                 PdfUrl = post.Pdf?.Url,
                 UserId = post.UserId,
                 NameOwner = post.NameOwner,
-                LastnameOwner = post.LastnameOwner
+                LastnameOwner = post.LastnameOwner,
+                CreatedAt = post.CreatedAt
             }).ToList();
 
             var response = new PostFeedResponseDto
@@ -298,7 +301,8 @@ public class PostController : ControllerBase
                 PdfUrl = post.Pdf?.Url,
                 UserId = post.UserId,
                 NameOwner = post.NameOwner,
-                LastnameOwner = post.LastnameOwner
+                LastnameOwner = post.LastnameOwner,
+                CreatedAt = post.CreatedAt
             }).ToList();
 
             var response = new PostFeedResponseDto
@@ -350,7 +354,8 @@ public class PostController : ControllerBase
                 PdfUrl = post.Pdf?.Url,
                 UserId = post.UserId,
                 NameOwner = post.NameOwner,
-                LastnameOwner = post.LastnameOwner
+                LastnameOwner = post.LastnameOwner,
+                CreatedAt = post.CreatedAt
             }).ToList();
 
             var response = new PostFeedResponseDto
