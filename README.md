@@ -9,11 +9,11 @@ PsychoShare Network is a specialized social platform designed for psychology pro
 ## 🛠️ Technical Stack
 
 - **Backend**: .NET 8.0 with C#
-- **Database**: MySQL/SQL Server
-- **Architecture**: Clean Architecture
-- **Authentication**: C# Authentication System
-- **Deployment**: Docker
-- **Testing**: Unit Testing Required
+- **Database**: MySQL 8.0+ with Entity Framework Core
+- **Architecture**: Clean Architecture (DAO Pattern)
+- **Authentication**: JWT (JSON Web Tokens)
+- **ORM**: Entity Framework Core with Lazy Loading
+- **Testing**: xUnit (In Progress)
 
 ## ✨ Core Features
 
@@ -46,8 +46,19 @@ This project follows Clean Architecture principles with clear separation of conc
 
 ### Prerequisites
 - .NET 8.0 SDK
-- MySQL/SQL Server
-- Docker (for deployment)
+- MySQL 8.0+
+- WAMP/XAMPP (for local MySQL)
+
+### Database Setup
+1. Create a MySQL database named `psychoshare`
+2. Configure environment variables in `.env.local`:
+```
+DB_SERVER=localhost
+DB_PORT=3306
+DB_NAME=psychoshare
+DB_USER=root
+DB_PASSWORD=your_password
+```
 
 ### Installation
 ```bash
@@ -60,40 +71,49 @@ cd PsychoShare-network-api
 # Restore dependencies
 dotnet restore
 
+# Run migrations (if needed)
+dotnet ef database update
+
 # Run the application
+cd psychoshare_api
 dotnet run
 ```
+
+The API will be available at `http://localhost:5174`
 
 ## 🌿 Development Guidelines
 
 ### Git Workflow
-- Create feature branches using kebab-case naming
-- Example: `user-authentication`, `file-upload-feature`
-- Write brief, explicit commit messages
-- All commits and code must be in English
+- Work on feature branches
+- Main branches: `main`, `development2`
+- Write clear commit messages in English
+- Test before pushing
 
 ### Code Standards
 - Follow Clean Code principles
 - Use descriptive variable names
-- Include unit tests for all features
-- Avoid accessibility-unfriendly symbols (@, x, /)
-
-### Branch Naming Convention
-❌ **Incorrect**: `feature/john-user-login`
-✅ **Correct**: `feature/user-authentication`
+- All code and comments in English
+- Document complex logic
 
 ## 🧪 Testing
 
-Unit tests are required for all implemented features. Run tests with:
+Unit tests are in development. Run tests with:
 
 ```bash
 dotnet test
 ```
 
+## 📚 API Documentation
+
+Once the server is running, access Swagger documentation at:
+```
+http://localhost:5174/swagger
+```
+
 ## 📁 Related Repositories
 
 - **Frontend**: `psychoshare-public-site` (HTML Vanilla, CSS3, JS + Bootstrap)
-- **Admin Dashboard**: Coming soon (React + Node.js)
+- **Admin Dashboard**: `psychoshare-admin-dashboard` (React + Node.js)
 
 ## 📄 License
 

@@ -1,59 +1,172 @@
-# PsychoShare Network API - Context
+# PsychoShare Network API - AI Context
 
 ## Project Overview
 
-PsychoShare Network is a social network platform designed specifically for psychologists to share Creative Commons licensed bibliographic materials. It provides standard social media functionality including user management, content sharing, and social interactions.
+PsychoShare Network is a social network platform for psychologists to share Creative Commons licensed academic content, scientific articles, and educational materials. Features standard social media functionality with academic focus.
 
 ## Technical Stack
 
 - **Backend**: .NET 8.0 with C#
-- **Database**: SQL Server or MySQL
-- **Frontend**: Vanilla JavaScript with Bootstrap
-- **Admin Dashboard**: React + Node.js (separate repository)
-- **Authentication**: C# standard authentication (JWT likely)
-- **Deployment**: Docker containerization
-- **Architecture**: Clean Architecture with possible Singleton pattern
+- **Database**: MySQL 8.0+ with Entity Framework Core
+- **ORM**: Entity Framework Core with Lazy Loading Proxies
+- **Authentication**: JWT (JSON Web Tokens)
+- **Architecture**: Clean Architecture with DAO Pattern
+- **Testing**: xUnit (In Progress)
+- **Dependency Injection**: Built-in .NET DI Container
+- **Frontend**: Vanilla JavaScript, HTML5, CSS3, Bootstrap (separate repo)
+- **Admin Dashboard**: React (separate repo - in planning)
 
-## Core Features
+## Project Structure
 
-- User account creation and management
-- Profile editing with image uploads
-- PDF file upload and sharing
-- User following system
-- Like and comment functionality
-- User and follower management
-- Account deletion
-- Creative Commons content licensing
+```
+PsychoShare-network-api/
+├── psychoshare_api/          # Main API (Controllers, DTOs, Services)
+├── entity_library/           # Domain entities (User, Post, Comment, etc.)
+├── dao_library/              # Data access (Interfaces, EF implementations)
+└── entity_library.Tests/     # Unit tests
+```
+
+## Core Features Implemented
+
+- JWT authentication and authorization
+- User management with profiles and avatars
+- Post CRUD with pagination and search
+- Comments system
+- Likes functionality
+- Following/follower relationships
+- File uploads (Images, PDFs, Avatars)
+- Admin features (Reports, Bans, Roles)
+- Feed system with pagination
 
 ## Development Guidelines
 
 ### Code Standards
 
-- **Language**: All code, comments, and commits must be in English
-- **Clean Code**: Use descriptive variable names that represent their purpose
-- **Architecture**: Follow Clean Architecture principles
-- **Testing**: Unit tests required for all assigned tasks
-- **Accessibility**: Avoid symbols like @, x, / to support screen readers
+- **Language**: All code, comments, and commits in English
+- **Naming**: PascalCase for classes/methods, camelCase for variables
+- **Clean Code**: Self-documenting code, minimal comments
+- **Architecture**: Clean Architecture, DAO Pattern, Dependency Injection
+- **Validation**: Input validation on all endpoints
+- **Error Handling**: Try-catch blocks with proper logging
+- **DTOs**: Use DTOs for all API requests/responses
 
 ### Git Workflow
 
-- **Branching**: Each developer works on feature branches
-- **Branch Naming**: Use kebab-case (e.g., `user-authentication`, `file-upload-feature`)
-- **Commits**: Brief, explicit descriptions of what was implemented
-- **No Personal Names**: Branch names should describe functionality, not developers
+- **Main branches**: `main` (production), `development2` (development)
+- **Feature branches**: Create from `development2`
+- **Commits**: Clear, descriptive messages in English
+- **No conventions enforced**: Team uses flexible branch naming
 
-### Project Structure
+### Database Guidelines
 
-- Backend API (current repository)
-- Frontend public site (separate repository: psychoshare-public-site)
-- Admin dashboard (separate React/Node repository)
+- **Connection**: Environment variables via `.env.local`
+- **Migrations**: Use EF Core migrations
+- **Lazy Loading**: Enabled (use with caution for performance)
+- **Relationships**: Properly defined with navigation properties
 
 ## AI Assistant Instructions
 
-- Follow Clean Architecture patterns
-- Suggest meaningful variable and method names
-- Prioritize accessibility in code suggestions
-- Maintain English language consistency
-- Consider unit testing approaches
-- Respect separation of concerns between repositories
-- Focus on psychologist user experience and Creative Commons compliance
+### When Suggesting Code
+
+- Follow Clean Architecture and DAO pattern
+- Use dependency injection (constructor injection)
+- Create DTOs for request/response objects
+- Include input validation
+- Add error handling with logging
+- Use async/await for database operations where beneficial
+- Return proper HTTP status codes (200, 400, 404, 500, etc.)
+
+### When Creating Controllers
+
+- Inherit from `ControllerBase`
+- Use `[ApiController]` and `[Route("api/[controller]")]` attributes
+- Inject `DAOFactory` for data access
+- Inject `ILogger<T>` for logging
+- Use proper HTTP verbs (GET, POST, PUT, DELETE)
+- Return `IActionResult` with proper status codes
+
+### When Creating Entities
+
+- Place in appropriate folder (system/, social_media_core/, etc.)
+- Define navigation properties for relationships
+- Use proper data annotations if needed
+- Consider lazy loading implications
+
+### When Creating DAOs
+
+- Define interface in `dao_library/interfaces/`
+- Implement in `dao_library/entity_framework/`
+- Inject `AppDbContext`
+- Use EF Core LINQ queries
+- Handle null cases appropriately
+
+### What NOT to Do
+
+- Don't hardcode connection strings
+- Don't use Spanish in code/comments
+- Don't create unnecessary comments (code should be self-explanatory)
+- Don't skip validation
+- Don't ignore error handling
+- Don't use Singleton pattern (use DI instead)
+
+### Testing Approach
+
+- Use Swagger UI for manual testing
+- Write xUnit tests for business logic
+- Test via `http://localhost:5174/swagger`
+- Verify all CRUD operations work correctly
+
+## Current API Endpoints
+
+### Auth & Users
+- POST /api/user (register)
+- GET /api/user/{id}
+- PUT /api/user/edit/{id}
+- GET /api/user/check-email
+
+### Posts
+- POST /api/post
+- GET /api/post/{id}
+- GET /api/post (paginated)
+- GET /api/post/feed (with search)
+- GET /api/post/user/{userId}
+- PUT /api/post/{id}
+- DELETE /api/post/{id}
+
+### Social
+- POST /api/comment
+- GET /api/comment/post/{id}
+- POST /api/like
+- DELETE /api/like/{id}
+- POST /api/following/follow
+- DELETE /api/following/unfollow
+
+### Media
+- POST /api/image
+- POST /api/pdf
+- POST /api/avatar
+
+### Admin
+- POST /api/report
+- GET /api/report
+- POST /api/ban
+- POST /api/role/assign
+
+## Environment Setup
+
+```env
+DB_SERVER=localhost
+DB_PORT=3306
+DB_NAME=psychoshare
+DB_USER=root
+DB_PASSWORD=your_password
+```
+
+## Priority Focus Areas
+
+- Maintain Clean Architecture
+- Proper error handling and validation
+- Consistent DTO usage
+- Performance optimization for queries
+- Security best practices (JWT, input validation)
+- Code readability and maintainability
