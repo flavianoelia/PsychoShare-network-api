@@ -44,7 +44,7 @@ namespace dao_library.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("Comments", (string)null);
                 });
 
             modelBuilder.Entity("Like", b =>
@@ -65,7 +65,7 @@ namespace dao_library.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Likes");
+                    b.ToTable("Likes", (string)null);
                 });
 
             modelBuilder.Entity("Person", b =>
@@ -92,7 +92,7 @@ namespace dao_library.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Persons");
+                    b.ToTable("Persons", (string)null);
 
                     b.HasDiscriminator<string>("PersonType").HasValue("Person");
 
@@ -155,7 +155,7 @@ namespace dao_library.Migrations
 
                     b.HasIndex("PdfId");
 
-                    b.ToTable("Posts");
+                    b.ToTable("Posts", (string)null);
                 });
 
             modelBuilder.Entity("Role", b =>
@@ -170,7 +170,7 @@ namespace dao_library.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("entity_library.ReportPolicy.Ban", b =>
@@ -212,7 +212,7 @@ namespace dao_library.Migrations
 
                     b.HasIndex("BanUserId");
 
-                    b.ToTable("Bans");
+                    b.ToTable("Bans", (string)null);
                 });
 
             modelBuilder.Entity("entity_library.ReportPolicy.Report", b =>
@@ -255,7 +255,7 @@ namespace dao_library.Migrations
 
                     b.HasIndex("ReporterUserId");
 
-                    b.ToTable("Reports");
+                    b.ToTable("Reports", (string)null);
                 });
 
             modelBuilder.Entity("entity_library.following.Following", b =>
@@ -279,7 +279,7 @@ namespace dao_library.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Followings");
+                    b.ToTable("Followings", (string)null);
                 });
 
             modelBuilder.Entity("entity_library.media.BaseFile", b =>
@@ -295,7 +295,7 @@ namespace dao_library.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BaseFiles");
+                    b.ToTable("BaseFiles", (string)null);
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("BaseFile");
 
@@ -356,7 +356,7 @@ namespace dao_library.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.ToTable("BaseFiles", t =>
+                    b.ToTable("BaseFiles", null, t =>
                         {
                             t.Property("IdUser")
                                 .HasColumnName("Pdf_IdUser");
