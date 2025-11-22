@@ -24,10 +24,13 @@ public class AppDbContext : DbContext
     public DbSet<Post> Posts { get; set; }
     public DbSet<Person> Persons { get; set; }
     public DbSet<User> Users { get; set; }
-    public DbSet<Role> Roles { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+         modelBuilder.Entity<User>()
+        .Property(u => u.RoleType)
+        .HasConversion<int>(); // save enum like int
+
         base.OnModelCreating(modelBuilder);
 
         // Configure TPH inheritance with discriminator
@@ -35,13 +38,6 @@ public class AppDbContext : DbContext
             .HasDiscriminator<string>("PersonType")
             .HasValue<Person>("Person")
             .HasValue<User>("User");
-
-        // Configure User-Role relationship using RoleId from base Person class
-        modelBuilder.Entity<User>()
-            .HasOne(u => u.Role)
-            .WithMany()
-            .HasForeignKey(u => u.RoleId)
-            .IsRequired(false);
 
         // Configure User entity constraints
         modelBuilder.Entity<User>()
