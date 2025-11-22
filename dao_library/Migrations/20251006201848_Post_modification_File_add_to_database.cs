@@ -150,6 +150,7 @@ namespace dao_library.Migrations
              table: "Posts");
                
 
+
             migrationBuilder.DropPrimaryKey(
                 name: "PK_Files",
                 table: "Files");

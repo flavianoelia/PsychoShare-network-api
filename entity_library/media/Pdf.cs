@@ -5,8 +5,8 @@ public class Pdf : BaseFile
     private string title = "";
     private string url = "";
     private long idUser;
-
     private string name = "";
+    private string PdfType = "";
 
     public string Title
     {
@@ -30,5 +30,10 @@ public class Pdf : BaseFile
     {
         get { return this.name; }   
         set { this.name = value; }  
+    }
+    public string Type
+    {
+        get { return this.PdfType; }
+        set { this.PdfType = value; }
     }
 }

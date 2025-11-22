@@ -5,6 +5,7 @@ using System.Security.Claims;
 using entity_library.media;
 using psychoshare_api.Services;
 using psychoshare_api.Configurations;
+using psychoshare_api.Services.Interfaces;
 
 
 namespace psychoshare_api.Controllers;
@@ -15,19 +16,18 @@ public class PostController : ControllerBase
 {
     private readonly ILogger<PostController> _logger;
     private readonly DAOFactory _daoFactory;
+    private readonly IFileUploadService _fileUploadService;
 
-private readonly FileUploadService _fileUploadService;
-
-public PostController(
-    ILogger<PostController> logger,
-    DAOFactory daoFactory,
-    FileUploadService fileUploadService
-)
-{
-    _logger = logger;
-    _daoFactory = daoFactory;
-    _fileUploadService = fileUploadService;
-}
+    public PostController(
+        ILogger<PostController> logger,
+        DAOFactory daoFactory,
+        IFileUploadService fileUploadService
+    )
+    {
+        _logger = logger;
+        _daoFactory = daoFactory;
+        _fileUploadService = fileUploadService;
+    }
 
 [Authorize]
 [HttpPost]
