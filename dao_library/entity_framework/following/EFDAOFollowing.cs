@@ -62,4 +62,25 @@ public class EFDAOFollowing : DAOFollowing
         _dbContext.SaveChanges();
         return true;
     }
+    
+    public List<long> GetFollowingIds(long userId)
+    {
+        return _dbContext.Followings
+            .Where(f => f.UserId == userId)
+            .Select(f => f.FollowedId)
+            .ToList();
+    }
+    
+    public Dictionary<long, bool> CheckMultipleFollowing(long userId, List<long> targetUserIds)
+    {
+        var followedIds = _dbContext.Followings
+            .Where(f => f.UserId == userId && targetUserIds.Contains(f.FollowedId))
+            .Select(f => f.FollowedId)
+            .ToHashSet();
+        
+        return targetUserIds.ToDictionary(
+            targetId => targetId,
+            targetId => followedIds.Contains(targetId)
+        );
+    }
 }
