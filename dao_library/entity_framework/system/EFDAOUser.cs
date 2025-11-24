@@ -31,7 +31,7 @@ public class EFDAOUser : DAOUser
     {
         var user = dbContext.Users
             .Include(u => u.Avatar) // solo si usas imagen
-            .Include(u => u.Role)  // solo si usas role
+            .Include(u => u.RoleType)  // solo si usas role
             .FirstOrDefault(u => u.Id == idUser);
 
         if (user == null)
@@ -57,7 +57,7 @@ public class EFDAOUser : DAOUser
     public (List<User> Users, int TotalCount) GetAllPaginated(int page, int size, string? search = null, string? role = null)
     {
         var query = dbContext.Users
-            .Include(u => u.Role)
+            .Include(u => u.RoleType)
             .Include(u => u.Avatar)
             .AsQueryable();
 
@@ -72,7 +72,7 @@ public class EFDAOUser : DAOUser
 
         if (!string.IsNullOrWhiteSpace(role))
         {
-            query = query.Where(u => u.Role != null && u.Role.RoleName == role);
+            query = query.Where(u => u.RoleType.ToString() == role);
         }
 
         var totalCount = query.Count();

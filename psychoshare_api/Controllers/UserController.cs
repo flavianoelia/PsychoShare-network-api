@@ -80,13 +80,13 @@ public class UserController : ControllerBase
         if (existingUser != null)
             return Conflict(new { success = false, message = "El email ya está registrado." });
 
-
         var user = new entity_library.system.User
         {
             Name = req.Name!.Trim(),
             LastName = req.LastName!.Trim(),
             Email = req.Email!.Trim(),
-            PasswordHash = entity_library.system.User.HashPassword(req.Password!)
+            PasswordHash = entity_library.system.User.HashPassword(req.Password!),
+            RoleType = RoleType.User
         };
 
         await _daoFactory.DAOUser().SaveAsync(user);
@@ -139,8 +139,8 @@ public class UserController : ControllerBase
             user.Name,
             user.LastName,
             user.Email,
-           ProfilePictureUrl = user.Avatar?.Url,
-            RoleName = user.Role?.RoleName
+            ProfilePictureUrl = user.Avatar?.Url,
+            RoleName = user.RoleType
         };
 
         return Ok(response);
@@ -183,7 +183,7 @@ public class UserController : ControllerBase
         Name = user.Name,
         LastName = user.LastName,
         Email = user.Email,
-        RoleName = user.Role?.RoleName ?? "",
+        RoleName = user.RoleType.ToString(),
         AvatarUrl = user.Avatar?.Url ?? ""
     };
 
@@ -230,7 +230,7 @@ public class UserController : ControllerBase
                 Name = u.Name,
                 LastName = u.LastName,
                 Email = u.Email,
-                RoleName = u.Role?.RoleName,
+                RoleName = u.RoleType.ToString(),
                 AvatarUrl = u.Avatar?.Url
             }).ToList();
 

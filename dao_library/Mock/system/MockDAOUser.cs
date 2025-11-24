@@ -76,7 +76,7 @@ public class MockDAOUser : DAOUser
 
         if (!string.IsNullOrWhiteSpace(role))
         {
-            query = query.Where(u => u.Role != null && u.Role.RoleName == role);
+            query = query.Where(u => u.RoleType.ToString() == role);
         }
 
         var totalCount = query.Count();
