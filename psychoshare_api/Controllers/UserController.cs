@@ -133,13 +133,13 @@ public class UserController : ControllerBase
         if (user == null)
             return NotFound(new { message = "Usuario no encontrado." });
 
-        var response = new
+        var response = new UserResponseDto
         {
             Id = user.Id,
-            user.Name,
-            user.LastName,
-            user.Email,
-           ProfilePictureUrl = user.Avatar?.Url,
+            Name = user.Name,
+            LastName = user.LastName,
+            Email = user.Email,
+            AvatarUrl = user.Avatar?.Url,
             RoleName = user.Role?.RoleName
         };
 
