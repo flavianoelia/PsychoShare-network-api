@@ -11,20 +11,21 @@ namespace dao_library.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
+               
+            migrationBuilder.DropForeignKey( 
                 name: "FK_Persons_Images_ImageId",
-                table: "Persons");
+                table: "Persons"); 
 
             migrationBuilder.DropForeignKey(
-                name: "FK_Posts_Images_ImageId",
-                table: "Posts");
+                 name: "FK_Posts_Images_ImageId",
+                 table: "Posts");
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_Posts_Images_ImgOwnerId",
-                table: "Posts");
+           migrationBuilder.DropForeignKey(
+               name: "FK_Posts_Images_ImgOwnerId",
+               table: "Posts");
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_Posts_Pdfs_PdfId",
+           migrationBuilder.DropForeignKey(
+              name: "FK_Posts_Pdfs_PdfId",
                 table: "Posts");
 
             migrationBuilder.DropTable(
@@ -133,20 +134,22 @@ namespace dao_library.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Persons_Files_ImageId",
-                table: "Persons");
+             name: "FK_Persons_Files_ImageId",
+             table: "Persons");
 
-            migrationBuilder.DropForeignKey(
+           migrationBuilder.DropForeignKey(
                 name: "FK_Posts_Files_ImageId",
                 table: "Posts");
 
-            migrationBuilder.DropForeignKey(
+           migrationBuilder.DropForeignKey(
                 name: "FK_Posts_Files_ImgOwnerId",
-                table: "Posts");
+                 table: "Posts");
 
-            migrationBuilder.DropForeignKey(
-                name: "FK_Posts_Files_PdfId",
-                table: "Posts");
+           migrationBuilder.DropForeignKey(
+             name: "FK_Posts_Files_PdfId",
+             table: "Posts");
+               
+
 
             migrationBuilder.DropPrimaryKey(
                 name: "PK_Files",

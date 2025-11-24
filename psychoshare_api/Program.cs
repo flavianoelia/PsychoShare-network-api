@@ -10,6 +10,7 @@ using psychoshare_api.Services;
 using psychoshare_api.Services.Interfaces;
 using Microsoft.OpenApi.Models;
 using dao_library.interfaces.media;
+using dao_library.entity_framework.social_media_core;
 
 // Load .env.local file (try multiple locations)
 var envPaths = new[] {
@@ -138,7 +139,8 @@ builder.Services.AddScoped<DAOFactory, EFDAOFactory>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IFileUploadService, FileUploadService>();
 builder.Services.AddScoped<IAvatarService, AvatarService>();
-
+builder.Services.AddScoped<IDAOImage, EFDAOImage>();
+builder.Services.AddScoped<IDAOPdf, EFDAOPdf>();
 var app = builder.Build();
 
 

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using dao_library.Contexts;
 
@@ -10,9 +11,11 @@ using dao_library.Contexts;
 namespace dao_library.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251122000808_AddBaseFileStructure")]
+    partial class AddBaseFileStructure
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,7 +47,7 @@ namespace dao_library.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("Like", b =>
@@ -65,7 +68,7 @@ namespace dao_library.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Likes", (string)null);
+                    b.ToTable("Likes");
                 });
 
             modelBuilder.Entity("Person", b =>
@@ -92,7 +95,7 @@ namespace dao_library.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Persons", (string)null);
+                    b.ToTable("Persons");
 
                     b.HasDiscriminator<string>("PersonType").HasValue("Person");
 
@@ -108,9 +111,6 @@ namespace dao_library.Migrations
                     b.Property<string>("Authorship")
                         .IsRequired()
                         .HasColumnType("longtext");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -141,9 +141,6 @@ namespace dao_library.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)");
-
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
@@ -155,7 +152,7 @@ namespace dao_library.Migrations
 
                     b.HasIndex("PdfId");
 
-                    b.ToTable("Posts", (string)null);
+                    b.ToTable("Posts");
                 });
 
             modelBuilder.Entity("Role", b =>
@@ -170,7 +167,7 @@ namespace dao_library.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("entity_library.ReportPolicy.Ban", b =>
@@ -212,7 +209,7 @@ namespace dao_library.Migrations
 
                     b.HasIndex("BanUserId");
 
-                    b.ToTable("Bans", (string)null);
+                    b.ToTable("Bans");
                 });
 
             modelBuilder.Entity("entity_library.ReportPolicy.Report", b =>
@@ -255,7 +252,7 @@ namespace dao_library.Migrations
 
                     b.HasIndex("ReporterUserId");
 
-                    b.ToTable("Reports", (string)null);
+                    b.ToTable("Reports");
                 });
 
             modelBuilder.Entity("entity_library.following.Following", b =>
@@ -279,7 +276,7 @@ namespace dao_library.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Followings", (string)null);
+                    b.ToTable("Followings");
                 });
 
             modelBuilder.Entity("entity_library.media.BaseFile", b =>
@@ -295,7 +292,7 @@ namespace dao_library.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("BaseFiles", (string)null);
+                    b.ToTable("BaseFiles");
 
                     b.HasDiscriminator<string>("Discriminator").HasValue("BaseFile");
 
@@ -364,7 +361,7 @@ namespace dao_library.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.ToTable("BaseFiles", null, t =>
+                    b.ToTable("BaseFiles", t =>
                         {
                             t.Property("IdUser")
                                 .HasColumnName("Pdf_IdUser");
