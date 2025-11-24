@@ -51,6 +51,9 @@ public async Task<IActionResult> CreatePost([FromForm] CreatePostRequest dto)
     if (!long.TryParse(userIdClaim, out long currentUserId))
         return Unauthorized("Token inválido o usuario no identificado");
 
+    var user = _daoFactory.DAOUser().GetUser(currentUserId);
+    if (user == null)
+        return NotFound("Usuario no encontrado");
 
         var post = new Post
         {
@@ -59,8 +62,8 @@ public async Task<IActionResult> CreatePost([FromForm] CreatePostRequest dto)
             Authorship = dto.Authorship!.Trim(),
             Resume = dto.Resume!.Trim(),
             UserId = currentUserId,
-            NameOwner = "User",
-            LastnameOwner = "Name"
+            NameOwner = user.Name,
+            LastnameOwner = user.LastName
         };
 
     // Imagen
