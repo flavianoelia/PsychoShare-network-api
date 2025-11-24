@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using dao_library.Contexts;
 
@@ -10,9 +11,11 @@ using dao_library.Contexts;
 namespace dao_library.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251124160759_AddNameColumnToBaseFiles")]
+    partial class AddNameColumnToBaseFiles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -87,6 +90,9 @@ namespace dao_library.Migrations
                         .HasMaxLength(8)
                         .HasColumnType("varchar(8)");
 
+                    b.Property<long?>("RoleId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("Id");
 
                     b.ToTable("Persons");
@@ -153,6 +159,21 @@ namespace dao_library.Migrations
                     b.HasIndex("PdfId");
 
                     b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("Role", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("entity_library.ReportPolicy.Ban", b =>
@@ -297,11 +318,10 @@ namespace dao_library.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("RoleType")
-                        .HasColumnType("int");
-
                     b.HasIndex("Email")
                         .IsUnique();
+
+                    b.HasIndex("RoleId");
 
                     b.HasDiscriminator().HasValue("User");
                 });
@@ -480,6 +500,15 @@ namespace dao_library.Migrations
                     b.Navigation("FollowedUser");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("entity_library.system.User", b =>
+                {
+                    b.HasOne("Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId");
+
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("entity_library.media.Avatar", b =>

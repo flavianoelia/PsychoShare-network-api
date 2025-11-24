@@ -5,7 +5,7 @@ namespace entity_library.system
     {
         private string email = "";
         private string passwordHash = "";
-        private Role? role;
+        private RoleType roleType = RoleType.User;
         private Avatar? avatar;
 
         public string Email
@@ -20,10 +20,10 @@ namespace entity_library.system
             set { passwordHash = value; }
         }
 
-        public virtual Role? Role
+        public virtual RoleType RoleType
         {
-            get { return this.role; }
-            set { this.role = value; }
+            get { return this.roleType; }
+            set { this.roleType = value; }
         }
 
         public virtual Avatar? Avatar

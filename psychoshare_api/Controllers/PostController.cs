@@ -51,6 +51,9 @@ public async Task<IActionResult> CreatePost([FromForm] CreatePostRequest dto)
     if (!long.TryParse(userIdClaim, out long currentUserId))
         return Unauthorized("Token inválido o usuario no identificado");
 
+    var user = _daoFactory.DAOUser().GetUser(currentUserId);
+    if (user == null)
+        return NotFound("Usuario no encontrado");
 
         var post = new Post
         {
@@ -59,8 +62,8 @@ public async Task<IActionResult> CreatePost([FromForm] CreatePostRequest dto)
             Authorship = dto.Authorship!.Trim(),
             Resume = dto.Resume!.Trim(),
             UserId = currentUserId,
-            NameOwner = "User",
-            LastnameOwner = "Name"
+            NameOwner = user.Name,
+            LastnameOwner = user.LastName
         };
 
     // Imagen
@@ -118,6 +121,7 @@ public async Task<IActionResult> CreatePost([FromForm] CreatePostRequest dto)
             if (post == null)
                 return NotFound($"Post con ID {id} no encontrado");
 
+            var postUser = _daoFactory.DAOUser().GetUser(post.UserId);
             var response = new PostResponseDto
             {
                 Id = post.Id,
@@ -130,6 +134,7 @@ public async Task<IActionResult> CreatePost([FromForm] CreatePostRequest dto)
                 UserId = post.UserId,
                 NameOwner = post.NameOwner,
                 LastnameOwner = post.LastnameOwner,
+                AvatarUrl = postUser?.Avatar?.Url,
                 CreatedAt = post.CreatedAt
             };
 
@@ -150,19 +155,24 @@ public async Task<IActionResult> CreatePost([FromForm] CreatePostRequest dto)
             var daoPost = _daoFactory.DaoPost();
             var posts = daoPost.GetPostFromUser(userId);
 
-            var response = posts.Select(post => new PostResponseDto
+            var response = posts.Select(post =>
             {
-                Id = post.Id,
-                Description = post.Description,
-                Title = post.Title,
-                Authorship = post.Authorship,
-                Resume = post.Resume,
-                ImageUrl = post.Image?.Url,
-                PdfUrl = post.Pdf?.Url,
-                UserId = post.UserId,
-                NameOwner = post.NameOwner,
-                LastnameOwner = post.LastnameOwner,
-                CreatedAt = post.CreatedAt
+                var postUser = _daoFactory.DAOUser().GetUser(post.UserId);
+                return new PostResponseDto
+                {
+                    Id = post.Id,
+                    Description = post.Description,
+                    Title = post.Title,
+                    Authorship = post.Authorship,
+                    Resume = post.Resume,
+                    ImageUrl = post.Image?.Url,
+                    PdfUrl = post.Pdf?.Url,
+                    UserId = post.UserId,
+                    NameOwner = post.NameOwner,
+                    LastnameOwner = post.LastnameOwner,
+                    AvatarUrl = postUser?.Avatar?.Url,
+                    CreatedAt = post.CreatedAt
+                };
             }).ToList();
 
             return Ok(response);
@@ -192,19 +202,24 @@ public async Task<IActionResult> CreatePost([FromForm] CreatePostRequest dto)
                 request.SearchTerm
             );
 
-            var postDtos = posts.Select(post => new PostResponseDto
+            var postDtos = posts.Select(post =>
             {
-                Id = post.Id,
-                Description = post.Description,
-                Title = post.Title,
-                Authorship = post.Authorship,
-                Resume = post.Resume,
-                ImageUrl = post.Image?.Url,
-                PdfUrl = post.Pdf?.Url,
-                UserId = post.UserId,
-                NameOwner = post.NameOwner,
-                LastnameOwner = post.LastnameOwner,
-                CreatedAt = post.CreatedAt
+                var postUser = _daoFactory.DAOUser().GetUser(post.UserId);
+                return new PostResponseDto
+                {
+                    Id = post.Id,
+                    Description = post.Description,
+                    Title = post.Title,
+                    Authorship = post.Authorship,
+                    Resume = post.Resume,
+                    ImageUrl = post.Image?.Url,
+                    PdfUrl = post.Pdf?.Url,
+                    UserId = post.UserId,
+                    NameOwner = post.NameOwner,
+                    LastnameOwner = post.LastnameOwner,
+                    AvatarUrl = postUser?.Avatar?.Url,
+                    CreatedAt = post.CreatedAt
+                };
             }).ToList();
 
             var response = new PostFeedResponseDto
@@ -320,19 +335,24 @@ public async Task<IActionResult> CreatePost([FromForm] CreatePostRequest dto)
                 request.SearchTerm
             );
 
-            var postDtos = posts.Select(post => new PostResponseDto
+            var postDtos = posts.Select(post =>
             {
-                Id = post.Id,
-                Description = post.Description,
-                Title = post.Title,
-                Authorship = post.Authorship,
-                Resume = post.Resume,
-                ImageUrl = post.Image?.Url,
-                PdfUrl = post.Pdf?.Url,
-                UserId = post.UserId,
-                NameOwner = post.NameOwner,
-                LastnameOwner = post.LastnameOwner,
-                CreatedAt = post.CreatedAt
+                var postUser = _daoFactory.DAOUser().GetUser(post.UserId);
+                return new PostResponseDto
+                {
+                    Id = post.Id,
+                    Description = post.Description,
+                    Title = post.Title,
+                    Authorship = post.Authorship,
+                    Resume = post.Resume,
+                    ImageUrl = post.Image?.Url,
+                    PdfUrl = post.Pdf?.Url,
+                    UserId = post.UserId,
+                    NameOwner = post.NameOwner,
+                    LastnameOwner = post.LastnameOwner,
+                    AvatarUrl = postUser?.Avatar?.Url,
+                    CreatedAt = post.CreatedAt
+                };
             }).ToList();
 
             var response = new PostFeedResponseDto
@@ -373,19 +393,24 @@ public async Task<IActionResult> CreatePost([FromForm] CreatePostRequest dto)
             var daoPost = _daoFactory.DaoPost();
             var (posts, totalCount) = daoPost.GetFeedPosts(userId, request.Page, request.Size, request.SearchTerm);
 
-            var postDtos = posts.Select(post => new PostResponseDto
+            var postDtos = posts.Select(post =>
             {
-                Id = post.Id,
-                Description = post.Description,
-                Title = post.Title,
-                Authorship = post.Authorship,
-                Resume = post.Resume,
-                ImageUrl = post.Image?.Url,
-                PdfUrl = post.Pdf?.Url,
-                UserId = post.UserId,
-                NameOwner = post.NameOwner,
-                LastnameOwner = post.LastnameOwner,
-                CreatedAt = post.CreatedAt
+                var postUser = _daoFactory.DAOUser().GetUser(post.UserId);
+                return new PostResponseDto
+                {
+                    Id = post.Id,
+                    Description = post.Description,
+                    Title = post.Title,
+                    Authorship = post.Authorship,
+                    Resume = post.Resume,
+                    ImageUrl = post.Image?.Url,
+                    PdfUrl = post.Pdf?.Url,
+                    UserId = post.UserId,
+                    NameOwner = post.NameOwner,
+                    LastnameOwner = post.LastnameOwner,
+                    AvatarUrl = postUser?.Avatar?.Url,
+                    CreatedAt = post.CreatedAt
+                };
             }).ToList();
 
             var response = new PostFeedResponseDto
