@@ -200,4 +200,51 @@ public class FollowingController : ControllerBase
             return BadRequest("Error retrieving following count");
         }
     }
+
+    [HttpGet("my-following-ids")]
+    public ActionResult<object> GetMyFollowingIds()
+    {
+        try
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized("User ID not found in token");
+            
+            long userId = long.Parse(userIdClaim.Value);
+            
+            var followedIds = df!.DAOFollowing().GetFollowingIds(userId);
+            
+            return Ok(new { followedUserIds = followedIds });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting following IDs");
+            return StatusCode(500, "Error retrieving following IDs");
+        }
+    }
+
+    [HttpPost("check-multiple")]
+    public ActionResult<Dictionary<long, bool>> CheckMultipleFollowing([FromBody] CheckMultipleDto request)
+    {
+        try
+        {
+            if (request.UserIds == null || request.UserIds.Count == 0)
+                return BadRequest("UserIds list cannot be empty");
+
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized("User ID not found in token");
+            
+            long userId = long.Parse(userIdClaim.Value);
+            
+            var result = df!.DAOFollowing().CheckMultipleFollowing(userId, request.UserIds);
+            
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error checking multiple following");
+            return StatusCode(500, "Error checking following status");
+        }
+    }
 }

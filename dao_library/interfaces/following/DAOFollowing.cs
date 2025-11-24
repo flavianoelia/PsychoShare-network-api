@@ -16,4 +16,8 @@ public interface DAOFollowing
     public bool CheckFollowing(long userId, long followedId);
     
     public bool DeleteByUserIds(long userId, long followedUserId);
+    
+    public List<long> GetFollowingIds(long userId);
+    
+    public Dictionary<long, bool> CheckMultipleFollowing(long userId, List<long> targetUserIds);
 }

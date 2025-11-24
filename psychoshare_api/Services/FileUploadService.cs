@@ -64,6 +64,36 @@ public class FileUploadService : IFileUploadService
         return $"{baseUrl}/{relativePath}/{uniqueName}";
     }
 
+    public string SavePdf(IFormFile file)
+    {
+        var fileName = Path.GetFileName(file.FileName);
+        var extension = Path.GetExtension(fileName).ToLowerInvariant();
+
+        if (!FileUploadConstants.AllowedPdfExtensions.Contains(extension))
+            throw new Exception("Formato de PDF no permitido.");
+
+        if (file.Length > FileUploadConstants.MaxPdfSize)
+            throw new Exception("El PDF excede el tamaño máximo permitido.");
+
+        var uniqueName = $"{Guid.NewGuid()}{extension}";
+
+        var uploads = Path.Combine(_env.WebRootPath, FileUploadConstants.PdfUploadPath);
+        Directory.CreateDirectory(uploads);
+
+        var filePath = Path.Combine(uploads, uniqueName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            file.CopyTo(stream);
+        }
+
+        var request = _http.HttpContext?.Request
+                ?? throw new InvalidOperationException("No hay HttpContext disponible.");
+
+        string baseUrl = $"{request.Scheme}://{request.Host}";
+        return $"{baseUrl}/{FileUploadConstants.PdfUploadPath}/{uniqueName}";
+    }
+
     public void DeleteFileByUrl(string url)
     {
         if (string.IsNullOrWhiteSpace(url))
@@ -79,7 +109,8 @@ public class FileUploadService : IFileUploadService
 
         // Whitelist allowed upload folders
         if (!relative.StartsWith(FileUploadConstants.AvatarUploadPath, StringComparison.OrdinalIgnoreCase)
-            && !relative.StartsWith(FileUploadConstants.ImageUploadPath, StringComparison.OrdinalIgnoreCase))
+            && !relative.StartsWith(FileUploadConstants.ImageUploadPath, StringComparison.OrdinalIgnoreCase)
+            && !relative.StartsWith(FileUploadConstants.PdfUploadPath, StringComparison.OrdinalIgnoreCase))
         {
             _logger.LogWarning("DeleteFileByUrl: ruta no permitida para borrado: {Relative}", relative);
             return;
