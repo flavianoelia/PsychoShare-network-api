@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using psychoshare_api.DTOs.Comment;
 using entity_library.system;
@@ -81,7 +83,7 @@ public class CommentController : ControllerBase
                 UserId = comment.UserId,
                 UserName = comment.User?.Name ?? "Unknown User",
                 PostId = comment.PostId,
-                CreatedAt = DateTime.Now, // Note: Comment entity doesn't have CreatedAt, using Now as placeholder
+                CreatedAt = DateTime.Now, 
                 AvatarUrl = comment.User?.Avatar?.Url,
             }).ToList();
 
@@ -196,9 +198,25 @@ public class CommentController : ControllerBase
             if (existingComment == null)
                 return NotFound("Comment not found");
 
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (!long.TryParse(userIdClaim, out long currentUserId))
+            {
+                return Unauthorized("Token inválido o usuario no identificado");
+            }
+
+            var roleClaimValue = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+            long roleId = 1;
+            if (!string.IsNullOrEmpty(roleClaimValue))
+                long.TryParse(roleClaimValue, out roleId);
+
+            if (existingComment.UserId != currentUserId && roleId < 2)
+            {
+                return Forbid();
+            }
+
             _daoFactory.DAOComment().Delete(id);
 
-            _logger.LogInformation("Comment {CommentId} deleted", id);
+            _logger.LogInformation("Comment {CommentId} deleted by user {UserId}", id, currentUserId);
             return Ok(new { message = "Comment deleted successfully" });
         }
         catch (Exception ex)
