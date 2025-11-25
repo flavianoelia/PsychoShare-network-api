@@ -280,4 +280,37 @@ public class UserController : ControllerBase
             return StatusCode(500, "Error interno del servidor");
         }
     }
+
+    [HttpPut("change-password/{id:long}")]
+    public IActionResult ChangePassword(long id, [FromBody] ChangePasswordDto req)
+    {
+        try
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new { success = false, errors = ModelState.Values.SelectMany(v => v.Errors.Select(e => e.ErrorMessage)) });
+
+            var user = _daoFactory.DAOUser().GetUser(id);
+            if (user == null)
+                return NotFound(new { success = false, message = "Usuario no encontrado." });
+
+            // Verificar que la contraseña actual sea correcta
+            if (!entity_library.system.User.VerifyPassword(req.OldPassword, user.PasswordHash))
+                return BadRequest(new { success = false, message = "La contraseña actual es incorrecta." });
+
+            // Validar que la nueva contraseña cumpla los requisitos
+            if (!IsValidPassword(req.NewPassword))
+                return BadRequest(new { success = false, message = "La nueva contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y caracteres especiales (@$!%*?&)." });
+
+            // Actualizar la contraseña
+            user.PasswordHash = entity_library.system.User.HashPassword(req.NewPassword);
+            _daoFactory.DAOUser().UpdateUser(id);
+
+            return Ok(new { success = true, message = "Contraseña actualizada correctamente." });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al cambiar contraseña del usuario");
+            return StatusCode(500, new { success = false, message = "Error interno del servidor" });
+        }
+    }
 }
