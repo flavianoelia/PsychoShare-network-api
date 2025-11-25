@@ -80,13 +80,13 @@ public class UserController : ControllerBase
         if (existingUser != null)
             return Conflict(new { success = false, message = "El email ya está registrado." });
 
-
         var user = new entity_library.system.User
         {
             Name = req.Name!.Trim(),
             LastName = req.LastName!.Trim(),
             Email = req.Email!.Trim(),
-            PasswordHash = entity_library.system.User.HashPassword(req.Password!)
+            PasswordHash = entity_library.system.User.HashPassword(req.Password!),
+            RoleType = RoleType.User
         };
 
         await _daoFactory.DAOUser().SaveAsync(user);
@@ -140,7 +140,7 @@ public class UserController : ControllerBase
             LastName = user.LastName,
             Email = user.Email,
             AvatarUrl = user.Avatar?.Url,
-            RoleName = user.Role?.RoleName
+            RoleName = user.RoleType.ToString()
         };
 
         return Ok(response);
@@ -183,7 +183,7 @@ public class UserController : ControllerBase
         Name = user.Name,
         LastName = user.LastName,
         Email = user.Email,
-        RoleName = user.Role?.RoleName ?? "",
+        RoleName = user.RoleType.ToString(),
         AvatarUrl = user.Avatar?.Url ?? ""
     };
 
@@ -230,7 +230,7 @@ public class UserController : ControllerBase
                 Name = u.Name,
                 LastName = u.LastName,
                 Email = u.Email,
-                RoleName = u.Role?.RoleName,
+                RoleName = u.RoleType.ToString(),
                 AvatarUrl = u.Avatar?.Url
             }).ToList();
 
@@ -248,6 +248,35 @@ public class UserController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error al obtener usuarios paginados");
+            return StatusCode(500, "Error interno del servidor");
+        }
+    }
+
+    [HttpPatch("{id:long}/role")]
+    public IActionResult UpdateUserRole(long id, [FromBody] UpdateRoleDto req)
+    {
+        try
+        {
+            var user = _daoFactory.DAOUser().GetUser(id);
+            if (user == null)
+                return NotFound(new { success = false, message = "Usuario no encontrado." });
+
+            if (!Enum.IsDefined(typeof(RoleType), req.RoleType))
+                return BadRequest(new { success = false, message = "Rol inválido." });
+
+            user.RoleType = (RoleType)req.RoleType;
+            _daoFactory.DAOUser().UpdateUser(id);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Rol actualizado correctamente.",
+                roleName = user.RoleType.ToString()
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al actualizar rol del usuario");
             return StatusCode(500, "Error interno del servidor");
         }
     }
