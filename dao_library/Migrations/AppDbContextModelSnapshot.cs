@@ -22,7 +22,140 @@ namespace dao_library.Migrations
                 .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("Ban", b =>
+            modelBuilder.Entity("Comment", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("PostId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("Like", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("PostId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Likes");
+                });
+
+            modelBuilder.Entity("Person", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PersonType")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("varchar(8)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Persons");
+
+                    b.HasDiscriminator<string>("PersonType").HasValue("Person");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("Post", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Authorship")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<long?>("ImageId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("ImgOwnerId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("LastnameOwner")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("NameOwner")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<long?>("PdfId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Resume")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ImageId");
+
+                    b.HasIndex("ImgOwnerId");
+
+                    b.HasIndex("PdfId");
+
+                    b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("entity_library.ReportPolicy.Ban", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -64,167 +197,7 @@ namespace dao_library.Migrations
                     b.ToTable("Bans");
                 });
 
-            modelBuilder.Entity("Comment", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("PostId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PostId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Comments");
-                });
-
-            modelBuilder.Entity("Following", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("FollowedId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Followings");
-                });
-
-            modelBuilder.Entity("Image", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("IdUser")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("ImageType")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Images");
-                });
-
-            modelBuilder.Entity("Like", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("PostId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PostId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Likes");
-                });
-
-            modelBuilder.Entity("Pdf", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("IdUser")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Pdfs");
-                });
-
-            modelBuilder.Entity("Post", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("ImageId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("NameOwner")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<long?>("PdfId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("authorship")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("description")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("imgOwner")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("resume")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("title")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ImageId");
-
-                    b.HasIndex("PdfId");
-
-                    b.ToTable("Posts");
-                });
-
-            modelBuilder.Entity("Report", b =>
+            modelBuilder.Entity("entity_library.ReportPolicy.Report", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -267,38 +240,80 @@ namespace dao_library.Migrations
                     b.ToTable("Reports");
                 });
 
-            modelBuilder.Entity("Role", b =>
+            modelBuilder.Entity("entity_library.following.Following", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    b.Property<string>("RoleName")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.Property<long>("FollowedId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.HasIndex("FollowedId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Followings");
                 });
 
-            modelBuilder.Entity("User", b =>
+            modelBuilder.Entity("entity_library.media.BaseFile", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("varchar(8)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("BaseFiles");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("BaseFile");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("entity_library.system.User", b =>
+                {
+                    b.HasBaseType("Person");
+
                     b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(191)
+                        .HasColumnType("varchar(191)");
+
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<long>("IdPerson")
+                    b.Property<int>("RoleType")
+                        .HasColumnType("int");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasDiscriminator().HasValue("User");
+                });
+
+            modelBuilder.Entity("entity_library.media.Image", b =>
+                {
+                    b.HasBaseType("entity_library.media.BaseFile");
+
+                    b.Property<long>("IdUser")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("ImageId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("LastName")
+                    b.Property<string>("ImageType")
                         .IsRequired()
                         .HasColumnType("longtext");
 
@@ -306,33 +321,59 @@ namespace dao_library.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("Url")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<long?>("RoleId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ImageId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("Users");
+                    b.HasDiscriminator().HasValue("Image");
                 });
 
-            modelBuilder.Entity("Ban", b =>
+            modelBuilder.Entity("entity_library.media.Pdf", b =>
                 {
-                    b.HasOne("User", "BanUser")
-                        .WithMany()
-                        .HasForeignKey("BanUserId");
+                    b.HasBaseType("entity_library.media.BaseFile");
 
-                    b.Navigation("BanUser");
+                    b.Property<long>("IdUser")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.ToTable("BaseFiles", t =>
+                        {
+                            t.Property("IdUser")
+                                .HasColumnName("Pdf_IdUser");
+
+                            t.Property("Name")
+                                .HasColumnName("Pdf_Name");
+
+                            t.Property("Url")
+                                .HasColumnName("Pdf_Url");
+                        });
+
+                    b.HasDiscriminator().HasValue("Pdf");
+                });
+
+            modelBuilder.Entity("entity_library.media.Avatar", b =>
+                {
+                    b.HasBaseType("entity_library.media.Image");
+
+                    b.HasIndex("IdUser")
+                        .IsUnique();
+
+                    b.HasDiscriminator().HasValue("Avatar");
                 });
 
             modelBuilder.Entity("Comment", b =>
@@ -343,7 +384,7 @@ namespace dao_library.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("User", "User")
+                    b.HasOne("entity_library.system.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -352,17 +393,6 @@ namespace dao_library.Migrations
                     b.Navigation("Post");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Following", b =>
-                {
-                    b.HasOne("User", "FollowedUser")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FollowedUser");
                 });
 
             modelBuilder.Entity("Like", b =>
@@ -373,7 +403,7 @@ namespace dao_library.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("User", "User")
+                    b.HasOne("entity_library.system.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -386,28 +416,43 @@ namespace dao_library.Migrations
 
             modelBuilder.Entity("Post", b =>
                 {
-                    b.HasOne("Image", "Image")
+                    b.HasOne("entity_library.media.Image", "Image")
                         .WithMany()
                         .HasForeignKey("ImageId");
 
-                    b.HasOne("Pdf", "Pdf")
+                    b.HasOne("entity_library.media.Image", "ImgOwner")
+                        .WithMany()
+                        .HasForeignKey("ImgOwnerId");
+
+                    b.HasOne("entity_library.media.Pdf", "Pdf")
                         .WithMany()
                         .HasForeignKey("PdfId");
 
                     b.Navigation("Image");
 
+                    b.Navigation("ImgOwner");
+
                     b.Navigation("Pdf");
                 });
 
-            modelBuilder.Entity("Report", b =>
+            modelBuilder.Entity("entity_library.ReportPolicy.Ban", b =>
                 {
-                    b.HasOne("User", "ReportedUser")
+                    b.HasOne("entity_library.system.User", "BanUser")
+                        .WithMany()
+                        .HasForeignKey("BanUserId");
+
+                    b.Navigation("BanUser");
+                });
+
+            modelBuilder.Entity("entity_library.ReportPolicy.Report", b =>
+                {
+                    b.HasOne("entity_library.system.User", "ReportedUser")
                         .WithMany()
                         .HasForeignKey("ReportedUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("User", "ReporterUser")
+                    b.HasOne("entity_library.system.User", "ReporterUser")
                         .WithMany()
                         .HasForeignKey("ReporterUserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -418,19 +463,34 @@ namespace dao_library.Migrations
                     b.Navigation("ReporterUser");
                 });
 
-            modelBuilder.Entity("User", b =>
+            modelBuilder.Entity("entity_library.following.Following", b =>
                 {
-                    b.HasOne("Image", "Image")
+                    b.HasOne("entity_library.system.User", "FollowedUser")
                         .WithMany()
-                        .HasForeignKey("ImageId");
+                        .HasForeignKey("FollowedId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("Role", "Role")
+                    b.HasOne("entity_library.system.User", "User")
                         .WithMany()
-                        .HasForeignKey("RoleId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Image");
+                    b.Navigation("FollowedUser");
 
-                    b.Navigation("Role");
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("entity_library.media.Avatar", b =>
+                {
+                    b.HasOne("entity_library.system.User", "User")
+                        .WithOne("Avatar")
+                        .HasForeignKey("entity_library.media.Avatar", "IdUser")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Post", b =>
@@ -438,6 +498,11 @@ namespace dao_library.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("Likes");
+                });
+
+            modelBuilder.Entity("entity_library.system.User", b =>
+                {
+                    b.Navigation("Avatar");
                 });
 #pragma warning restore 612, 618
         }

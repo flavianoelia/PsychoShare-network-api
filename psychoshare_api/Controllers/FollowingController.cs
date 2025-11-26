@@ -1,109 +1,250 @@
-//using entity_library.following;
-using System.Linq;
-using Microsoft.EntityFrameworkCore;
+using entity_library.following;
+using entity_library.system;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using psychoshare_api.DTOs.Following;
-using dao_library.Contexts;
-
+using psychoshare_api.DTOs.User;
+using System.Security.Claims;
 
 namespace psychoshare_api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
+[Authorize]
 public class FollowingController : ControllerBase
 {
     private readonly ILogger<FollowingController> _logger;
-    private readonly AppDbContext _db;
+    private DAOFactory? df;
 
-    public FollowingController(ILogger<FollowingController> logger, AppDbContext db)
+    public FollowingController(ILogger<FollowingController> logger, DAOFactory df)
     {
         _logger = logger;
-        _db = db;
-    }
-}
-
-
-/*
-    [HttpPost]
-    public async Task<ActionResult<FollowingResponseDto>> Follow([FromBody] CreateFollowingDto createFollowingDto)
-    {
-        var following = new Following
-        {
-            UserId = createFollowingDto.UserId,
-            FollowedId = createFollowingDto.FollowedId,
-            StartDate = DateTime.Now
-        };
-        _db.Followings.Add(following);
-        await _db.SaveChangesAsync();
-        var response = new FollowingResponseDto
-        {
-            FollowingId = following.FollowingId,
-            UserId = following.UserId,
-            FollowedId = following.FollowedId,
-            StartDate = following.StartDate
-        };
-        return Ok(response);
+        this.df = df;
     }
 
-    [HttpDelete("{userId}/{followedId}")]
-    public async Task<ActionResult<bool>> Unfollow(long userId, long followedId)
+    [HttpPost("{followedUserId}")]
+    public ActionResult<FollowingResponseDto> Follow(long followedUserId)
     {
-        var following = await _db.Followings.FirstOrDefaultAsync(f => f.UserId == userId && f.FollowedId == followedId);
-        if (following == null)
-            return Ok(false);
-        _db.Followings.Remove(following);
-        await _db.SaveChangesAsync();
-        return Ok(true);
+        try
+        {
+            // Extraer userId del JWT token
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+            {
+                return Unauthorized("User ID not found in token");
+            }
+            long userId = long.Parse(userIdClaim.Value);
+
+            // Validación: Un usuario no puede seguirse a sí mismo
+            if (userId == followedUserId)
+            {
+                return BadRequest("A user cannot follow themselves");
+            }
+
+            // Validación: Verificar si ya está siguiendo al usuario
+            bool alreadyFollowing = df!.DAOFollowing().CheckFollowing(userId, followedUserId);
+            if (alreadyFollowing)
+            {
+                return BadRequest("User is already following this person");
+            }
+
+            var following = new Following
+            {
+                UserId = userId,
+                FollowedId = followedUserId,
+                StartDate = DateTime.Now
+            };
+            
+            df!.DAOFollowing().Save(following);
+            
+            var response = new FollowingResponseDto
+            {
+                Id = following.Id,
+                UserId = following.UserId,
+                FollowedUserId = following.FollowedId,
+                StartDate = following.StartDate
+            };
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error creating following");
+            return BadRequest("Error creating following relationship");
+        }
+    }
+
+    [HttpDelete("{followedUserId}")]
+    public ActionResult<bool> Unfollow(long followedUserId)
+    {
+        try
+        {
+            // Extraer userId del JWT token
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+            {
+                return Unauthorized("User ID not found in token");
+            }
+            long userId = long.Parse(userIdClaim.Value);
+
+            // Validación: Un usuario no puede hacer unfollow de sí mismo
+            if (userId == followedUserId)
+            {
+                return BadRequest("A user cannot unfollow themselves");
+            }
+
+            bool deleted = df!.DAOFollowing().DeleteByUserIds(userId, followedUserId);
+            return Ok(deleted);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error unfollowing user");
+            return BadRequest("Error removing following relationship");
+        }
     }
 
     [HttpGet("followers/{userId}")]
-    public async Task<ActionResult<List<FollowingResponseDto>>> GetFollowers(long userId)
+    public ActionResult<List<UserResponseDto>> GetFollowers(long userId)
     {
-        var followers = await _db.Followings.Where(f => f.FollowedId == userId).ToListAsync();
-        var response = followers.Select(f => new FollowingResponseDto
+        try
         {
-            FollowingId = f.FollowingId,
-            UserId = f.UserId,
-            FollowedId = f.FollowedId,
-            StartDate = f.StartDate
-        }).ToList();
-        return Ok(response);
+            var followers = df!.DAOFollowing().GetFollowersFromUser(userId);
+            var response = followers.Select(user => new UserResponseDto
+            {
+                Id = user.Id,
+                Name = user.Name,
+                LastName = user.LastName,
+                Email = user.Email
+            }).ToList();
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting followers");
+            return BadRequest("Error retrieving followers");
+        }
     }
 
     [HttpGet("following/{userId}")]
-    public async Task<ActionResult<List<FollowingResponseDto>>> GetFollowing(long userId)
+    public ActionResult<List<UserResponseDto>> GetFollowing(long userId)
     {
-        var following = await _db.Followings.Where(f => f.UserId == userId).ToListAsync();
-        var response = following.Select(f => new FollowingResponseDto
+        try
         {
-            FollowingId = f.FollowingId,
-            UserId = f.UserId,
-            FollowedId = f.FollowedId,
-            StartDate = f.StartDate
-        }).ToList();
-        return Ok(response);
+            var following = df!.DAOFollowing().GetContactsFromUser(userId);
+            var response = following.Select(user => new UserResponseDto
+            {
+                Id = user.Id,
+                Name = user.Name,
+                LastName = user.LastName,
+                Email = user.Email
+            }).ToList();
+            return Ok(response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting following users");
+            return BadRequest("Error retrieving following users");
+        }
     }
 
-    [HttpGet("check/{userId}/{targetUserId}")]
-    public async Task<ActionResult<bool>> CheckFollowing(long userId, long targetUserId)
+    [HttpGet("check/{targetUserId}")]
+    public ActionResult<bool> CheckFollowing(long targetUserId)
     {
-        var exists = await _db.Followings.AnyAsync(f => f.UserId == userId && f.FollowedId == targetUserId);
-        return Ok(exists);
+        try
+        {
+            // Extraer userId del JWT token
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+            {
+                return Unauthorized("User ID not found in token");
+            }
+            long userId = long.Parse(userIdClaim.Value);
+
+            var isFollowing = df!.DAOFollowing().CheckFollowing(userId, targetUserId);
+            return Ok(isFollowing);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error checking following status");
+            return BadRequest("Error checking following status");
+        }
     }
 
-    [HttpGet("followers/count/{userId}")]
-    public async Task<ActionResult<int>> GetFollowersCount(long userId)
+    
+    [HttpGet("followers/{userId}/count")]
+    public ActionResult<int> GetFollowersCount(long userId)
     {
-    // ...existing code...
-        var count = await _db.Followings.CountAsync(f => f.FollowedId == userId);
-        return Ok(count);
+        try
+        {
+            var followers = df!.DAOFollowing().GetFollowersFromUser(userId);
+            return Ok(followers.Count());
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting followers count");
+            return BadRequest("Error retrieving followers count");
+        }
     }
 
-    [HttpGet("following/count/{userId}")]
-    public async Task<ActionResult<int>> GetFollowingCount(long userId)
+    
+    [HttpGet("following/{userId}/count")]
+    public ActionResult<int> GetFollowingCount(long userId)
     {
-        var count = await _db.Followings.CountAsync(f => f.UserId == userId);
-        return Ok(count);
+        try
+        {
+            var following = df!.DAOFollowing().GetContactsFromUser(userId);
+            return Ok(following.Count());
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting following count");
+            return BadRequest("Error retrieving following count");
+        }
+    }
+
+    [HttpGet("my-following-ids")]
+    public ActionResult<object> GetMyFollowingIds()
+    {
+        try
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized("User ID not found in token");
+            
+            long userId = long.Parse(userIdClaim.Value);
+            
+            var followedIds = df!.DAOFollowing().GetFollowingIds(userId);
+            
+            return Ok(new { followedUserIds = followedIds });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting following IDs");
+            return StatusCode(500, "Error retrieving following IDs");
+        }
+    }
+
+    [HttpPost("check-multiple")]
+    public ActionResult<Dictionary<long, bool>> CheckMultipleFollowing([FromBody] CheckMultipleDto request)
+    {
+        try
+        {
+            if (request.UserIds == null || request.UserIds.Count == 0)
+                return BadRequest("UserIds list cannot be empty");
+
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Unauthorized("User ID not found in token");
+            
+            long userId = long.Parse(userIdClaim.Value);
+            
+            var result = df!.DAOFollowing().CheckMultipleFollowing(userId, request.UserIds);
+            
+            return Ok(result);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error checking multiple following");
+            return StatusCode(500, "Error checking following status");
+        }
     }
 }
-*/

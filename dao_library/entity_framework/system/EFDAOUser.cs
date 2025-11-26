@@ -1,4 +1,6 @@
 using dao_library.Contexts;
+using entity_library.media;
+using entity_library.system;
 using Microsoft.EntityFrameworkCore;
 
 public class EFDAOUser : DAOUser
@@ -19,21 +21,72 @@ public class EFDAOUser : DAOUser
         return user;
     }
 
-    public User? GetUserByUsername(string username)
-    {
-        return this.dbContext.Users.FirstOrDefault(user => user.Username == username);
-    }
-
     public void Save(User user)
     {
-        throw new NotImplementedException();
+        this.dbContext.Users.Add(user);
+        this.dbContext.SaveChanges();
     }
+    
     public void UpdateUser(long idUser)
     {
-        throw new NotImplementedException();
+        var user = dbContext.Users
+            .Include(u => u.Avatar) // solo si usas imagen
+            .FirstOrDefault(u => u.Id == idUser);
+
+        if (user == null)
+            throw new Exception("Usuario no encontrado.");
+
+        dbContext.Users.Update(user);
+        dbContext.SaveChanges();
     }
+    public bool ExistsByEmailExceptUser(string email, long userId)
+    {
+        return dbContext.Users.Any(u => u.Email == email && u.Id != userId);
+    }
+    
     public void Delete(long IdUser)
     {
-        throw new NotImplementedException();
+        var user = this.dbContext.Users.Find(IdUser);
+        if (user != null)
+        {
+            this.dbContext.Users.Remove(user);
+            this.dbContext.SaveChanges();
+        }
+    }
+    public (List<User> Users, int TotalCount) GetAllPaginated(int page, int size, string? search = null, string? role = null)
+    {
+        var query = dbContext.Users
+            .Include(u => u.Avatar)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var searchLower = search.Trim().ToLower();
+            query = query.Where(u => 
+                u.Name.ToLower().Contains(searchLower) ||
+                u.LastName.ToLower().Contains(searchLower) ||
+                u.Email.ToLower().Contains(searchLower));
+        }
+
+        if (!string.IsNullOrWhiteSpace(role))
+        {
+            query = query.Where(u => u.RoleType.ToString() == role);
+        }
+
+        var totalCount = query.Count();
+
+        var users = query
+            .OrderBy(u => u.Id)
+            .Skip((page - 1) * size)
+            .Take(size)
+            .ToList();
+
+        return (users, totalCount);
+    }
+
+    public async Task SaveAsync(User user)
+    {
+        await dbContext.Users.AddAsync(user);
+        await dbContext.SaveChangesAsync();
     }
 }

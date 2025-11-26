@@ -10,6 +10,11 @@
 *.userosscache
 *.sln.docstates
 
+# Local environment configuration (database connections, etc.)
+.env.local
+appsettings.Local.json
+
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
@@ -379,6 +384,7 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # VS Code files for those working on multiple tools
+.vscode/
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
@@ -398,3 +404,10 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+# Local environment configuration (database connections, etc.)
+.env.local
+appsettings.Local.json
+
+# User uploaded files (images, PDFs, etc.)
+psychoshare_api/wwwroot/uploads/

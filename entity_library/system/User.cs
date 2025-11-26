@@ -1,28 +1,45 @@
-public class User : Person
+using entity_library.media;
+namespace entity_library.system
 {
-    private string username = "";
-    private string email = "";
-    private string password = "";
-    private Role? role;
-
-    public long Id { get; set; }
-
-    public string Username
+    public class User : Person
     {
-        get { return username; }
-        set { username = value; }
-    }
-    public string Email
-    {
-        get { return email; }
-        set { email = value; }
-    }
-    public string Password
-    {
-        get { return password; }
-        set { password = value; }
-    }
-    public virtual Role? Role { get; set; }
-    public virtual Image? Image { get; set; }
+        private string email = "";
+        private string passwordHash = "";
+        private RoleType roleType = RoleType.User;
+        private Avatar? avatar;
 
+        public string Email
+        {
+            get { return email; }
+            set { email = value; }
+        }
+
+        public string PasswordHash
+        {
+            get { return passwordHash; }
+            set { passwordHash = value; }
+        }
+
+        public virtual RoleType RoleType
+        {
+            get { return this.roleType; }
+            set { this.roleType = value; }
+        }
+
+        public virtual Avatar? Avatar
+        {
+            get { return this.avatar; }
+            set { this.avatar = value; }
+        }
+
+        public static string HashPassword(string plainPassword)
+        {
+            return BCrypt.Net.BCrypt.HashPassword(plainPassword);
+        }
+
+        public static bool VerifyPassword(string plainPassword, string passwordHash)
+        {
+            return BCrypt.Net.BCrypt.Verify(plainPassword, passwordHash);
+        }
+    }
 }
