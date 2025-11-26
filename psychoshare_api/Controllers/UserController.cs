@@ -251,4 +251,33 @@ public class UserController : ControllerBase
             return StatusCode(500, "Error interno del servidor");
         }
     }
+
+    [HttpPatch("{id:long}/role")]
+    public IActionResult UpdateUserRole(long id, [FromBody] UpdateRoleDto req)
+    {
+        try
+        {
+            var user = _daoFactory.DAOUser().GetUser(id);
+            if (user == null)
+                return NotFound(new { success = false, message = "Usuario no encontrado." });
+
+            if (!Enum.IsDefined(typeof(RoleType), req.RoleType))
+                return BadRequest(new { success = false, message = "Rol inválido." });
+
+            user.RoleType = (RoleType)req.RoleType;
+            _daoFactory.DAOUser().UpdateUser(id);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Rol actualizado correctamente.",
+                roleName = user.RoleType.ToString()
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al actualizar rol del usuario");
+            return StatusCode(500, "Error interno del servidor");
+        }
+    }
 }
