@@ -107,8 +107,9 @@ public IActionResult CreatePost([FromForm] CreatePostRequest dto)
     var daoPost = _daoFactory.DaoPost();
     daoPost.Save(post);
 
-    return Ok();
-}
+        return Ok("Post creado exitosamente");
+    }
+
 
     [HttpGet("{id}")]
     public IActionResult ViewPost(long id)
