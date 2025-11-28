@@ -280,4 +280,43 @@ public class UserController : ControllerBase
             return StatusCode(500, "Error interno del servidor");
         }
     }
+
+    [HttpDelete("{id:long}")]
+    public IActionResult DeleteUser(long id)
+    {
+        try
+        {
+            // Obtener ID del usuario autenticado desde el JWT
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !long.TryParse(userIdClaim, out long currentUserId))
+                return Unauthorized(new { success = false, message = "No autorizado." });
+
+            // Obtener rol del usuario autenticado
+            var roleClaim = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+            bool isAdmin = roleClaim == RoleType.Admin.ToString();
+
+            // Verificar autorización: solo el propio usuario o un admin pueden eliminar
+            if (currentUserId != id && !isAdmin)
+                return Forbid();
+
+            // Verificar que el usuario existe
+            var userToDelete = _daoFactory.DAOUser().GetUser(id);
+            if (userToDelete == null)
+                return NotFound(new { success = false, message = "Usuario no encontrado." });
+
+            // Eliminar usuario (CASCADE eliminará automáticamente posts, likes, comments, avatar, images, pdfs, followings)
+            _daoFactory.DAOUser().Delete(id);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Usuario eliminado correctamente."
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al eliminar usuario {UserId}", id);
+            return StatusCode(500, new { success = false, message = "Error interno del servidor" });
+        }
+    }
 }

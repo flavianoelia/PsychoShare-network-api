@@ -74,9 +74,46 @@ public class AppDbContext : DbContext
             .HasForeignKey(f => f.FollowedId)
             .OnDelete(DeleteBehavior.Cascade);
         
+        // Configure User→Avatar relationship with CASCADE delete
         modelBuilder.Entity<User>()
             .HasOne(u => u.Avatar)
             .WithOne(a => a.User)       // relación avatar-user
-            .HasForeignKey<Avatar>(a => a.IdUser); // FK está en Avatar (heredada de Image)
+            .HasForeignKey<Avatar>(a => a.IdUser)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Configure User→Posts relationship with CASCADE delete
+        modelBuilder.Entity<Post>()
+            .HasOne<User>()
+            .WithMany()
+            .HasForeignKey(p => p.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Configure User→Likes relationship with CASCADE delete
+        modelBuilder.Entity<Like>()
+            .HasOne(l => l.User)
+            .WithMany()
+            .HasForeignKey(l => l.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Configure Post→Likes relationship with CASCADE delete
+        modelBuilder.Entity<Like>()
+            .HasOne(l => l.Post)
+            .WithMany(p => p.Likes)
+            .HasForeignKey(l => l.PostId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Configure Image (includes Avatar) relationship with CASCADE delete
+        modelBuilder.Entity<Image>()
+            .HasOne(i => i.User)
+            .WithMany()
+            .HasForeignKey(i => i.IdUser)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Configure Pdf relationship with CASCADE delete
+        modelBuilder.Entity<Pdf>()
+            .HasOne<User>()
+            .WithMany()
+            .HasForeignKey(p => p.IdUser)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
