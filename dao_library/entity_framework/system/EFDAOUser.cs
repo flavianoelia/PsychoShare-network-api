@@ -30,7 +30,6 @@ public class EFDAOUser : DAOUser
     public void UpdateUser(long idUser)
     {
         var user = dbContext.Users
-            .Include(u => u.Avatar) // solo si usas imagen
             .FirstOrDefault(u => u.Id == idUser);
 
         if (user == null)
@@ -56,7 +55,6 @@ public class EFDAOUser : DAOUser
     public (List<User> Users, int TotalCount) GetAllPaginated(int page, int size, string? search = null, string? role = null)
     {
         var query = dbContext.Users
-            .Include(u => u.Avatar)
             .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(search))

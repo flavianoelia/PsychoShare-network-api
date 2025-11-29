@@ -16,7 +16,6 @@ public class EFDAOComment : DAOComment
     public List<Comment> getCommentsFromPost(long IdPost, int limit = 2)
     {
         return _dbContext.Comments
-            .Include(c => c.User)
             .Where(c => c.PostId == IdPost)
             .OrderByDescending(c => c.Id)
             .Take(limit)
@@ -27,7 +26,6 @@ public class EFDAOComment : DAOComment
     public List<Comment> getCommentsFromPostPaged(long IdPost, int skip, int take)
     {
         return _dbContext.Comments
-            .Include(c => c.User)
             .Where(c => c.PostId == IdPost)
             .OrderByDescending(c => c.Id)
             .Skip(skip)
@@ -65,7 +63,6 @@ public class EFDAOComment : DAOComment
     public Comment? GetById(long id)
     {
         return _dbContext.Comments
-            .Include(c => c.User)
             .FirstOrDefault(c => c.Id == id);
     }
 

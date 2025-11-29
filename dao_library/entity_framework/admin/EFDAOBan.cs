@@ -23,7 +23,6 @@ public class EFDAOBan : DAOBan
     public Ban? GetById(long id)
     {
         return _dbContext.Bans
-            .Include(b => b.BanUser)
             .FirstOrDefault(b => b.Id == id);
     }
 
@@ -43,7 +42,6 @@ public class EFDAOBan : DAOBan
     {
         return _dbContext.Bans
             .Where(b => b.IsActive == true)
-            .Include(b => b.BanUser)
             .ToList();
     }
 
@@ -51,7 +49,6 @@ public class EFDAOBan : DAOBan
     {
         return _dbContext.Bans
             .Where(b => b.BannedUserId == userId)
-            .Include(b => b.BanUser)
             .OrderByDescending(b => b.StartDate)
             .FirstOrDefault();
     }
@@ -60,7 +57,6 @@ public class EFDAOBan : DAOBan
     {
         var query = _dbContext.Bans
             .Where(b => b.IsActive == true)
-            .Include(b => b.BanUser)
             .AsQueryable();
 
         var totalCount = query.Count();
@@ -77,7 +73,6 @@ public class EFDAOBan : DAOBan
     public (List<Ban> Bans, int TotalCount) GetAllBansPaginated(int page, int size)
     {
         var query = _dbContext.Bans
-            .Include(b => b.BanUser)
             .AsQueryable();
 
         var totalCount = query.Count();

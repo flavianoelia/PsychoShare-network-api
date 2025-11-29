@@ -44,7 +44,6 @@ public class EFDAOLike : DAOLike
     public List<Like> GetPostLikes(long postId)
     {
         return _dbContext.Likes
-            .Include(l => l.User)
             .Where(l => l.PostId == postId)
             .OrderByDescending(l => l.Id) 
             .ToList();
@@ -54,7 +53,6 @@ public class EFDAOLike : DAOLike
     public List<Like> GetUserLikes(long userId)
     {
         return _dbContext.Likes
-            .Include(l => l.Post)
             .Where(l => l.UserId == userId)
             .OrderByDescending(l => l.Id) 
             .ToList();
@@ -101,8 +99,6 @@ public class EFDAOLike : DAOLike
     public Like? GetById(long id)
     {
         return _dbContext.Likes
-            .Include(l => l.User)
-            .Include(l => l.Post)
             .FirstOrDefault(l => l.Id == id);
     }
 
@@ -110,8 +106,6 @@ public class EFDAOLike : DAOLike
     public List<Like> GetAll()
     {
         return _dbContext.Likes
-            .Include(l => l.User)
-            .Include(l => l.Post)
             .OrderByDescending(l => l.Id)
             .ToList();
     }
