@@ -17,6 +17,7 @@ public class EFDAOComment : DAOComment
     {
         return _dbContext.Comments
             .Include(c => c.User)
+                .ThenInclude(u => u!.Avatar)
             .Where(c => c.PostId == IdPost)
             .OrderByDescending(c => c.Id)
             .Take(limit)
@@ -28,6 +29,7 @@ public class EFDAOComment : DAOComment
     {
         return _dbContext.Comments
             .Include(c => c.User)
+                .ThenInclude(u => u!.Avatar) 
             .Where(c => c.PostId == IdPost)
             .OrderByDescending(c => c.Id)
             .Skip(skip)
@@ -66,6 +68,7 @@ public class EFDAOComment : DAOComment
     {
         return _dbContext.Comments
             .Include(c => c.User)
+                .ThenInclude(u => u!.Avatar)
             .FirstOrDefault(c => c.Id == id);
     }
 

@@ -8,4 +8,5 @@ public class CommentResponseDto
     public string UserName { get; set; } = "";
     public long PostId { get; set; }
     public DateTime CreatedAt { get; set; }
+    public string? AvatarUrl { get; set; }
 }
