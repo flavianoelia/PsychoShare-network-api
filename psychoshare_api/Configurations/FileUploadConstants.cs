@@ -2,8 +2,8 @@ namespace psychoshare_api.Configurations
 {
     public static class FileUploadConstants
     {
-        // Tamaño máximo en bytes (ej. 5 MB)
-        public const long MaxImageSize = 5 * 1024 * 1024;
+        // Tamaño máximo en bytes (ej. 20 MB)
+        public const long MaxImageSize = 20 * 1024 * 1024;
 
         // Formatos permitidos
         public static readonly string[] AllowedImageExtensions = { ".jpg", ".jpeg", ".png", ".webp", ".gif" };
@@ -15,7 +15,7 @@ namespace psychoshare_api.Configurations
 
         public static readonly string[] AllowedPdfExtensions = { ".pdf" };
 
-        public const long MaxPdfSize = 10 * 1024 * 1024;
+        public const long MaxPdfSize = 50 * 1024 * 1024;
 
 
         // Ruta física base (se puede combinar con IWebHostEnvironment)
