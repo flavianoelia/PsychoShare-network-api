@@ -31,7 +31,7 @@ public class PostController : ControllerBase
 
 [Authorize]
 [HttpPost]
-public async Task<IActionResult> CreatePost([FromForm] CreatePostRequest dto)
+public IActionResult CreatePost([FromForm] CreatePostRequest dto)
 {
     var errors = new List<string>();
 
@@ -55,16 +55,16 @@ public async Task<IActionResult> CreatePost([FromForm] CreatePostRequest dto)
     if (user == null)
         return NotFound("Usuario no encontrado");
 
-        var post = new Post
-        {
-            Description = dto.Description!.Trim(),
-            Title = dto.Title!.Trim(),
-            Authorship = dto.Authorship!.Trim(),
-            Resume = dto.Resume!.Trim(),
-            UserId = currentUserId,
-            NameOwner = user.Name,
-            LastnameOwner = user.LastName
-        };
+    var post = new Post
+    {
+        Description = dto.Description!.Trim(),
+        Title = dto.Title!.Trim(),
+        Authorship = dto.Authorship!.Trim(),
+        Resume = dto.Resume!.Trim(),
+        UserId = currentUserId,
+        NameOwner = user.Name,
+        LastnameOwner = user.LastName
+    };
 
     // Imagen
     if (dto.Image != null && dto.Image.Length > 0)
@@ -104,11 +104,12 @@ public async Task<IActionResult> CreatePost([FromForm] CreatePostRequest dto)
         }
     }
 
-        var daoPost = _daoFactory.DaoPost();
-        daoPost.Save(post);
+    var daoPost = _daoFactory.DaoPost();
+    daoPost.Save(post);
 
         return Ok("Post creado exitosamente");
     }
+
 
     [HttpGet("{id}")]
     public IActionResult ViewPost(long id)
