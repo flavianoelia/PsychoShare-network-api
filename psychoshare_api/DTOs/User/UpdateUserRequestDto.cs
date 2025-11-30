@@ -4,17 +4,14 @@ namespace psychoshare_api.DTOs.User
 {
     public class UpdateUserRequestDto
     {
-        [Required]
-        public int idPerson { get; set; }
+        [StringLength(50)]
+        public string? Name { get; set; }
 
-        [Required, StringLength(50)]
-        public string Name { get; set; } = string.Empty;
+        [StringLength(50)]
+        public string? LastName { get; set; }
 
-        [Required, StringLength(50)]
-        public string LastName { get; set; } = string.Empty;
-
-        [Required, EmailAddress]
-        public string Email { get; set; } = string.Empty;
+        [EmailAddress]
+        public string? Email { get; set; }
 
         [StringLength(255)]
         public string? Bio { get; set; }
