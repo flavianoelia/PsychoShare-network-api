@@ -5,14 +5,12 @@
 namespace dao_library.Migrations
 {
     /// <inheritdoc />
-    public partial class RemoveUniqueIndexOnBaseFilesIdUser : Migration
+    public partial class RefactorAvatarRelationship : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropIndex(
-                name: "IX_BaseFiles_IdUser",
-                table: "BaseFiles");
+
         }
 
         /// <inheritdoc />
