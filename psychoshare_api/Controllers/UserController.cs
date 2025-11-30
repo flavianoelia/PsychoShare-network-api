@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using psychoshare_api.DTOs.User;
 using System.Text.RegularExpressions;
 using entity_library.media;
+using psychoshare_api.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace psychoshare_api.Controllers;
 
@@ -14,13 +16,15 @@ public class UserController : ControllerBase
     private readonly ILogger<UserController> _logger;
     private readonly DAOFactory _daoFactory;
     private readonly TokenService _tokenService;
+    private readonly IFileUploadService _fileUploadService;
 
 
-    public UserController(ILogger<UserController> logger, DAOFactory daoFactory, TokenService tokenService)
+    public UserController(ILogger<UserController> logger, DAOFactory daoFactory, TokenService tokenService, IFileUploadService fileUploadService)
     {
         _logger = logger;
         _daoFactory = daoFactory;
         _tokenService = tokenService;
+        _fileUploadService = fileUploadService;
     }
 
     #region Validations
@@ -278,6 +282,117 @@ public class UserController : ControllerBase
         {
             _logger.LogError(ex, "Error al actualizar rol del usuario");
             return StatusCode(500, "Error interno del servidor");
+        }
+    }
+
+    /// <summary>
+    /// Elimina un usuario y todos sus datos relacionados en cascada (posts, likes, comments, followings, archivos).
+    /// Solo el propio usuario o un Admin pueden eliminar la cuenta.
+    /// </summary>
+    [HttpDelete("{id:long}")]
+    public async Task<IActionResult> DeleteUser(long id)
+    {
+        try
+        {
+            // Obtener ID del usuario autenticado desde el JWT
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !long.TryParse(userIdClaim, out long currentUserId))
+            {
+                return Unauthorized(new { success = false, message = "No autorizado. Token inválido." });
+            }
+
+            // Obtener rol del usuario autenticado
+            var roleClaim = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+            bool isSuperadmin = roleClaim == RoleType.Superadmin.ToString();
+            bool isAdmin = roleClaim == RoleType.Admin.ToString();
+
+            // Verificar autorización:
+            // - Usuario común (User): solo puede eliminarse a sí mismo
+            // - Admin: puede eliminar usuarios comunes y a sí mismo
+            // - Superadmin: puede eliminar a CUALQUIERA (users, admins, otros superadmins)
+            if (!isSuperadmin)
+            {
+                // Si no es Superadmin, solo puede eliminar a sí mismo o (si es Admin) a usuarios de menor rango
+                if (currentUserId != id && !isAdmin)
+                {
+                    return StatusCode(403, new { success = false, message = "No tienes permiso para eliminar este usuario." });
+                }
+
+                // Si es Admin pero intenta eliminar a otro Admin o Superadmin, denegar
+                if (isAdmin && currentUserId != id)
+                {
+                    var userToCheck = _daoFactory.DAOUser().GetUser(id);
+                    if (userToCheck != null && (userToCheck.RoleType == RoleType.Admin || userToCheck.RoleType == RoleType.Superadmin))
+                    {
+                        return StatusCode(403, new { success = false, message = "Los Admins solo pueden eliminar usuarios comunes." });
+                    }
+                }
+            }
+
+            // Obtener usuario con includes para recuperar URLs de archivos ANTES de eliminar
+            var userToDelete = _daoFactory.DAOUser().GetUser(id);
+            if (userToDelete == null)
+            {
+                return NotFound(new { success = false, message = "Usuario no encontrado." });
+            }
+
+            // Obtener todas las URLs de archivos físicos ANTES de eliminar de DB
+            List<string> fileUrlsToDelete = new List<string>();
+
+            // Avatar
+            var avatar = _daoFactory.DAOAvatar().GetAvatarByUserId(id);
+            if (avatar != null && !string.IsNullOrEmpty(avatar.Url))
+            {
+                fileUrlsToDelete.Add(avatar.Url);
+            }
+
+            // Images - acceso directo a EFDAOFactory
+            if (_daoFactory is dao_library.interfaces.media.EFDAOFactory efFactory)
+            {
+                var images = await efFactory.DaoImage().GetByUserIdAsync(id);
+                if (images != null && images.Any())
+                {
+                    fileUrlsToDelete.AddRange(images.Where(i => !string.IsNullOrEmpty(i.Url)).Select(i => i.Url));
+                }
+
+                // PDFs
+                var pdfs = await efFactory.DaoPdf().GetByUserIdAsync(id);
+                if (pdfs != null && pdfs.Any())
+                {
+                    fileUrlsToDelete.AddRange(pdfs.Where(p => !string.IsNullOrEmpty(p.Url)).Select(p => p.Url));
+                }
+            }
+
+            // Eliminar usuario de la base de datos (CASCADE eliminará automáticamente todos los registros relacionados)
+            _daoFactory.DAOUser().Delete(id);
+
+            // Eliminar archivos físicos del disco DESPUÉS de eliminar de DB (para no dejar archivos huérfanos si falla la DB)
+            foreach (var fileUrl in fileUrlsToDelete)
+            {
+                try
+                {
+                    _fileUploadService.DeleteFileByUrl(fileUrl);
+                }
+                catch (Exception fileEx)
+                {
+                    // Log pero no fallar si un archivo no se puede eliminar
+                    _logger.LogWarning(fileEx, "No se pudo eliminar el archivo físico: {FileUrl}", fileUrl);
+                }
+            }
+
+            _logger.LogInformation("Usuario {UserId} eliminado correctamente con {FileCount} archivos físicos.", id, fileUrlsToDelete.Count);
+
+            return Ok(new
+            {
+                success = true,
+                message = "Usuario y todos sus datos eliminados correctamente.",
+                filesDeleted = fileUrlsToDelete.Count
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error al eliminar usuario {UserId}", id);
+            return StatusCode(500, new { success = false, message = "Error interno del servidor al eliminar usuario." });
         }
     }
 }

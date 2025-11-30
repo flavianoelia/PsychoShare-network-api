@@ -48,6 +48,11 @@ public class AppDbContext : DbContext
             .HasMaxLength(191)
             .IsRequired();
 
+        // Ignore User.Avatar navigation property to prevent bidirectional relationship inference
+        // Avatar relationship is handled via Image→User (Avatar inherits from Image)
+        modelBuilder.Entity<User>()
+            .Ignore(u => u.Avatar);
+
         // Configure Comment foreign keys with CASCADE delete
         modelBuilder.Entity<Comment>()
             .HasOne(c => c.User)
@@ -73,10 +78,40 @@ public class AppDbContext : DbContext
             .WithMany()
             .HasForeignKey(f => f.FollowedId)
             .OnDelete(DeleteBehavior.Cascade);
-        
-        modelBuilder.Entity<User>()
-            .HasOne(u => u.Avatar)
-            .WithOne(a => a.User)       // relación avatar-user
-            .HasForeignKey<Avatar>(a => a.IdUser); // FK está en Avatar (heredada de Image)
+
+        // Configure User→Posts relationship with CASCADE delete
+        modelBuilder.Entity<Post>()
+            .HasOne<User>()
+            .WithMany()
+            .HasForeignKey(p => p.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Configure User→Likes relationship with CASCADE delete
+        modelBuilder.Entity<Like>()
+            .HasOne(l => l.User)
+            .WithMany()
+            .HasForeignKey(l => l.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Configure Post→Likes relationship with CASCADE delete
+        modelBuilder.Entity<Like>()
+            .HasOne(l => l.Post)
+            .WithMany(p => p.Likes)
+            .HasForeignKey(l => l.PostId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Configure Image (base class for Avatar and Image) with CASCADE delete
+        modelBuilder.Entity<Image>()
+            .HasOne(i => i.User)
+            .WithMany()
+            .HasForeignKey(i => i.IdUser)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Configure Pdf relationship with CASCADE delete
+        modelBuilder.Entity<Pdf>()
+            .HasOne<User>()
+            .WithMany()
+            .HasForeignKey(p => p.IdUser)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
