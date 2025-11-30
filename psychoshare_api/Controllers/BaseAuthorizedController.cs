@@ -15,4 +15,12 @@ public abstract class BaseAuthorizedController : ControllerBase
             roleId = 1;
         return roleId >= 2;
     }
+
+    protected long? GetAuthenticatedUserId()
+    {
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (long.TryParse(userIdClaim, out long userId))
+            return userId;
+        return null;
+    }
 }

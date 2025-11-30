@@ -21,8 +21,14 @@ public class ReportController : BaseAuthorizedController
     [HttpPost]
     public ActionResult<ReportResponseDto> ReportUser([FromBody] CreateReportDto createReportDto)
     {
-        if (!IsAdminOrSuperAdmin())
-            return Forbid();
+        // Cualquier usuario autenticado puede crear un reporte
+        // Validar que el usuario que reporta sea el mismo que está autenticado
+        var authenticatedUserId = GetAuthenticatedUserId();
+        if (authenticatedUserId == null)
+            return Unauthorized("Usuario no autenticado");
+        
+        if (createReportDto.ReporterUserId != authenticatedUserId.Value)
+            return Forbid("No puedes crear reportes en nombre de otro usuario");
 
         var report = new Report
         {
