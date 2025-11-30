@@ -23,16 +23,12 @@ public class EFDAOReport : DAOReport
     public List<Report> GetAll()
     {
         return _dbContext.Reports
-            .Include(r => r.ReporterUser)
-            .Include(r => r.ReportedUser)
             .ToList();
     }
 
     public (List<Report> Reports, int TotalCount) GetAllPaginated(int page, int size, string? status = null, string? contentType = null, DateTime? dateFrom = null, DateTime? dateTo = null)
     {
         var query = _dbContext.Reports
-            .Include(r => r.ReporterUser)
-            .Include(r => r.ReportedUser)
             .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(status))
@@ -69,8 +65,6 @@ public class EFDAOReport : DAOReport
     public Report? GetById(long id)
     {
         return _dbContext.Reports
-            .Include(r => r.ReporterUser)
-            .Include(r => r.ReportedUser)
             .FirstOrDefault(r => r.Id == id);
     }
 

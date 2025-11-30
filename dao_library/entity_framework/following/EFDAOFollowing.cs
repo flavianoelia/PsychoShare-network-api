@@ -18,7 +18,6 @@ public class EFDAOFollowing : DAOFollowing
     {
         return _dbContext.Followings
             .Where(f => f.UserId == userId)
-            .Include(f => f.FollowedUser)
             .Select(f => f.FollowedUser!)
             .ToList();
     }
@@ -39,7 +38,6 @@ public class EFDAOFollowing : DAOFollowing
     {
         return _dbContext.Followings
             .Where(f => f.FollowedId == userId)
-            .Include(f => f.User)
             .Select(f => f.User!)
             .ToList();
     }
