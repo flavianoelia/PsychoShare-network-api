@@ -48,31 +48,9 @@ public class AppDbContext : DbContext
             .HasMaxLength(191)
             .IsRequired();
 
-        // Configure Comment foreign keys with CASCADE delete
-        modelBuilder.Entity<Comment>()
-            .HasOne(c => c.User)
-            .WithMany()
-            .HasForeignKey(c => c.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<Comment>()
-            .HasOne(c => c.Post)
-            .WithMany(p => p.Comments)
-            .HasForeignKey(c => c.PostId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        // Configure Following relationships
-        modelBuilder.Entity<Following>()
-            .HasOne(f => f.User)
-            .WithMany()
-            .HasForeignKey(f => f.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<Following>()
-            .HasOne(f => f.FollowedUser)
-            .WithMany()
-            .HasForeignKey(f => f.FollowedId)
-            .OnDelete(DeleteBehavior.Cascade);
+        // NOTE: Keep only approved cascade configurations.
+        // Comment and Following cascade configurations were removed to avoid
+        // conflicting behaviors with the TPH File/Avatar model.
         
         // Configure User→Avatar relationship with CASCADE delete
         modelBuilder.Entity<User>()
