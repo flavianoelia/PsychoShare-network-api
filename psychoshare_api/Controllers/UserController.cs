@@ -137,13 +137,15 @@ public class UserController : ControllerBase
         if (user == null)
             return NotFound(new { message = "Usuario no encontrado." });
 
+        var avatar = _daoFactory.DAOAvatar().GetAvatarByUserId(user.Id);
+        
         var response = new UserResponseDto
         {
             Id = user.Id,
             Name = user.Name,
             LastName = user.LastName,
             Email = user.Email,
-            AvatarUrl = user.Avatar?.Url,
+            AvatarUrl = avatar?.Url,
             RoleName = user.RoleType.ToString()
         };
 
@@ -170,16 +172,31 @@ public class UserController : ControllerBase
     if (!string.IsNullOrWhiteSpace(req.Email))
         user.Email = req.Email.Trim();
 
+    // Update avatar using DAO (User.Avatar is Ignored in EF)
     if (!string.IsNullOrWhiteSpace(req.ProfilePictureUrl))
     {
-        if (user.Avatar == null)
-            user.Avatar = new Avatar();
-
-        user.Avatar.Url = req.ProfilePictureUrl.Trim();
+        var existingAvatar = _daoFactory.DAOAvatar().GetAvatarByUserId(user.Id);
+        if (existingAvatar == null)
+        {
+            // Create new avatar
+            var newAvatar = new Avatar
+            {
+                IdUser = user.Id,
+                Url = req.ProfilePictureUrl.Trim()
+            };
+            _daoFactory.DAOAvatar().Save(newAvatar);
+        }
+        else
+        {
+            // Update existing avatar
+            existingAvatar.Url = req.ProfilePictureUrl.Trim();
+            _daoFactory.DAOAvatar().UpdateAvatarByUserId(user.Id, existingAvatar);
+        }
     }
 
     _daoFactory.DAOUser().UpdateUser(id);
 
+    var avatar = _daoFactory.DAOAvatar().GetAvatarByUserId(user.Id);
     
     var response = new UserResponseDto
     {
@@ -188,7 +205,7 @@ public class UserController : ControllerBase
         LastName = user.LastName,
         Email = user.Email,
         RoleName = user.RoleType.ToString(),
-        AvatarUrl = user.Avatar?.Url ?? ""
+        AvatarUrl = avatar?.Url ?? ""
     };
 
     return Ok(new
@@ -228,14 +245,17 @@ public class UserController : ControllerBase
                 filter.Role
             );
 
-            var userDtos = users.Select(u => new UserResponseDto
-            {
-                Id = u.Id,
-                Name = u.Name,
-                LastName = u.LastName,
-                Email = u.Email,
-                RoleName = u.RoleType.ToString(),
-                AvatarUrl = u.Avatar?.Url
+            var userDtos = users.Select(u => {
+                var avatar = _daoFactory.DAOAvatar().GetAvatarByUserId(u.Id);
+                return new UserResponseDto
+                {
+                    Id = u.Id,
+                    Name = u.Name,
+                    LastName = u.LastName,
+                    Email = u.Email,
+                    RoleName = u.RoleType.ToString(),
+                    AvatarUrl = avatar?.Url
+                };
             }).ToList();
 
             var response = new UserPagedResponseDto
