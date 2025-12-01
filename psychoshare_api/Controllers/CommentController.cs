@@ -44,6 +44,7 @@ public class CommentController : ControllerBase
             };
             _daoFactory.DAOComment().Save(comment);
 
+            var avatar = _daoFactory.DAOAvatar().GetAvatarByUserId(user.Id);
             var responseDto = new CommentResponseDto
             {
                 Id = comment.Id,
@@ -52,7 +53,7 @@ public class CommentController : ControllerBase
                 UserName = user.Name,
                 PostId = comment.PostId,
                 CreatedAt = DateTime.Now,
-                AvatarUrl = user.Avatar?.Url,
+                AvatarUrl = avatar?.Url,
             };
 
             return Ok(responseDto);
@@ -76,15 +77,18 @@ public class CommentController : ControllerBase
             var comments = _daoFactory.DAOComment().getCommentsFromPost(postId, 2);
             var totalCount = _daoFactory.DAOComment().GetCommentsCount(postId);
 
-            var commentDtos = comments.Select(comment => new CommentResponseDto
-            {
-                Id = comment.Id,
-                Text = comment.Text,
-                UserId = comment.UserId,
-                UserName = comment.User?.Name ?? "Unknown User",
-                PostId = comment.PostId,
-                CreatedAt = DateTime.Now, 
-                AvatarUrl = comment.User?.Avatar?.Url,
+            var commentDtos = comments.Select(comment => {
+                var avatar = comment.User != null ? _daoFactory.DAOAvatar().GetAvatarByUserId(comment.User.Id) : null;
+                return new CommentResponseDto
+                {
+                    Id = comment.Id,
+                    Text = comment.Text,
+                    UserId = comment.UserId,
+                    UserName = comment.User?.Name ?? "Unknown User",
+                    PostId = comment.PostId,
+                    CreatedAt = DateTime.Now, 
+                    AvatarUrl = avatar?.Url,
+                };
             }).ToList();
 
             var paginationDto = new CommentsPaginationDto
@@ -117,15 +121,18 @@ public class CommentController : ControllerBase
             var comments = _daoFactory.DAOComment().getCommentsFromPostPaged(postId, skip, take);
             var totalCount = _daoFactory.DAOComment().GetCommentsCount(postId);
 
-            var commentDtos = comments.Select(comment => new CommentResponseDto
-            {
-                Id = comment.Id,
-                Text = comment.Text,
-                UserId = comment.UserId,
-                UserName = comment.User?.Name ?? "Unknown User", 
-                PostId = comment.PostId,
-                CreatedAt = DateTime.Now,
-                AvatarUrl = comment.User?.Avatar?.Url,
+            var commentDtos = comments.Select(comment => {
+                var avatar = comment.User != null ? _daoFactory.DAOAvatar().GetAvatarByUserId(comment.User.Id) : null;
+                return new CommentResponseDto
+                {
+                    Id = comment.Id,
+                    Text = comment.Text,
+                    UserId = comment.UserId,
+                    UserName = comment.User?.Name ?? "Unknown User", 
+                    PostId = comment.PostId,
+                    CreatedAt = DateTime.Now,
+                    AvatarUrl = avatar?.Url,
+                };
             }).ToList();
 
             var paginationDto = new CommentsPaginationDto
@@ -168,6 +175,7 @@ public class CommentController : ControllerBase
                 return StatusCode(500, "Error updating comment");
             }
 
+            var avatar = updatedComment.User != null ? _daoFactory.DAOAvatar().GetAvatarByUserId(updatedComment.User.Id) : null;
             var responseDto = new CommentResponseDto
             {
                 Id = updatedComment.Id,
@@ -176,7 +184,7 @@ public class CommentController : ControllerBase
                 UserName = updatedComment.User?.Name ?? "Unknown User",
                 PostId = updatedComment.PostId,
                 CreatedAt = DateTime.Now,
-                AvatarUrl = updatedComment.User?.Avatar?.Url,
+                AvatarUrl = avatar?.Url,
             };
 
             _logger.LogInformation("Comment {CommentId} updated", id);

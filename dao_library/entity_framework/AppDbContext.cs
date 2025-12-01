@@ -48,8 +48,8 @@ public class AppDbContext : DbContext
             .HasMaxLength(191)
             .IsRequired();
 
-        // Ignore User.Avatar navigation property to prevent bidirectional relationship inference
-        // Avatar relationship is handled via Image→User (Avatar inherits from Image)
+        // Ignore User.Avatar to prevent EF from creating AvatarId column
+        // Avatars are loaded via Lazy Loading using IdUser in Avatar table
         modelBuilder.Entity<User>()
             .Ignore(u => u.Avatar);
 

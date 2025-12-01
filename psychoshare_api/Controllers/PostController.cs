@@ -159,6 +159,7 @@ public IActionResult CreatePost([FromForm] CreatePostRequest dto)
             var response = posts.Select(post =>
             {
                 var postUser = _daoFactory.DAOUser().GetUser(post.UserId);
+                var avatar = postUser != null ? _daoFactory.DAOAvatar().GetAvatarByUserId(postUser.Id) : null;
                 return new PostResponseDto
                 {
                     Id = post.Id,
@@ -171,7 +172,7 @@ public IActionResult CreatePost([FromForm] CreatePostRequest dto)
                     UserId = post.UserId,
                     NameOwner = post.NameOwner,
                     LastnameOwner = post.LastnameOwner,
-                    AvatarUrl = postUser?.Avatar?.Url,
+                    AvatarUrl = avatar?.Url,
                     CreatedAt = post.CreatedAt
                 };
             }).ToList();
@@ -206,6 +207,7 @@ public IActionResult CreatePost([FromForm] CreatePostRequest dto)
             var postDtos = posts.Select(post =>
             {
                 var postUser = _daoFactory.DAOUser().GetUser(post.UserId);
+                var avatar = postUser != null ? _daoFactory.DAOAvatar().GetAvatarByUserId(postUser.Id) : null;
                 return new PostResponseDto
                 {
                     Id = post.Id,
@@ -218,7 +220,7 @@ public IActionResult CreatePost([FromForm] CreatePostRequest dto)
                     UserId = post.UserId,
                     NameOwner = post.NameOwner,
                     LastnameOwner = post.LastnameOwner,
-                    AvatarUrl = postUser?.Avatar?.Url,
+                    AvatarUrl = avatar?.Url,
                     CreatedAt = post.CreatedAt
                 };
             }).ToList();
@@ -339,6 +341,7 @@ public IActionResult CreatePost([FromForm] CreatePostRequest dto)
             var postDtos = posts.Select(post =>
             {
                 var postUser = _daoFactory.DAOUser().GetUser(post.UserId);
+                var avatar = postUser != null ? _daoFactory.DAOAvatar().GetAvatarByUserId(postUser.Id) : null;
                 return new PostResponseDto
                 {
                     Id = post.Id,
@@ -351,7 +354,7 @@ public IActionResult CreatePost([FromForm] CreatePostRequest dto)
                     UserId = post.UserId,
                     NameOwner = post.NameOwner,
                     LastnameOwner = post.LastnameOwner,
-                    AvatarUrl = postUser?.Avatar?.Url,
+                    AvatarUrl = avatar?.Url,
                     CreatedAt = post.CreatedAt
                 };
             }).ToList();
