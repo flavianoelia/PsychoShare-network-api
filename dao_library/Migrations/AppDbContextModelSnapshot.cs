@@ -290,9 +290,6 @@ namespace dao_library.Migrations
                 {
                     b.HasBaseType("Person");
 
-                    b.Property<long?>("AvatarId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(191)
@@ -304,8 +301,6 @@ namespace dao_library.Migrations
 
                     b.Property<int>("RoleType")
                         .HasColumnType("int");
-
-                    b.HasIndex("AvatarId");
 
                     b.HasIndex("Email")
                         .IsUnique();
@@ -494,15 +489,6 @@ namespace dao_library.Migrations
                     b.Navigation("FollowedUser");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("entity_library.system.User", b =>
-                {
-                    b.HasOne("entity_library.media.Avatar", "Avatar")
-                        .WithMany()
-                        .HasForeignKey("AvatarId");
-
-                    b.Navigation("Avatar");
                 });
 
             modelBuilder.Entity("entity_library.media.Image", b =>
