@@ -6,5 +6,5 @@ public class LikeResponseDto
     public long UserId { get; set; }
     public long PostId { get; set; }
     public string UserName { get; set; } = "";
-    public DateTime CreatedAt { get; set; }
+    public string CreatedAt { get; set; } = "";
 }
