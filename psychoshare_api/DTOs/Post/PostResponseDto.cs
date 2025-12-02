@@ -15,5 +15,5 @@ public class PostResponseDto
     public string? PdfUrl { get; set; }
     public int CommentsCount { get; set; }
     public int LikesCount { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public string CreatedAt { get; set; } = "";
 }

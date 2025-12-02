@@ -7,6 +7,6 @@ public class CommentResponseDto
     public long UserId { get; set; }
     public string UserName { get; set; } = "";
     public long PostId { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public string CreatedAt { get; set; } = "";
     public string? AvatarUrl { get; set; }
 }

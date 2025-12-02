@@ -103,7 +103,7 @@ public class LikeController : ControllerBase
                 UserId = like.UserId,
                 PostId = like.PostId,
                 UserName = like.User?.Name ?? "Usuario desconocido",
-                CreatedAt = DateTime.Now 
+                CreatedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") 
             }).ToList();
 
             return Ok(likeDtos);
@@ -138,7 +138,7 @@ public class LikeController : ControllerBase
                 UserId = like.UserId,
                 PostId = like.PostId,
                 UserName = like.User?.Name ?? "Usuario desconocido",
-                CreatedAt = DateTime.Now 
+                CreatedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") 
             }).ToList();
 
             return Ok(likeDtos);

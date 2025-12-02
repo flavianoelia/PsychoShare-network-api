@@ -136,7 +136,7 @@ public IActionResult CreatePost([FromForm] CreatePostRequest dto)
                 NameOwner = post.NameOwner,
                 LastnameOwner = post.LastnameOwner,
                 AvatarUrl = postUser?.Avatar?.Url,
-                CreatedAt = post.CreatedAt
+                CreatedAt = post.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")
             };
 
             return Ok(response);
@@ -173,7 +173,7 @@ public IActionResult CreatePost([FromForm] CreatePostRequest dto)
                     NameOwner = post.NameOwner,
                     LastnameOwner = post.LastnameOwner,
                     AvatarUrl = avatar?.Url,
-                    CreatedAt = post.CreatedAt
+                    CreatedAt = post.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")
                 };
             }).ToList();
 
@@ -221,7 +221,7 @@ public IActionResult CreatePost([FromForm] CreatePostRequest dto)
                     NameOwner = post.NameOwner,
                     LastnameOwner = post.LastnameOwner,
                     AvatarUrl = avatar?.Url,
-                    CreatedAt = post.CreatedAt
+                    CreatedAt = post.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")
                 };
             }).ToList();
 
@@ -355,7 +355,7 @@ public IActionResult CreatePost([FromForm] CreatePostRequest dto)
                     NameOwner = post.NameOwner,
                     LastnameOwner = post.LastnameOwner,
                     AvatarUrl = avatar?.Url,
-                    CreatedAt = post.CreatedAt
+                    CreatedAt = post.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")
                 };
             }).ToList();
 
@@ -413,7 +413,7 @@ public IActionResult CreatePost([FromForm] CreatePostRequest dto)
                     NameOwner = post.NameOwner,
                     LastnameOwner = post.LastnameOwner,
                     AvatarUrl = postUser?.Avatar?.Url,
-                    CreatedAt = post.CreatedAt
+                    CreatedAt = post.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")
                 };
             }).ToList();
 
