@@ -18,6 +18,17 @@ public class LikeController : ControllerBase
         _daoFactory = daoFactory;
     }
 
+    private string FormatDateTime(DateTime dateTime)
+    {
+        return dateTime.ToString("yyyy-MM-dd HH:mm:ss");
+    }
+
+    private DateTime GetArgentinaTime()
+    {
+        var argentinaZone = TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time");
+        return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, argentinaZone);
+    }
+
     /// <summary>
     /// Toggle like/unlike for a post (Main method)
     /// </summary>
@@ -103,7 +114,7 @@ public class LikeController : ControllerBase
                 UserId = like.UserId,
                 PostId = like.PostId,
                 UserName = like.User?.Name ?? "Usuario desconocido",
-                CreatedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") 
+                CreatedAt = FormatDateTime(GetArgentinaTime())
             }).ToList();
 
             return Ok(likeDtos);
@@ -138,7 +149,7 @@ public class LikeController : ControllerBase
                 UserId = like.UserId,
                 PostId = like.PostId,
                 UserName = like.User?.Name ?? "Usuario desconocido",
-                CreatedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") 
+                CreatedAt = FormatDateTime(GetArgentinaTime())
             }).ToList();
 
             return Ok(likeDtos);

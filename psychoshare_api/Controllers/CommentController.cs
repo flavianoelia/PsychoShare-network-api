@@ -22,6 +22,17 @@ public class CommentController : ControllerBase
         _daoFactory = daoFactory;
     }
 
+    private string FormatDateTime(DateTime dateTime)
+    {
+        return dateTime.ToString("yyyy-MM-dd HH:mm:ss");
+    }
+
+    private DateTime GetArgentinaTime()
+    {
+        var argentinaZone = TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time");
+        return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, argentinaZone);
+    }
+
     [HttpPost]
     public ActionResult<CommentResponseDto> CreateComment([FromBody] CreateCommentDto createCommentDto)
     {
@@ -52,7 +63,7 @@ public class CommentController : ControllerBase
                 UserId = comment.UserId,
                 UserName = user.Name,
                 PostId = comment.PostId,
-                CreatedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                CreatedAt = FormatDateTime(GetArgentinaTime()),
                 AvatarUrl = avatar?.Url,
             };
 
@@ -86,7 +97,7 @@ public class CommentController : ControllerBase
                     UserId = comment.UserId,
                     UserName = comment.User?.Name ?? "Unknown User",
                     PostId = comment.PostId,
-                    CreatedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"), 
+                    CreatedAt = FormatDateTime(GetArgentinaTime()), 
                     AvatarUrl = avatar?.Url,
                 };
             }).ToList();
@@ -130,7 +141,7 @@ public class CommentController : ControllerBase
                     UserId = comment.UserId,
                     UserName = comment.User?.Name ?? "Unknown User", 
                     PostId = comment.PostId,
-                    CreatedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                    CreatedAt = FormatDateTime(GetArgentinaTime()),
                     AvatarUrl = avatar?.Url,
                 };
             }).ToList();
@@ -183,7 +194,7 @@ public class CommentController : ControllerBase
                 UserId = updatedComment.UserId,
                 UserName = updatedComment.User?.Name ?? "Unknown User",
                 PostId = updatedComment.PostId,
-                CreatedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                CreatedAt = FormatDateTime(GetArgentinaTime()),
                 AvatarUrl = avatar?.Url,
             };
 

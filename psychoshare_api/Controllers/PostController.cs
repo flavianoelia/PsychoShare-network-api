@@ -29,6 +29,17 @@ public class PostController : ControllerBase
         _fileUploadService = fileUploadService;
     }
 
+    private string FormatDateTime(DateTime dateTime)
+    {
+        return dateTime.ToString("yyyy-MM-dd HH:mm:ss");
+    }
+
+    private DateTime GetArgentinaTime()
+    {
+        var argentinaZone = TimeZoneInfo.FindSystemTimeZoneById("Argentina Standard Time");
+        return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, argentinaZone);
+    }
+
 [Authorize]
 [HttpPost]
 public IActionResult CreatePost([FromForm] CreatePostRequest dto)
@@ -63,7 +74,9 @@ public IActionResult CreatePost([FromForm] CreatePostRequest dto)
         Resume = dto.Resume!.Trim(),
         UserId = currentUserId,
         NameOwner = user.Name,
-        LastnameOwner = user.LastName
+        LastnameOwner = user.LastName,
+        CreatedAt = GetArgentinaTime(),
+        UpdatedAt = GetArgentinaTime()
     };
 
     // Imagen
@@ -136,7 +149,7 @@ public IActionResult CreatePost([FromForm] CreatePostRequest dto)
                 NameOwner = post.NameOwner,
                 LastnameOwner = post.LastnameOwner,
                 AvatarUrl = postUser?.Avatar?.Url,
-                CreatedAt = post.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")
+                CreatedAt = FormatDateTime(post.CreatedAt)
             };
 
             return Ok(response);
@@ -173,7 +186,7 @@ public IActionResult CreatePost([FromForm] CreatePostRequest dto)
                     NameOwner = post.NameOwner,
                     LastnameOwner = post.LastnameOwner,
                     AvatarUrl = avatar?.Url,
-                    CreatedAt = post.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")
+                    CreatedAt = FormatDateTime(post.CreatedAt)
                 };
             }).ToList();
 
@@ -221,7 +234,7 @@ public IActionResult CreatePost([FromForm] CreatePostRequest dto)
                     NameOwner = post.NameOwner,
                     LastnameOwner = post.LastnameOwner,
                     AvatarUrl = avatar?.Url,
-                    CreatedAt = post.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")
+                    CreatedAt = FormatDateTime(post.CreatedAt)
                 };
             }).ToList();
 
@@ -355,7 +368,7 @@ public IActionResult CreatePost([FromForm] CreatePostRequest dto)
                     NameOwner = post.NameOwner,
                     LastnameOwner = post.LastnameOwner,
                     AvatarUrl = avatar?.Url,
-                    CreatedAt = post.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")
+                    CreatedAt = FormatDateTime(post.CreatedAt)
                 };
             }).ToList();
 
@@ -413,7 +426,7 @@ public IActionResult CreatePost([FromForm] CreatePostRequest dto)
                     NameOwner = post.NameOwner,
                     LastnameOwner = post.LastnameOwner,
                     AvatarUrl = postUser?.Avatar?.Url,
-                    CreatedAt = post.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")
+                    CreatedAt = FormatDateTime(post.CreatedAt)
                 };
             }).ToList();
 

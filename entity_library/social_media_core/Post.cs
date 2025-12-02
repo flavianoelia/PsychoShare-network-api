@@ -19,8 +19,8 @@ public class Post
     private string resume = "";
     private Image? image;
     private Pdf? pdf;
-    private DateTime createdAt = DateTime.UtcNow;
-    private DateTime updatedAt = DateTime.UtcNow;
+    private DateTime createdAt = DateTime.Now;
+    private DateTime updatedAt = DateTime.Now;
     #endregion
 
     #region Public Atributes
