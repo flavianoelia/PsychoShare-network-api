@@ -126,7 +126,8 @@ public class UserController : ControllerBase
             message = "Inicio de sesión exitoso",
             email = user.Email,
             userId = user.Id,
-            token = token
+            token = token,
+            role = user.RoleType.ToString()
         });
     }
 

@@ -22,6 +22,7 @@ public class TokenService
         {
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Role, user.RoleType.ToString()),
         };
 
         // Assign created claims to a new identity.
