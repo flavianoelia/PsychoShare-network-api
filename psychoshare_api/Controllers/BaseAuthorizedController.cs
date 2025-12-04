@@ -11,8 +11,13 @@ public abstract class BaseAuthorizedController : ControllerBase
     {
         var roleClaimValue = User.FindFirst(ClaimTypes.Role)?.Value;
         
-        // El rol ahora es string: "User", "Admin", o "Superadmin"
-        return roleClaimValue == "Admin" || roleClaimValue == "Superadmin";
+        // El rol es numérico: "1" (User), "2" (Admin), "3" (Superadmin)
+        if (long.TryParse(roleClaimValue, out long roleId))
+        {
+            return roleId >= 2; // Admin (2) o Superadmin (3)
+        }
+        
+        return false;
     }
 
     protected long? GetAuthenticatedUserId()
