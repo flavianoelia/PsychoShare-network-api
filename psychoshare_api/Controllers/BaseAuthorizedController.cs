@@ -10,10 +10,9 @@ public abstract class BaseAuthorizedController : ControllerBase
     protected bool IsAdminOrSuperAdmin()
     {
         var roleClaimValue = User.FindFirst(ClaimTypes.Role)?.Value;
-        long roleId;
-        if (!long.TryParse(roleClaimValue, out roleId))
-            roleId = 1;
-        return roleId >= 2;
+        
+        // El rol ahora es string: "User", "Admin", o "Superadmin"
+        return roleClaimValue == "Admin" || roleClaimValue == "Superadmin";
     }
 
     protected long? GetAuthenticatedUserId()

@@ -22,7 +22,7 @@ public class TokenService
         {
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Role, user.RoleType.ToString()),
+            new Claim(ClaimTypes.Role, ((int)user.RoleType).ToString()), // Envía el número del enum
         };
 
         // Assign created claims to a new identity.
