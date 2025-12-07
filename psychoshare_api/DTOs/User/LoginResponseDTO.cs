@@ -6,4 +6,5 @@ public class LoginResponseDTO
     public required long userId { get; set; }
     public required string token { get; set; }
     public required string role { get; set; }
+    public required long connectedUsers { get; set; }
 }

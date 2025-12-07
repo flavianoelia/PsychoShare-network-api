@@ -118,6 +118,11 @@ public class UserController : ControllerBase
         {
             return Unauthorized(new { success = false, message = "Mail o contraseña inválidos" });
         }
+
+        UserCounterSingleton.Instance.IncrementUserCount();
+
+        var connectedUsers = UserCounterSingleton.Instance.GetCurrentUserCount();
+
         var token = _tokenService.CreateToken(user);
 
         return Ok(new LoginResponseDTO
@@ -127,7 +132,8 @@ public class UserController : ControllerBase
             email = user.Email,
             userId = user.Id,
             token = token,
-            role = user.RoleType.ToString()
+            role = user.RoleType.ToString(),
+            connectedUsers = connectedUsers
         });
     }
 
@@ -448,5 +454,19 @@ public class UserController : ControllerBase
             _logger.LogError(ex, "Error al eliminar usuario {UserId}", id);
             return StatusCode(500, new { success = false, message = "Error interno del servidor al eliminar usuario." });
         }
+    }
+
+    [HttpPost("logout")]
+    public IActionResult Logout()
+    {
+        UserCounterSingleton.Instance.DecrementUserCount();
+
+        var connectedUsers = UserCounterSingleton.Instance.GetCurrentUserCount();
+
+        return Ok(new {
+            success = true, 
+            message = "Cierre de sesión exitoso.", 
+            connectedUsers = connectedUsers
+        });
     }
 }
