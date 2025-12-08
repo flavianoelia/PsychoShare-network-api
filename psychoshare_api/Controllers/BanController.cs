@@ -175,12 +175,28 @@ public class BanController : BaseAuthorizedController
         }
     }
 
+ 
     [HttpGet("check/{userId}")]
-    public ActionResult<bool> CheckBanStatus(long userId)
-    {
-        var isBanned = _daoFactory.DAOBan().CheckBanStatus(userId);
-        return Ok(isBanned);
-    }
+        public ActionResult<object> CheckBanStatus(long userId)
+        {
+            var ban = _daoFactory.DAOBan().GetUserBan(userId);
+
+            if (ban == null || !ban.IsActive)
+            {
+                return Ok(new
+                {
+                    isBanned = false
+                });
+            }
+
+            return Ok(new
+            {
+                isBanned = true,
+                banReason = ban.Reason,
+                banType = ban.BanType,
+                expiryDate = ban.EndDate
+            });
+        }
 
     [HttpGet]
     public ActionResult<BanPagedResponseDto> GetAllBans([FromQuery] int page = 1, [FromQuery] int size = 10)
