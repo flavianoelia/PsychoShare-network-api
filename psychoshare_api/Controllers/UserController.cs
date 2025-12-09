@@ -469,4 +469,27 @@ public class UserController : ControllerBase
             connectedUsers = connectedUsers
         });
     }
+
+    [HttpGet("connectedUsers")]
+    [Authorize]
+    public IActionResult GetConnectedUsers()
+    {
+        int count = UserCounterSingleton.Instance.GetCurrentUserCount();
+
+        if (count == 0)
+        {
+            return Ok(new
+            {
+                success = true,
+                message = "No hay usuarios conectados",
+                connectedUsers = 0
+            });
+        }
+        return Ok(new
+        {
+            success = true,
+            message = $"{count} usuarios conectados",
+            connectedUsers = count
+        });
+    }
 }
