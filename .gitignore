@@ -411,3 +411,5 @@ appsettings.Local.json
 
 # User uploaded files (images, PDFs, etc.)
 psychoshare_api/wwwroot/uploads/
+
+GenerateHash/
