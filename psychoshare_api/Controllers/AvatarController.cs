@@ -50,7 +50,7 @@ public class AvatarController : ControllerBase
     public IActionResult GetUserAvatar(long userId)
     {
         var response = _avatarService.GetUserAvatar(userId);
-        if (response == null) return NotFound("El usuario no tiene avatar");
+        if (response == null) return Ok("El usuario no tiene avatar");
         return Ok(response);
     }
 
